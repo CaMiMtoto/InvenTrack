@@ -16,14 +16,8 @@
           rel="stylesheet">
     <!--end::Fonts-->
     {{--    // check if environment is local or production--}}
-    @if(config('app.env') == 'local')
-        @vite(['resources/sass/master.scss', 'resources/js/master.js','resources/css/app.css'])
-    @else
-        <link href="{{ asset('build/assets/master.css') }}" rel="stylesheet"/>
-        <link href="{{ asset('build/assets/app.css') }}" rel="stylesheet"/>
-        <script type="module" src="{{ asset('build/assets/master2.js') }}"></script>
-        <script type="module" src="{{ asset('build/assets/sweetalert2.js') }}"></script>
-    @endif
+    @vite(['resources/sass/master.scss', 'resources/js/master.js','resources/css/app.css'])
+
 
     @yield('styles')
 </head>

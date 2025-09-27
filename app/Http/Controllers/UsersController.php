@@ -24,6 +24,7 @@ class UsersController extends Controller
 
     /**
      * @throws Exception
+     * @throws \Exception
      */
     public function index(RoleService $roleService)
     {
@@ -37,10 +38,9 @@ class UsersController extends Controller
                 ->make(true);
         }
         $roles = $this->roleService->getAllRoles();
-        $merchants = Merchant::query()->get();
         return view('admin.users.list', [
             'roles' => $roles,
-            'merchants' => $merchants,
+            'merchants' => [],
         ]);
     }
 

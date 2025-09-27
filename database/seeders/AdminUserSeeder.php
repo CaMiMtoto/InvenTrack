@@ -18,7 +18,7 @@ class AdminUserSeeder extends Seeder
         }
 
         User::query()->create([
-            'name' => 'T Pay Admin',
+            'name' => 'Super Admin',
             'email' => 'admin@domain.rw',
             'password' => bcrypt('password'),
             'is_super_admin' => true,

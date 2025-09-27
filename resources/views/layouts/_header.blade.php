@@ -6,13 +6,7 @@
             <div class="btn btn-icon btn-active-color-primary w-35px h-35px ms-3 me-2 d-flex d-lg-none"
                  id="kt_app_sidebar_mobile_toggle">
                 <i class="ki-duotone ki-abstract-14 fs-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
-                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                         class="icon icon-tabler icons-tabler-outline icon-tabler-square-chevron-left">
-                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                        <path d="M13 15l-3 -3l3 -3"/>
-                        <path d="M3 3m0 2a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2z"/>
-                    </svg>
+                    <x-lucide-square-arrow-left class="tw-w-8 tw-h-8"/>
                 </i>
             </div>
             <!--end::Sidebar mobile toggle-->
@@ -30,13 +24,8 @@
                  data-kt-toggle="true" data-kt-toggle-state="active" data-kt-toggle-target="body"
                  data-kt-toggle-name="app-sidebar-minimize">
                 <i class="ki-duotone ki-exit-left fs-2x rotate-180">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                         class="lucide lucide-panel-left-close-icon lucide-panel-left-close">
-                        <rect width="18" height="18" x="3" y="3" rx="2"/>
-                        <path d="M9 3v18"/>
-                        <path d="m16 15-3-3 3-3"/>
-                    </svg>
+                    <x-lucide-square-arrow-left class="tw-w-8 tw-h-8"/>
+
                 </i>
             </div>
             <!--end::Sidebar toggle-->
@@ -46,10 +35,10 @@
             <div class="app-navbar-item  d-none d-lg-flex align-items-stretch flex-lg-grow-1 me-2 me-lg-0">
                 <div class="container-fluid">
                     <h2 class="fw-bolder">
-                        TPAY
+                        {{ config('app.name') }}
                     </h2>
                     <p>
-                        Transaction Payments
+                        {!! $pageDescription??'' !!}
                     </p>
                 </div>
             </div>

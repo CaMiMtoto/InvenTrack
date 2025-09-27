@@ -4,6 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property-read \App\Models\Delivery|null $delivery
+ * @property-read \App\Models\Product|null $product
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|DeliveryItem newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|DeliveryItem newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|DeliveryItem query()
+ * @mixin \Eloquent
+ */
 class DeliveryItem extends Model
 {
     protected $guarded = [];
