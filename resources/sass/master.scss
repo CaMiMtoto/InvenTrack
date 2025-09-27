@@ -1,0 +1,43 @@
+@import "variables";
+@import "pikaday";
+// Variables
+$body-bg: #ffffff;
+
+// Typography
+$font-family-sans-serif: "Figtree", sans-serif;
+$font-size-base: 0.9rem;
+$line-height-base: 1.6;
+* {
+    font-family: "Figtree", sans-serif !important;
+}
+//
+//@import "sweetalert2/src/sweetalert2";
+// Bootstrap
+@import "style";
+@import "vendors/plugins/datatables";
+@import "sweetalert2/src/sweetalert2";
+@import "vendors/plugins/sweetalert2";
+@import "vendors/plugins/keenicons";
+@import "vendors/plugins/flatpickr";
+
+// DataTables
+@import "bootstrap-icons/font/bootstrap-icons.css";
+@import "datatables.net-bs5/css/dataTables.bootstrap5.min.css";
+@import "datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css";
+@import "pikaday/scss/pikaday";
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-fullscreen .modal-content {
+    min-height: 100% !important;
+    height: auto !important;
+}
+
+.invalid-feedback {
+    font-size: 1rem !important;
+}
+
