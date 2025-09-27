@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('accounts', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
+            $table->enum('type',['asset','liability','equity','income','expense']);
             $table->timestamps();
         });
     }

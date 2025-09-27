@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::create('stock_movements', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('product_id')->constrained();
+            $table->enum('type',['in','out','return']);
+            $table->string('reference_type'); // purchase, order, return
+            $table->unsignedBigInteger('reference_id');
+            $table->integer('quantity');
             $table->timestamps();
         });
     }

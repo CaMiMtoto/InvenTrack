@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::create('journal_entries', function (Blueprint $table) {
             $table->id();
+            $table->date('date');
+            $table->string('reference_type'); // order, purchase, return, expense
+            $table->unsignedBigInteger('reference_id');
+            $table->string('description')->nullable();
+            $table->foreignId('created_by')->constrained('users');
             $table->timestamps();
         });
     }
