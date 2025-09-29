@@ -18,6 +18,7 @@ return new class extends Migration
             $table->decimal('total_amount', 15, 2);
             $table->enum('order_status', ['pending','approved','assigned','delivered','reconciled','completed'])->default('pending');
             $table->enum('payment_status', ['unpaid','partial','paid'])->default('unpaid');
+            $table->date('order_date');
             $table->timestamps();
         });
     }

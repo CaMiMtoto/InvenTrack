@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -28,5 +29,36 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Purchase extends Model
 {
-    //
+    use HasFactory;
+
+    public function items(): \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(PurchaseItem::class);
+    }
+
+    public function supplier(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Supplier::class);
+    }
+
+
+    public static function booted(): void
+    {
+        static::creating(function ($purchase) {
+            $year = now()->year;
+
+            // Get last purchase in current year
+            $lastInvoice = self::whereYear('created_at', $year)
+                ->orderBy('id', 'desc')
+                ->first();
+
+            $lastNumber = $lastInvoice
+                ? intval(substr($lastInvoice->invoice_number, -4))
+                : 0;
+
+            $nextNumber = str_pad($lastNumber + 1, 4, '0', STR_PAD_LEFT);
+
+            $purchase->invoice_number = "INV-$year-$nextNumber";
+        });
+    }
 }

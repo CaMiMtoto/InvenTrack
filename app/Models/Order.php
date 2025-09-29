@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @property int $id
@@ -28,5 +29,23 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Order extends Model
 {
-    //
+
+    public function customer(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Customer::class);
+    }
+
+    public function generateInvoiceNumber(): bool
+    {
+        $str = $this->id;
+        $padded = str_pad($str, 5, '0', STR_PAD_LEFT);
+        $invNo = 'SO-' . $padded;
+        return $this->update(['invoice_number' => $invNo]);
+    }
+
+    public function items(): HasMany
+    {
+        return $this->hasMany(OrderItem::class);
+    }
+
 }

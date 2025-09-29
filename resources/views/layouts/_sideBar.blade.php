@@ -22,6 +22,41 @@
                 </a>
             </div>
 
+            @canany([\App\Constants\Permission::managePurchaseOrders()])
+                <div data-kt-menu-trigger="click"
+                     class="menu-item menu-accordion {{ Str::of(request()->url())->contains('/admin/purchase-orders')?'show':'' }}">
+                    <!--begin:Menu link-->
+                    <span class="menu-link">
+                        <span class="menu-icon">
+                           <x-lucide-ticket-check class="tw-w-6 tw-h-6"/>
+                        </span>
+                        <span class="menu-title">
+                           Purchase
+                        </span>
+                    <span class="menu-arrow"></span>
+                </span>
+                    <!--end:Menu link-->
+                    <!--begin:Menu sub-->
+                    <div class="menu-sub menu-sub-accordion">
+                        @can(\App\Constants\Permission::ADD_PURCHASE)
+                            <a class="menu-link {{ request()->url()==route('admin.purchases.create')?'active':'' }}"
+                               href="{{ route('admin.purchases.create') }}">
+                                <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                                <span class="menu-title">Stock In</span>
+                            </a>
+                        @endcan
+
+                        <a class="menu-link {{ request()->url()==route('admin.purchases.index')?'active':'' }}"
+                           href="{{ route('admin.purchases.index') }}">
+                            <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                            <span class="menu-title">All Stock In</span>
+                        </a>
+
+                    </div>
+                    <!--end:Menu item-->
+                </div>
+            @endcanany
+
 
             <!--end:Menu item-->
             <div data-kt-menu-trigger="click"

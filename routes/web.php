@@ -14,6 +14,16 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 Route::group(['middleware' => ['auth', PasswordChanged::class, EnsureUserIsActive::class], 'prefix' => '/admin', 'as' => 'admin.'], function () {
 
 
+    Route::group(['prefix' => "purchases", "as" => "purchases."], function () {
+        Route::get('/', [App\Http\Controllers\PurchaseController::class, 'index'])->name('index');
+        Route::get('/create', [App\Http\Controllers\PurchaseController::class, 'create'])->name('create');
+        Route::post('/', [App\Http\Controllers\PurchaseController::class, 'store'])->name('store');
+        Route::get('/{purchase}', [App\Http\Controllers\PurchaseController::class, 'show'])->name('show');
+        Route::delete('/{purchase}', [App\Http\Controllers\PurchaseController::class, 'destroy'])->name('destroy');
+        Route::get('/{purchase}/edit', [App\Http\Controllers\PurchaseController::class, 'edit'])->name('edit');
+        Route::put('/{purchase}', [App\Http\Controllers\PurchaseController::class, 'update'])->name('update');
+    });
+
     Route::group(['prefix' => "settings", "as" => "settings."], function () {
 
 
