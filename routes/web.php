@@ -24,6 +24,22 @@ Route::group(['middleware' => ['auth', PasswordChanged::class, EnsureUserIsActiv
         Route::put('/{purchase}', [App\Http\Controllers\PurchaseController::class, 'update'])->name('update');
     });
 
+    Route::group(['prefix' => "orders", "as" => "orders."], function () {
+        Route::get('/', [App\Http\Controllers\OrderController::class, 'index'])->name('index');
+        Route::get('/create', [App\Http\Controllers\OrderController::class, 'create'])->name('create');
+        Route::post('/store', [App\Http\Controllers\OrderController::class, 'store'])->name('store');
+        Route::get('/{saleOrder}/show', [App\Http\Controllers\OrderController::class, 'show'])->name('show');
+        Route::delete('/{order}/destroy', [App\Http\Controllers\OrderController::class, 'destroy'])->name('destroy');
+        Route::get('/{order}/edit', [App\Http\Controllers\OrderController::class, 'edit'])->name('edit');
+        Route::put('/{order}/update', [App\Http\Controllers\OrderController::class, 'update'])->name('update');
+        Route::get('/{order}/print', [App\Http\Controllers\OrderController::class, 'print'])->name('print');
+        Route::put('/{order}/cancel', [App\Http\Controllers\OrderController::class, 'cancel'])->name('cancel');
+
+
+    });
+
+
+
     Route::group(['prefix' => "settings", "as" => "settings."], function () {
 
 
@@ -50,7 +66,24 @@ Route::group(['middleware' => ['auth', PasswordChanged::class, EnsureUserIsActiv
     Route::get('/dashboard', [App\Http\Controllers\HomeController::class, 'dashboard'])->name('dashboard');
 
 
-    Route::prefix('reports')->group(function () {
+
+    Route::group(['prefix' => 'reports', 'as' => 'reports.'], function () {
+
+        Route::get('/sales', [App\Http\Controllers\ReportsController::class, 'salesReport'])->name('sales');
+        Route::get('/print-sales', [App\Http\Controllers\ReportsController::class, 'printSales'])->name('print-sales');
+        Route::get('/export-sales', [App\Http\Controllers\ReportsController::class, 'exportSales'])->name('export-sales');
+        Route::get('/export-purchases', [App\Http\Controllers\ReportsController::class, 'exportPurchases'])->name('purchases-export');
+        Route::get('/stock', [App\Http\Controllers\ReportsController::class, 'stockReport'])->name('stock');
+
+
+        Route::get('/payments', [App\Http\Controllers\ReportsController::class, 'paymentsReport'])->name('payments');
+        Route::get('/print-payments', [App\Http\Controllers\ReportsController::class, 'printPayments'])->name('print-payments');
+
+
+        Route::get('/purchase-orders/history', [App\Http\Controllers\PurchaseOrderController::class, 'history'])->name('purchase-orders.history');
+        Route::get('/purchase-orders/history/export', [App\Http\Controllers\PurchaseOrderController::class, 'exportHistory'])->name('purchase-orders.history.export');
+        Route::get('/items', [App\Http\Controllers\ReportsController::class, 'itemsReport'])->name('items');
+        Route::get('/expenses', [App\Http\Controllers\ReportsController::class, 'expensesReport'])->name('expenses');
 
     });
 

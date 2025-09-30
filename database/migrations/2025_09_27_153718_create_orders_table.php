@@ -19,6 +19,7 @@ return new class extends Migration
             $table->enum('order_status', ['pending','approved','assigned','delivered','reconciled','completed'])->default('pending');
             $table->enum('payment_status', ['unpaid','partial','paid'])->default('unpaid');
             $table->date('order_date');
+            $table->string('invoice_number')->nullable();
             $table->timestamps();
         });
     }

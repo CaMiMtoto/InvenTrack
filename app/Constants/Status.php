@@ -17,4 +17,19 @@ class Status
     const Active = 'active';
     const Successful = 'successful';
     const Failed = 'failed';
+
+    public static function getStatuses(): array
+    {
+        return [
+            self::Completed,
+            self::InProgress,
+            self::Confirmed,
+            self::Submitted,
+            self::Pending,
+            self::Approved,
+            self::Rejected,
+            self::Cancelled,
+            self::Inactive,
+        ];
+    }
 }

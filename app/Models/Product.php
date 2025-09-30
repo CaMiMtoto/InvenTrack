@@ -36,6 +36,8 @@ use Illuminate\Database\Eloquent\Model;
 class Product extends Model
 {
     use HasFactory;
+
+    protected $appends=['actual_qty'];
     public function increaseStock(int $qty): void
     {
         $this->increment('stock', $qty);
@@ -44,5 +46,10 @@ class Product extends Model
     public function decreaseStock(int $qty): void
     {
         $this->decrement('stock', $qty);
+    }
+
+    public function getActualQtyAttribute(): int
+    {
+        return $this->stock;
     }
 }

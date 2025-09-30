@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use App\Traits\HasEncodedId;
+use App\Traits\HasStatusColor;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -29,7 +32,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class Order extends Model
 {
+    use HasStatusColor;
+    use HasFactory,HasEncodedId;
 
+    protected $appends = ['status_color','status'];
+    protected $casts = [
+        'order_date' => 'datetime:d-m-Y',
+    ];
     public function customer(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Customer::class);
@@ -46,6 +55,11 @@ class Order extends Model
     public function items(): HasMany
     {
         return $this->hasMany(OrderItem::class);
+    }
+
+    public function getStatusAttribute()
+    {
+        return ucfirst($this->order_status);
     }
 
 }

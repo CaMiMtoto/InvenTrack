@@ -22,6 +22,42 @@
                 </a>
             </div>
 
+            @canany([\App\Constants\Permission::ManageSalesOrders()])
+                <div data-kt-menu-trigger="click"
+                     class="menu-item menu-accordion {{ Str::of(request()->url())->contains('/admin/sales-order')?'show':'' }}">
+                    <!--begin:Menu link-->
+                    <span class="menu-link">
+                        <span class="menu-icon">
+                           <x-lucide-shopping-bag class="tw-w-6 tw-h-6"/>
+                        </span>
+                        <span class="menu-title">
+                           Sales
+                        </span>
+                    <span class="menu-arrow"></span>
+                </span>
+                    <!--end:Menu link-->
+                    <!--begin:Menu sub-->
+                    <div class="menu-sub menu-sub-accordion">
+                        @can(\App\Constants\Permission::ADD_SALES)
+                            <a class="menu-link {{ request()->url()==route('admin.orders.create')?'active':'' }}"
+                               href="{{ route('admin.orders.create') }}">
+                                <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                                <span class="menu-title">New Sale</span>
+                            </a>
+                        @endcan
+
+                        <a class="menu-link {{ request()->url()==route('admin.orders.index')?'active':'' }}"
+                           href="{{ route('admin.orders.index',['start_date'=>date('Y-m-d'), 'end_date'=>date('Y-m-d')]) }}">
+                            <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                            <span class="menu-title">All Sales</span>
+                        </a>
+                        <!--end:Menu link-->
+
+                    </div>
+                    <!--end:Menu item-->
+                </div>
+            @endcanany
+
             @canany([\App\Constants\Permission::managePurchaseOrders()])
                 <div data-kt-menu-trigger="click"
                      class="menu-item menu-accordion {{ Str::of(request()->url())->contains('/admin/purchase-orders')?'show':'' }}">

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Constants\Status;
 use App\Models\Customer;
 use App\Models\JournalEntry;
 use App\Models\Order;
@@ -11,6 +12,7 @@ use App\Models\StockMovement;
 use Auth;
 use DB;
 use Illuminate\Http\Request;
+use PragmaRX\Google2FA\Support\QRCode;
 
 class OrderController extends Controller
 {
@@ -29,13 +31,13 @@ class OrderController extends Controller
             $data = Order::query()
                 ->with('customer')
                 ->withCount('items')
-                ->withSum('items', DB::raw("quantity * price"))
+                ->withSum('items', DB::raw("quantity * unit_price"))
                 ->when($startDate, fn($query, $startDate) => $query->whereDate('order_date', '>=', $startDate))
                 ->when($endDate, fn($query, $endDate) => $query->whereDate('order_date', '<=', $endDate))
                 ->when($status, fn($query, $status) => $query->where('status', $status));
 
             return \DataTables::of($data)
-                ->addColumn('action', fn(Order $Order) => view('admin.sales.partials.actions', compact('Order')))
+                ->addColumn('action', fn(Order $saleOrder) => view('admin.sales.partials.actions', compact('saleOrder')))
                 ->rawColumns(['action'])
                 ->make(true);
         }
@@ -77,10 +79,10 @@ class OrderController extends Controller
             // Create the purchase order
             $order = Order::create([
                 'customer_id' => $data['customer_id'],
-                'status' => $data['status'] ?? 'Order',
+                'order_status' => $data['status'] ?? 'pending',
                 'order_date' => $data['order_date'],
                 'total_amount' => $total_amount,
-                'done_by' => auth()->id()
+                'created_by' => auth()->id()
             ]);
 
             $order->generateInvoiceNumber();
@@ -90,10 +92,10 @@ class OrderController extends Controller
             foreach ($data['product_ids'] as $index => $product_id) {
                 $qty = $data['quantities'][$index];
                 $price = $data['prices'][$index];
-                $orderItem = $order->items()->create([
+                $order->items()->create([
                     'product_id' => $product_id,
                     'quantity' => $qty,
-                    'price' => $price,
+                    'unit_price' => $price,
                 ]);
 
                 $total_amount += $qty * $price;
@@ -102,7 +104,7 @@ class OrderController extends Controller
                 $newQty = $qty;
 
                 if ($product) {
-                    // Ensure the stock is sufficient (checking in boxes or units)
+                    // Ensure the stock is enough (checking in boxes or units)
                     if ($product->stock < $newQty) {
                         DB::rollBack(); // Roll back the transaction
                         return redirect()->back()->withErrors(['error' => 'Insufficient stock for product: ' . $product->name])
@@ -126,11 +128,11 @@ class OrderController extends Controller
         if ($request->ajax()) {
             return response()->json([
                 'success' => 'Sales order saved successfully.',
-                'url' => route('admin.sale-orders.index')
+                'url' => route('admin.orders.index')
             ]);
         }
 
-        return redirect()->route('admin.sale-orders.index')->with('success', 'Sales order saved successfully.');
+        return redirect()->route('admin.orders.index')->with('success', 'Sales order saved successfully.');
     }
 
     // 2. Approve order (storekeeper)
@@ -217,10 +219,10 @@ class OrderController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Order $Order)
+    public function show(Order $saleOrder)
     {
-        $Order->load('customer', 'items.product');
-        return view('admin.sales.show', compact('Order'));
+        $saleOrder->load('customer', 'items.product');
+        return view('admin.sales.show', compact('saleOrder'));
     }
 
     /**
@@ -234,70 +236,12 @@ class OrderController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
-     * @throws \Throwable
-     */
-    public function update(Request $request, Order $Order)
-    {
-        $data = $request->validate([
-            'supplier_id' => ['required', 'exists:suppliers,id'], // Ensure supplier exists
-            'status' => ['nullable', 'in:pending,completed,canceled'], // Customize statuses as needed
-            'delivery_date' => ['required', 'date'],
-            'items' => ['required', 'array'],
-            'items.*.product_id' => ['required', 'exists:products,id'], // Ensure products exist
-            'items.*.quantity' => ['required', 'integer', 'min:1'],
-            'items.*.price' => ['required', 'numeric', 'min:0'],
-        ]);
-
-        DB::transaction(function () use ($data, $Order) {
-            // Step 1: Rollback stock for existing items
-            foreach ($Order->items()->get() as $existingItem) {
-                $product = Product::find($existingItem->product_id);
-                if ($product) {
-                    // Subtract the existing item's quantity from the stock
-                    $product->stock_quantity -= $existingItem->quantity;
-                    $product->save(); // Save the updated stock
-                }
-            }
-
-            // Step 2: Update the purchase order
-            $Order->update([
-                'supplier_id' => $data['supplier_id'],
-                'status' => $data['status'],
-                'delivery_date' => $data['delivery_date'],
-            ]);
-
-            // Step 3: Delete existing items and re-add with updated quantities
-            $Order->items()->delete(); // Remove existing items
-
-            // Step 4: Add new items and update stock quantities
-            foreach ($data['items'] as $itemData) {
-                // Add new item to purchase order
-                $Order->items()->create($itemData);
-
-                // Update stock with new quantities
-                $product = Product::find($itemData['product_id']);
-                if ($product) {
-                    // Add the new quantity to the stock
-                    $product->stock_quantity += $itemData['quantity'];
-                    $product->save(); // Save updated stock
-                }
-            }
-        });
-
-        return response()->json([
-            'success' => 'Sales order updated successfully.',
-            'url' => route('admin.sale-orders.index')
-        ]);
-    }
-
-    /**
      * Remove the specified resource from storage.
      * @throws \Throwable
      */
     public function destroy(Order $Order)
     {
-        if ($Order->status !== Status::ORDER) {
+        if ($Order->status !== Status::Pending) {
             return response()->json(['error' => 'Only pending orders can be deleted.']);
         }
         DB::beginTransaction();
@@ -314,11 +258,11 @@ class OrderController extends Controller
      */
     public function cancel(Order $Order)
     {
-        if ($Order->status !== Status::ORDER) {
+        if ($Order->status !== Status::Pending) {
             return response()->json(['error' => 'Only pending orders can be canceled.']);
         }
         DB::beginTransaction();
-        $Order->update(['status' => Status::CANCELLED]);
+        $Order->update(['status' => Status::Cancelled]);
         // rollback stock
         $this->rollbackStock($Order);
         DB::commit();
@@ -326,18 +270,19 @@ class OrderController extends Controller
     }
 
 
-    public function print(Order $Order)
+    public function print(Order $order)
     {
-        $Order->load('customer', 'items.product');
+        $order->load('customer', 'items.product');
+        $saleOrder=$order;
         $data = QrCode::size(512)
 //            ->format('png')
 //            ->merge(public_path('assets/media/logos/logo.png'), 0.3, true)
             ->errorCorrection('M')
             ->generate(
-                route('home.order-verify', encodeId($Order->id))
+                route('home.order-verify', encodeId($order->id))
             );
-        $downloadName = 'sales-order-' . $Order->invoice_number . now()->toDateTimeLocalString() . '.pdf';
-        $pdf = Pdf::loadView('admin.sales.print', compact('Order', 'data'));
+        $downloadName = 'sales-order-' . $order->invoice_number . now()->toDateTimeLocalString() . '.pdf';
+        $pdf = Pdf::loadView('admin.sales.print', compact('saleOrder', 'data'));
         $pdf->setPaper('a4', 'portrait');
         return $pdf->stream($downloadName);
 
