@@ -21,6 +21,8 @@ return new class extends Migration
             $table->string('image')->nullable();
             $table->integer('min_stock')->default(0);
             $table->boolean('is_active')->default(true);
+            $table->string('unit_measure')->nullable();
+            $table->string('sku')->nullable();
             $table->timestamps();
         });
     }

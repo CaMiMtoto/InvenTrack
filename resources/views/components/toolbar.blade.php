@@ -32,7 +32,7 @@
 
         <div class="d-flex align-items-center gap-2">
             @foreach($actions as $action)
-                <a href="{{ $action['url'] }}" class="btn btn-sm {{ $action['class'] ?? 'btn-light-primary' }}">
+                <a href="{{ $action['url'] }}" id="{{$action['id']??''}}" class="btn btn-sm {{ $action['class'] ?? 'btn-light-primary' }}">
                     {!! $action['icon'] ?? '' !!} {{ $action['label'] }}
                 </a>
             @endforeach

@@ -19,7 +19,7 @@ return new class extends Migration
             $table->decimal('amount', 15, 2);
             $table->foreignIdFor(PaymentMethod::class)->nullable()->constrained();
             $table->string('payment_reference')->nullable();
-            $table->date('expense_date');
+            $table->date('date');
             $table->timestamps();
         });
     }

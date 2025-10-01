@@ -37,7 +37,14 @@ class Product extends Model
 {
     use HasFactory;
 
+    const IMAGE_PATH ='images/products';
+
     protected $appends=['actual_qty'];
+
+    public function category(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Category::class);
+    }
     public function increaseStock(int $qty): void
     {
         $this->increment('stock', $qty);
@@ -52,4 +59,24 @@ class Product extends Model
     {
         return $this->stock;
     }
+
+    public static function generateSku($name, $categoryId): string
+    {
+        // Get first 3 letters of category
+        $category = Category::find($categoryId);
+        $catCode = strtoupper(substr($category->name, 0, 3));
+
+        // Get first word or initials from product name
+        $words = explode(' ', $name);
+        $prodCode = strtoupper(substr($words[0], 0, 3));
+
+        // Count existing products with same code pattern
+        $count = self::where('sku', 'like', "$catCode-$prodCode-%")->count();
+
+        // Increment by 1
+        $number = str_pad($count + 1, 3, '0', STR_PAD_LEFT);
+
+        return "$catCode-$prodCode-$number";
+    }
+
 }

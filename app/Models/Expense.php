@@ -30,5 +30,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Expense extends Model
 {
-    //
+    public function category(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(ExpenseCategory::class);
+    }
 }

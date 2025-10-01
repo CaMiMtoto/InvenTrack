@@ -24,32 +24,39 @@
 
             @canany([\App\Constants\Permission::ManageSalesOrders()])
                 <div data-kt-menu-trigger="click"
-                     class="menu-item menu-accordion {{ Str::of(request()->url())->contains('/admin/sales-order')?'show':'' }}">
+                     class="menu-item menu-accordion {{ Str::of(request()->url())->contains('/admin/orders')?'show':'' }}">
                     <!--begin:Menu link-->
                     <span class="menu-link">
                         <span class="menu-icon">
                            <x-lucide-shopping-bag class="tw-w-6 tw-h-6"/>
                         </span>
                         <span class="menu-title">
-                           Sales
+                           Orders
                         </span>
                     <span class="menu-arrow"></span>
                 </span>
                     <!--end:Menu link-->
                     <!--begin:Menu sub-->
                     <div class="menu-sub menu-sub-accordion">
-                        @can(\App\Constants\Permission::ADD_SALES)
+                        @can(\App\Constants\Permission::NEW_ORDER)
                             <a class="menu-link {{ request()->url()==route('admin.orders.create')?'active':'' }}"
                                href="{{ route('admin.orders.create') }}">
                                 <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
-                                <span class="menu-title">New Sale</span>
+                                <span class="menu-title">New Order</span>
+                            </a>
+                        @endcan
+                        @can(\App\Constants\Permission::APPROVE_ORDERS)
+                            <a class="menu-link {{ request()->fullUrl()==route('admin.orders.index',['status'=>'pending'])?'active':'' }}"
+                               href="{{ route('admin.orders.index',['status'=>'pending']) }}">
+                                <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                                <span class="menu-title">Pending Orders</span>
                             </a>
                         @endcan
 
-                        <a class="menu-link {{ request()->url()==route('admin.orders.index')?'active':'' }}"
+                        <a class="menu-link {{ request()->fullUrl()==route('admin.orders.index')?'active':'' }}"
                            href="{{ route('admin.orders.index',['start_date'=>date('Y-m-d'), 'end_date'=>date('Y-m-d')]) }}">
                             <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
-                            <span class="menu-title">All Sales</span>
+                            <span class="menu-title">All Orders</span>
                         </a>
                         <!--end:Menu link-->
 
@@ -92,31 +99,143 @@
                     <!--end:Menu item-->
                 </div>
             @endcanany
-
-
-            <!--end:Menu item-->
-            <div data-kt-menu-trigger="click"
-                 class="menu-item menu-accordion  {{ Str::of(request()->url())->contains('/admin/settings')?'show':'' }}">
-                <!--begin:Menu link-->
-                <span class="menu-link">
+            @canany([\App\Constants\Permission::ManageProducts()])
+                <div data-kt-menu-trigger="click"
+                     class="menu-item menu-accordion {{ Str::of(request()->url())->contains('/admin/products')?'show':'' }}">
+                    <!--begin:Menu link-->
+                    <span class="menu-link">
                         <span class="menu-icon">
-                              <x-lucide-settings-2 class="tw-w-6 tw-h-6"/>
+                        <x-lucide-scan-barcode class="tw-w-6 tw-h-6"/>
                         </span>
                         <span class="menu-title">
-                            Settings
+                           Products Management
                         </span>
-                        <span class="menu-arrow"></span>
-                    </span>
-                <!--end:Menu link-->
+                    <span class="menu-arrow"></span>
+                </span>
+                    <!--end:Menu link-->
+                    <!--begin:Menu sub-->
+                    <div class="menu-sub menu-sub-accordion">
 
-                <!--begin:Menu sub-->
-                <div class="menu-sub menu-sub-accordion">
+                        <a class="menu-link {{ request()->url()==route('admin.products.categories.index')?'active':'' }}"
+                           href="{{ route('admin.products.categories.index') }}">
+                            <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                            <span class="menu-title">Categories</span>
+                        </a>
+                        <!--end:Menu link-->
 
+                        <a class="menu-link {{ request()->url()==route('admin.products.index')?'active':'' }}"
+                           href="{{ route('admin.products.index') }}">
+                            <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                            <span class="menu-title">Products</span>
+                        </a>
+                        <!--end:Menu link-->
 
+                    </div>
+                    <!--end:Menu item-->
                 </div>
-                <!--end:Menu item-->
+            @endcanany
 
-            </div>
+            @canany([\App\Constants\Permission::ManageStock()])
+                <div data-kt-menu-trigger="click"
+                     class="menu-item menu-accordion {{ Str::of(request()->url())->contains('/admin/stock')?'show':'' }}">
+                    <!--begin:Menu link-->
+                    <span class="menu-link">
+                        <span class="menu-icon">
+                          <x-lucide-activity class="tw-w-6 tw-h-6"/>
+                        </span>
+                        <span class="menu-title">
+                           Stock Management
+                        </span>
+                    <span class="menu-arrow"></span>
+                </span>
+                    <!--end:Menu link-->
+                    <!--begin:Menu sub-->
+                    <div class="menu-sub menu-sub-accordion">
+                        @canany([\App\Constants\Permission::VIEW_STOCK_MOVEMENT])
+                            <a class="menu-link {{ request()->url()==route('admin.stock-transaction.index')?'active':'' }}"
+                               href="{{ route('admin.stock-transaction.index') }}">
+                                <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                                <span class="menu-title">Movements</span>
+                            </a>
+                            <!--end:Menu link-->
+                        @endcanany
+                        @canany([\App\Constants\Permission::VIEW_STOCK_ADJUSTMENT,\App\Constants\Permission::MANAGE_STOCK_ADJUSTMENT])
+                            <a class="menu-link {{ request()->url()==route('admin.stock-transaction.adjustments')?'active':'' }}"
+                               href="{{ route('admin.stock-transaction.adjustments') }}">
+                                <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                                <span class="menu-title">Adjustments</span>
+                            </a>
+                        @endcanany
+                        <!--end:Menu link-->
+
+                    </div>
+                    <!--end:Menu item-->
+                </div>
+            @endcanany
+            @can(\App\Constants\Permission::MANAGE_EXPENSES)
+                <div class="menu-item here">
+                    <!--begin:Menu link-->
+                    <a href="{{ route('admin.expenses.index') }}"
+                       class="menu-link {{ request()->fullUrl() ==route('admin.expenses.index')?'active':'' }}">
+                        <div class="menu-icon">
+                            {{--                        <i class="bi bi-speedometer2 fs-2"></i>--}}
+                            <x-lucide-trending-up class="tw-w-6 tw-h-6"/>
+                        </div>
+                        <span class="menu-title">Expenses</span>
+                    </a>
+                    <!--end:Menu link-->
+                </div>
+            @endcan
+
+            @canany([\App\Constants\Permission::ManageSettings()])
+                <div data-kt-menu-trigger="click"
+                     class="menu-item menu-accordion {{ Str::of(request()->url())->contains('/admin/settings')?'show':'' }}">
+                    <!--begin:Menu link-->
+                    <span class="menu-link">
+                    <span class="menu-icon">
+                       <x-lucide-settings class="tw-w-6 tw-h-6"/>
+                    </span>
+                    <span class="menu-title">
+                       System Settings
+                    </span>
+                <span class="menu-arrow"></span>
+            </span>
+                    <!--end:Menu link-->
+                    <!--begin:Menu sub-->
+                    <div class="menu-sub menu-sub-accordion">
+                        @can(\App\Constants\Permission::MANAGE_SUPPLIERS)
+                            <a class="menu-link {{ request()->url()==route('admin.settings.suppliers.index')?'active':'' }}"
+                               href="{{ route('admin.settings.suppliers.index') }}">
+                                <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                                <span class="menu-title">Suppliers</span>
+                            </a>
+                        @endcan
+                        @can(\App\Constants\Permission::MANAGE_CUSTOMERS)
+                            <a class="menu-link {{ request()->url()==route('admin.settings.customers.index')?'active':'' }}"
+                               href="{{ route('admin.settings.customers.index') }}">
+                                <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                                <span class="menu-title">Customers</span>
+                            </a>
+                        @endcan
+                        @can(\App\Constants\Permission::MANAGE_PAYMENT_METHODS)
+                            <a class="menu-link {{ request()->url()==route('admin.settings.payment-methods.index')?'active':'' }}"
+                               href="{{ route('admin.settings.payment-methods.index') }}">
+                                <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                                <span class="menu-title">Payment Methods</span>
+                            </a>
+                        @endcan
+                        @can(\App\Constants\Permission::MANAGE_EXPENSE_CATEGORIES)
+                            <a class="menu-link {{ request()->url()==route('admin.settings.expense-categories.index')?'active':'' }}"
+                               href="{{ route('admin.settings.expense-categories.index') }}">
+                                <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                                <span class="menu-title">Expense Categories</span>
+                            </a>
+                        @endcan
+
+                    </div>
+                    <!--end:Menu item-->
+                </div>
+            @endcanany
 
 
             @canany([\App\Constants\Permission::MANAGE_ROLES,\App\Constants\Permission::MANAGE_PERMISSIONS,\App\Constants\Permission::MANAGE_USERS])

@@ -18,12 +18,14 @@ class ProductFactory extends Factory
             'created_at' => Carbon::now(),
             'is_active' => $this->faker->boolean(),
             'min_stock' => $this->faker->randomNumber(),
-            'image' =>fake()->imageUrl(),
+            'image' => fake()->imageUrl(),
             'stock' => $this->faker->randomNumber(),
             'price' => $this->faker->randomFloat(),
             'description' => $this->faker->text(),
             'category_id' => Category::query()->inRandomOrder()->first()->id,
             'name' => $this->faker->name(),
+            'sku' => fake()->postcode(),
+            'unit_measure' => fake()->randomElement(['Ml', 'Kg', 'Bottle', 'Piece'])
         ];
     }
 }

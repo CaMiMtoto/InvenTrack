@@ -17,8 +17,8 @@ class PurchaseFactory extends Factory
         return [
             'supplier_id' => Supplier::query()->inRandomOrder()->first()->id,
             'invoice_number' => fake()->swiftBicNumber(),
-            'total_amount' => $this->faker->word(),
-            'purchased_at' => $this->faker->word(),
+            'total_amount' => fake()->numberBetween(10000, 99999999),
+            'purchased_at' => now(),
             'user_id' => User::query()->inRandomOrder()->first()->id,
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),

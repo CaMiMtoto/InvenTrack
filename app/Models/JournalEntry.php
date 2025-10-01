@@ -28,5 +28,9 @@ use Illuminate\Database\Eloquent\Model;
  */
 class JournalEntry extends Model
 {
-    //
+    public function reference(): \Illuminate\Database\Eloquent\Relations\MorphTo
+    {
+        return $this->morphTo();
+    }
+
 }

@@ -34,7 +34,7 @@ class OrderController extends Controller
                 ->withSum('items', DB::raw("quantity * unit_price"))
                 ->when($startDate, fn($query, $startDate) => $query->whereDate('order_date', '>=', $startDate))
                 ->when($endDate, fn($query, $endDate) => $query->whereDate('order_date', '<=', $endDate))
-                ->when($status, fn($query, $status) => $query->where('status', $status));
+                ->when($status, fn($query, $status) => $query->where('order_status', $status));
 
             return \DataTables::of($data)
                 ->addColumn('action', fn(Order $saleOrder) => view('admin.sales.partials.actions', compact('saleOrder')))

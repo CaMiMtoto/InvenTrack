@@ -29,20 +29,20 @@
                     <!--end::Item-->
                     <!--begin::Item-->
                     <li class="breadcrumb-item text-gray-700">
-                        All Orders
+                        {{ ucfirst(request('status','All')) }} Orders
                     </li>
                     <!--end::Item-->
                 </ul>
                 <!--end::Breadcrumb-->
                 <!--begin::Title-->
                 <h1 class="page-heading d-flex flex-column justify-content-center text-dark fw-bolder fs-1 lh-0">
-                    All Orders
+                    {{ ucfirst(request('status','All')) }}  Orders
                 </h1>
                 <!--end::Title-->
             </div>
             <!--end::Page title-->
             <!--begin::Actions-->
-            @can(\App\Constants\Permission::ADD_SALES)
+            @can(\App\Constants\Permission::NEW_ORDER)
                 <a href="{{ route('admin.orders.create') }}" class="btn btn-sm btn-light-primary "
                    id="addBtn">
                     <i class="bi bi-plus"></i>
@@ -62,8 +62,8 @@
                 <!--begin::Search-->
                 <div>
                     <h4> Filters</h4>
-                    <p class="text-muted tw-text-xs">
-                        Filter the products by date and status
+                    <p class="small">
+                        Filter records by dates
                     </p>
                 </div>
                 <!--end::Search-->
@@ -82,21 +82,7 @@
                            value="{{request('end_date')}}"
                            placeholder="End Date"/>
                 </div>
-                <div class="w-100 w-lg-auto">
-                    <!--begin::Select2-->
-                    <select class="form-select form--solid form-select-sm" name="status">
-                        <option value="">
-                            Status
-                        </option>
-                        @foreach(\App\Constants\Status::getStatuses() as $status)
-                            <option value="{{$status}}"
-                                {{ request()->get('status')==$status?'selected':'' }}>
-                                {{$status}}
-                            </option>
-                        @endforeach
-                    </select>
-                    <!--end::Select2-->
-                </div>
+
                 <div class="btn-group btn-group-sm">
                     <button class="btn btn-primary btn-sm" type="submit">
                         <i class="bi bi-funnel"></i>
@@ -142,10 +128,7 @@
                 ajax: '{!! request()->fullUrl() !!}',
                 columns: [
                     {
-                        data: 'order_date', name: 'order_date',
-                        render: function (data, type, row, meta) {
-                            return moment(data).format('DD/MM/YYYY');
-                        }
+                        data: 'order_date', name: 'order_date'
                     },
                     {data: 'invoice_number', name: 'invoice_number'},
 

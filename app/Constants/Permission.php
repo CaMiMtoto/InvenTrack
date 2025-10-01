@@ -7,15 +7,16 @@ class Permission
     const MANAGE_USERS = 'MANAGE_USERS';
     const MANAGE_ROLES = 'MANAGE_ROLES';
     const MANAGE_PERMISSIONS = 'MANAGE_PERMISSIONS';
-    const MANAGE_MERCHANTS = 'MANAGE_MERCHANTS';
     const VIEW_PURCHASES = 'VIEW_PURCHASES';
     const ADD_PURCHASE = 'ADD_PURCHASE';
-    const ADD_SALES = 'ADD_SALES';
+    const NEW_ORDER = 'NEW_ORDER';
+    const VIEW_ORDERS='VIEW_ORDERS';
+    const APPROVE_ORDERS='APPROVE_ORDERS';
     public const  VIEW_PERMISSIONS = 'view_permissions';
     public const MANAGE_CATEGORIES = 'manage_categories';
     public const MANAGE_PRODUCTS = 'manage_products';
-    public const MANAGE_SALES_DELIVERY = 'manage_sales_delivery';
-    public const VIEW_SALES = 'view_sales';
+    public const MANAGE_ORDERS_DELIVERY = 'MANAGE_ORDERS_DELIVERY';
+
     public const MANAGE_SUPPLIERS = 'manage_suppliers';
     public const MANAGE_STOCK = 'manage_stock';
     public const MANAGE_STOCK_ADJUSTMENT = 'manage_stock_adjustment';
@@ -43,7 +44,17 @@ class Permission
             self::MANAGE_USERS,
             self::MANAGE_ROLES,
             self::MANAGE_PERMISSIONS,
-            self::MANAGE_MERCHANTS
+            self::VIEW_PURCHASES,
+            self::ADD_PURCHASE,
+            self::NEW_ORDER,
+            self::VIEW_ORDERS,
+            self::APPROVE_ORDERS,
+            self::VIEW_PERMISSIONS,
+            self::MANAGE_CATEGORIES,
+            self::MANAGE_PRODUCTS,
+            self::MANAGE_ORDERS_DELIVERY,
+            self::MANAGE_SUPPLIERS,
+            self::MANAGE_STOCK,
         ];
     }
 
@@ -55,10 +66,37 @@ class Permission
         ];
     }
 
-    public static function ManageSalesOrders()
+    public static function ManageSalesOrders(): array
     {
         return [
-            self::ADD_SALES,
+            self::NEW_ORDER,
+        ];
+    }
+
+    public static function ManageProducts(): array
+    {
+        return [
+            self::MANAGE_PRODUCTS,
+            self::MANAGE_CATEGORIES
+        ];
+    }
+    public static function ManageStock(): array
+    {
+        return [
+            self::MANAGE_STOCK,
+            self::MANAGE_STOCK_ADJUSTMENT,
+            self::VIEW_STOCK_ADJUSTMENT,
+            self::VIEW_STOCK_MOVEMENT
+        ];
+    }
+
+    public static function ManageSettings(): array
+    {
+        return [
+            self::MANAGE_SUPPLIERS,
+            self::MANAGE_CUSTOMERS,
+            self::MANAGE_PAYMENT_METHODS,
+            self::MANAGE_EXPENSE_CATEGORIES
         ];
     }
 }

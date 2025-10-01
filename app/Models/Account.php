@@ -22,5 +22,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Account extends Model
 {
-    //
+    const INVENTORY_ID=1;
+    const ACCOUNTS_PAYABLE_ID=2;
+    const CASH_ID=3;
+    const BANK_ID=4;
 }

@@ -11,19 +11,16 @@ class Toolbar extends Component
     public array $breadcrumbs;
     public string $title;
     public array $actions;
-    public ?string $subtitle;
 
     /**
      * @param array $breadcrumbs [['label' => 'Home', 'url' => route('dashboard')], ...]
      * @param string $title
-     * @param string|null $subtitle
      * @param array $actions [['label'=>'Go Back', 'url'=>..., 'class'=>'btn-primary'], ...]
      */
-    public function __construct(array $breadcrumbs = [], string $title = '', string $subtitle = null, array $actions = [])
+    public function __construct(array $breadcrumbs = [], string $title = '', array $actions = [])
     {
         $this->breadcrumbs = $breadcrumbs;
         $this->title = $title;
-        $this->subtitle = $subtitle;
         $this->actions = $actions;
     }
 

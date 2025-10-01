@@ -1,5 +1,10 @@
 <?php
 
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\ExpenseController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\SupplierController;
 use App\Http\Middleware\EnsureUserIsActive;
 use App\Http\Middleware\PasswordChanged;
 use Illuminate\Support\Facades\Route;
@@ -13,7 +18,6 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 
 Route::group(['middleware' => ['auth', PasswordChanged::class, EnsureUserIsActive::class], 'prefix' => '/admin', 'as' => 'admin.'], function () {
 
-
     Route::group(['prefix' => "purchases", "as" => "purchases."], function () {
         Route::get('/', [App\Http\Controllers\PurchaseController::class, 'index'])->name('index');
         Route::get('/create', [App\Http\Controllers\PurchaseController::class, 'create'])->name('create');
@@ -22,6 +26,8 @@ Route::group(['middleware' => ['auth', PasswordChanged::class, EnsureUserIsActiv
         Route::delete('/{purchase}', [App\Http\Controllers\PurchaseController::class, 'destroy'])->name('destroy');
         Route::get('/{purchase}/edit', [App\Http\Controllers\PurchaseController::class, 'edit'])->name('edit');
         Route::put('/{purchase}', [App\Http\Controllers\PurchaseController::class, 'update'])->name('update');
+        Route::get('/{purchaseOrder}/print', [App\Http\Controllers\PurchaseController::class, 'print'])->name('print');
+
     });
 
     Route::group(['prefix' => "orders", "as" => "orders."], function () {
@@ -34,14 +40,63 @@ Route::group(['middleware' => ['auth', PasswordChanged::class, EnsureUserIsActiv
         Route::put('/{order}/update', [App\Http\Controllers\OrderController::class, 'update'])->name('update');
         Route::get('/{order}/print', [App\Http\Controllers\OrderController::class, 'print'])->name('print');
         Route::put('/{order}/cancel', [App\Http\Controllers\OrderController::class, 'cancel'])->name('cancel');
+    });
+    Route::get('/sales/{saleOrder}/deliveries', [App\Http\Controllers\SaleDeliveryController::class, 'index'])->name('sale-deliveries.index');
+    Route::post('/sales/{saleOrder}/deliveries/store', [App\Http\Controllers\SaleDeliveryController::class, 'store'])->name('sale-deliveries.store');
+    Route::get('/sales/deliveries/{saleDelivery}/print', [App\Http\Controllers\SaleDeliveryController::class, 'print'])->name('sale-deliveries.print');
 
+    Route::get('/stock/movements', [StockTransactionController::class, 'index'])->name('stock-transaction.index');
+    Route::get('/stock/adjustments', [StockTransactionController::class, 'adjustments'])->name('stock-transaction.adjustments');
+    Route::post('/stock/adjustments', [StockTransactionController::class, 'adjustStock'])->name('stock-transaction.adjust-stock');
+
+    Route::get('/expenses', [ExpenseController::class, 'index'])->name('expenses.index');
+    Route::post('/expenses/store', [ExpenseController::class, 'store'])->name('expenses.store');
+    Route::get('/expenses/{expense}/show', [ExpenseController::class, 'show'])->name('expenses.show');
+    Route::delete('/expenses/{expense}/destroy', [ExpenseController::class, 'destroy'])->name('expenses.destroy');
+
+    //product management routes
+    Route::group(["prefix" => "products", "as" => "products."], function () {
+        Route::get('/', [ProductController::class, 'index'])->name('index');
+        Route::get('/{product}/show', [ProductController::class, 'show'])->name('show');
+        Route::post('/store', [ProductController::class, 'store'])->name('store');
+        Route::delete('/{product}/destroy', [ProductController::class, 'destroy'])->name('destroy');
+        Route::get('/export-excel', [ProductController::class, 'exportExcel'])->name('excel-export');
+
+        // categories
+        Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
+        Route::get('/categories/{category}/show', [CategoryController::class, 'show'])->name('categories.show');
+        Route::post('/categories/store', [CategoryController::class, 'store'])->name('categories.store');
+        Route::delete('/categories/{category}/destroy', [CategoryController::class, 'destroy'])->name('categories.destroy');
 
     });
 
 
 
-    Route::group(['prefix' => "settings", "as" => "settings."], function () {
+    Route::group(["prefix" => "settings", "as" => "settings."], function () {
+        //supplier routes
+        Route::get('/suppliers', [SupplierController::class, 'index'])->name('suppliers.index');
+        Route::get('/suppliers/{supplier}/show', [SupplierController::class, 'show'])->name('suppliers.show');
+        Route::post('/suppliers/store', [SupplierController::class, 'store'])->name('suppliers.store');
+        Route::delete('/suppliers/{supplier}', [SupplierController::class, 'destroy'])->name('suppliers.destroy');
+        //Customers routes
+        Route::get('/customers', [CustomerController::class, 'index'])->name('customers.index');
+        Route::get('/customers/{customer}/show', [CustomerController::class, 'show'])->name('customers.show');
+        Route::post('/customers/store', [CustomerController::class, 'store'])->name('customers.store');
+        Route::delete('/customers/{customer}', [CustomerController::class, 'destroy'])->name('customers.destroy');
 
+        Route::prefix('payment-methods')->group(function () {
+            Route::get('/', [App\Http\Controllers\PaymentMethodController::class, 'index'])->name('payment-methods.index');
+            Route::post('/store', [App\Http\Controllers\PaymentMethodController::class, 'store'])->name('payment-methods.store');
+            Route::get('/{paymentMethod}/show', [App\Http\Controllers\PaymentMethodController::class, 'show'])->name('payment-methods.show');
+            Route::delete('/{paymentMethod}/destroy', [App\Http\Controllers\PaymentMethodController::class, 'destroy'])->name('payment-methods.destroy');
+        });
+
+        Route::prefix('expense-categories')->group(function () {
+            Route::get('/', [App\Http\Controllers\ExpenseCategoryController::class, 'index'])->name('expense-categories.index');
+            Route::post('/store', [App\Http\Controllers\ExpenseCategoryController::class, 'store'])->name('expense-categories.store');
+            Route::get('/{expenseCategory}/show', [App\Http\Controllers\ExpenseCategoryController::class, 'show'])->name('expense-categories.show');
+            Route::delete('/{expenseCategory}/destroy', [App\Http\Controllers\ExpenseCategoryController::class, 'destroy'])->name('expense-categories.destroy');
+        });
 
     });
 
