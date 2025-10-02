@@ -18,7 +18,10 @@ return new class extends Migration {
             $table->enum('order_status', ['pending', 'approved', 'assigned', 'delivered', 'reconciled', 'completed', 'cancelled'])->default('pending');
             $table->enum('payment_status', ['unpaid', 'partial', 'paid'])->default('unpaid');
             $table->date('order_date');
+            $table->string('order_number')->nullable();
             $table->string('invoice_number')->nullable();
+            $table->foreignIdFor(\App\Models\User::class, 'approved_by')->nullable()->constrained();
+            $table->dateTime('approved_at')->nullable();
             $table->timestamps();
         });
     }

@@ -5,13 +5,29 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @property-read \App\Models\User|null $deliveryPerson
+ * @property int $id
+ * @property int $order_id
+ * @property int $delivery_person_id
+ * @property string $status
+ * @property string|null $notes
+ * @property string|null $delivered_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\User $deliveryPerson
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\DeliveryItem> $items
  * @property-read int|null $items_count
- * @property-read \App\Models\Order|null $order
+ * @property-read \App\Models\Order $order
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Delivery newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Delivery newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Delivery query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Delivery whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Delivery whereDeliveredAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Delivery whereDeliveryPersonId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Delivery whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Delivery whereNotes($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Delivery whereOrderId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Delivery whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Delivery whereUpdatedAt($value)
  * @mixin \Eloquent
  */
 class Delivery extends Model
@@ -28,7 +44,7 @@ class Delivery extends Model
         return $this->belongsTo(User::class, 'delivery_person_id');
     }
 
-    public function items()
+    public function items(): \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Relations\HasMany|Delivery
     {
         return $this->hasMany(DeliveryItem::class);
     }

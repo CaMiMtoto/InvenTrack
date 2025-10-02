@@ -40,12 +40,11 @@ class UsersController extends Controller
         $roles = $this->roleService->getAllRoles();
         return view('admin.users.list', [
             'roles' => $roles,
-            'merchants' => [],
         ]);
     }
 
     /**
-     * @throws Throwable
+     * @throws \Throwable
      */
     public function store(Request $request)
     {
@@ -57,11 +56,6 @@ class UsersController extends Controller
             'roles' => ['required', 'array'],
             'roles.*' => ['required', 'integer', 'exists:roles,id'],
             'phone' => ['required', 'string', 'max:255'],
-            'merchant_id' => [
-                'nullable',
-                Rule::requiredIf(auth()->user()->merchant_id != null),
-                'integer', 'exists:merchants,id',
-            ],
         ]);
 
         $id = $request->input('id');
@@ -72,7 +66,6 @@ class UsersController extends Controller
             'email' => $request->input('email'),
             'phone_number' => $request->input('phone'),
             'password' => Hash::make($random),
-            'merchant_id' => $request->input('merchant_id'),
         ];
         if ($id > 0) {
             $user = User::find($id);

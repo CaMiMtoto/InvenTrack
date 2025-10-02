@@ -11,9 +11,7 @@ class PermissionRepository
 {
     public function getAll(): Collection|array
     {
-        $category = auth()->user()?->merchant_id ? ['merchant', 'both'] : ['admin', 'both'];
-        return Permission::whereIn('category', $category)
-            ->orderBy('name')
+        return Permission::query()->orderBy('name')
             ->get();
 
     }

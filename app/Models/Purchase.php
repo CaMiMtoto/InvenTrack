@@ -12,10 +12,19 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $supplier_id
  * @property string|null $invoice_number
  * @property string $total_amount
- * @property string $purchased_at
+ * @property \Illuminate\Support\Carbon $purchased_at
  * @property int $user_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\PurchaseItem> $items
+ * @property-read int|null $items_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\JournalEntry> $journalEntries
+ * @property-read int|null $journal_entries_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\StockMovement> $stockMovements
+ * @property-read int|null $stock_movements_count
+ * @property-read \App\Models\Supplier $supplier
+ * @property-read mixed $total
+ * @method static \Database\Factories\PurchaseFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Purchase newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Purchase newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Purchase query()

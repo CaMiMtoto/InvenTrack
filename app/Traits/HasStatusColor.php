@@ -15,12 +15,13 @@ trait HasStatusColor
 
             strtolower(Status::Submitted),
             strtolower(Status::InProgress),
-            strtolower(Status::Confirmed) => 'info',
+            strtolower(Status::Approved) => 'info',
 
             strtolower(Status::Completed),
             strtolower(Status::Active),
             strtolower(Status::Successful),
-            strtolower(Status::Approved) => 'success',
+            strtolower(Status::Reconciled),
+            strtolower(Status::Delivered) => 'success',
 
             strtolower(Status::Rejected),
             strtolower(Status::Cancelled),

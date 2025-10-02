@@ -23,6 +23,7 @@ class OrderFactory extends Factory
             'updated_at' => Carbon::now(),
             'order_date' => fake()->dateTimeBetween('-2 month', 'now'),
             'customer_id' => Customer::query()->inRandomOrder()->first()->id,
+            'order_number'=>fake()->buildingNumber()
         ];
     }
 }

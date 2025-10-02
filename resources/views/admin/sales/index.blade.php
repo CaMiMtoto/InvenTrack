@@ -104,7 +104,7 @@
                     <thead>
                     <tr class="text-start text-gray-800 fw-bold fs-7 text-uppercase">
                         <th>Date</th>
-                        <th>Invoice #</th>
+                        <th>Order #</th>
                         <th>Customer</th>
                         <th>Status</th>
                         <th>Items</th>
@@ -130,7 +130,7 @@
                     {
                         data: 'order_date', name: 'order_date'
                     },
-                    {data: 'invoice_number', name: 'invoice_number'},
+                    {data: 'order_number', name: 'order_number'},
 
                     {data: 'customer.name', name: 'customer.name'},
                     {

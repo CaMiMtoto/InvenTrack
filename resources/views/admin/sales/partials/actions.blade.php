@@ -7,7 +7,7 @@
         <a class="dropdown-item" href="{{ route('admin.orders.show', encodeId($saleOrder->id)) }}">Details</a>
         <a class="dropdown-item" href="{{route('admin.orders.print',encodeId( $saleOrder->id))}}"
            target="_blank">Print</a>
-        @if($saleOrder->status != \App\Constants\Status::Cancelled && auth()->user()->can(\App\Constants\Permission::MANAGE_ORDERS_DELIVERY))
+        @if($saleOrder->status != \App\Constants\Status::Cancelled && auth()->user()->can(\App\Constants\Permission::VIEW_DELIVERIES))
             <a class="dropdown-item" href="">Deliveries</a>
         @endif
         @if( auth()->user()->can(\App\Constants\Permission::CANCEL_SALES_ORDERS))

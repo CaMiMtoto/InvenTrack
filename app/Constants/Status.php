@@ -17,6 +17,8 @@ class Status
     const Active = 'active';
     const Successful = 'successful';
     const Failed = 'failed';
+    const Delivered='delivered';
+    const Reconciled='reconciled';
 
     public static function getStatuses(): array
     {

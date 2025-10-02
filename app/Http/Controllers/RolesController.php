@@ -54,7 +54,6 @@ class RolesController extends Controller
         $roleData = [
             'name' => $data['name'],
             'guard_name' => 'web',
-            'merchant_id' => auth()->user()->merchant_id,
         ];
         $id = $request->input('id');
         try {

@@ -17,10 +17,7 @@ class RoleRepository
     public function getRoleBuilder(): Builder
     {
         return Role::query()
-            ->withCount('permissions')
-            ->when(auth()->user()->merchant_id, function ($query) {
-                $query->where('merchant_id', auth()->user()->merchant_id);
-            });
+            ->withCount('permissions');
     }
 
     public function getById($id): Model|Collection|Builder|array|null

@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $quantity
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read Model|\Eloquent $reference
  * @method static \Illuminate\Database\Eloquent\Builder<static>|StockMovement newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|StockMovement newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|StockMovement query()

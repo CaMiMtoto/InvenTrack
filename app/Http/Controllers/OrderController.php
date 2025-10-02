@@ -2,17 +2,25 @@
 
 namespace App\Http\Controllers;
 
+use App\Constants\Permission;
 use App\Constants\Status;
+use App\Constants\TransactionType;
+use App\Models\Account;
+use App\Models\ApprovalFlow;
 use App\Models\Customer;
 use App\Models\JournalEntry;
+use App\Models\JournalLine;
 use App\Models\Order;
 use App\Models\PaymentMethod;
 use App\Models\Product;
 use App\Models\StockMovement;
+use App\Models\User;
 use Auth;
 use DB;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use PragmaRX\Google2FA\Support\QRCode;
+use Yajra\DataTables\Exceptions\Exception;
 
 class OrderController extends Controller
 {
@@ -85,7 +93,7 @@ class OrderController extends Controller
                 'created_by' => auth()->id()
             ]);
 
-            $order->generateInvoiceNumber();
+            $order->generateOrderNumber();
 
             // Loop through items and add them to the purchase order
 
@@ -136,42 +144,95 @@ class OrderController extends Controller
     }
 
     // 2. Approve order (storekeeper)
-    public function approve(Order $order)
+
+    /**
+     * @throws \Throwable
+     */
+    public function updateStatus(Request $request, Order $order)
     {
-        if ($order->status !== 'pending') {
-            return back()->with('error', 'Only pending orders can be approved.');
+        $data = $request->validate([
+            'action' => ['required', 'in:approved,rejected'],
+            'comment' => ['nullable', 'string', 'max:255'],
+        ]);
+
+        if (strtolower($order->status) !== 'pending') {
+            return response()->json(['error' => 'Only pending orders can be processed.'], 422);
         }
 
-        DB::transaction(function () use ($order) {
-            $order->update([
-                'status' => 'approved',
-                'approved_by' => auth()->id(),
+        DB::transaction(function () use ($order, $data) {
+            $order->order_status = $data['action'];
+            $order->approved_by = auth()->id();
+            $order->approved_at = now();
+            $order->save();
+
+            // record flow history
+            ApprovalFlow::create([
+                'approvable_type' => $order->getMorphClass(),
+                'approvable_id' => $order->id,
+                'user_id' => auth()->id(),
+                'status' => $data['action'],
+                'comment' => $data['comment'],
             ]);
 
-            // Deduct stock
-            foreach ($order->items as $item) {
-                StockMovement::create([
-                    'product_id' => $item->product_id,
-                    'quantity' => -$item->quantity,
-                    'type' => 'sale',
-                    'reference_id' => $order->id,
-                    'reference_type' => Order::class,
-                    'created_by' => auth()->id(),
-                ]);
+            if ($data['action'] === 'approved') {
+                $this->processApprovedOrder($order);
             }
-
-            // Create journal entry
-            JournalEntry::create([
-                'order_id' => $order->id,
-                'debit' => $order->total_amount,
-                'credit' => $order->total_amount,
-                'description' => "Sale of products Invoice #{$order->order_number}",
-                'created_by' => auth()->id(),
-            ]);
         });
 
-        return back()->with('success', "Order {$order->order_number} approved.");
+        return response()->json(['success' => "Order {$data['action']} successfully."]);
     }
+
+    /**
+     * @throws \Exception
+     */
+    protected function processApprovedOrder(Order $order)
+    {
+        $totalAmount = 0;
+        foreach ($order->items as $item) {
+            $product = $item->product;
+
+            if ($product->stock < $item->quantity) {
+                throw new \Exception("Not enough stock for product: {$product->name}");
+            }
+
+            $product->stock -= $item->quantity;
+            $product->save();
+
+            StockMovement::create([
+                'product_id' => $product->id,
+                'quantity' => $item->quantity,
+                'type' => 'out',
+                'reference_type' => $order->getMorphClass(),
+                'reference_id' => $order->id,
+            ]);
+
+            $totalAmount += $item->quantity * $item->price;
+        }
+
+        // Create journal entry
+        $journalEntry = JournalEntry::create([
+            'reference_type' => $order->getMorphClass(),
+            'reference_id' => $order->id,
+            'description' => 'Approved Order #' . $order->order_number,
+            'date' => now(),
+            'created_by' => auth()->id(),
+        ]);
+
+        JournalLine::create([
+            'journal_entry_id' => $journalEntry->id,
+            'account_id' => Account::ACCOUNTS_RECEIVABLE_ID,
+            'type' => TransactionType::DEBIT,
+            'amount' => $totalAmount,
+        ]);
+
+        JournalLine::create([
+            'journal_entry_id' => $journalEntry->id,
+            'account_id' => Account::SALES_REVENUE_ID,
+            'type' => TransactionType::CREDIT,
+            'amount' => $totalAmount,
+        ]);
+    }
+
 
     public function assignDelivery(Order $order, Request $request)
     {
@@ -273,7 +334,7 @@ class OrderController extends Controller
     public function print(Order $order)
     {
         $order->load('customer', 'items.product');
-        $saleOrder=$order;
+        $saleOrder = $order;
         $data = QrCode::size(512)
 //            ->format('png')
 //            ->merge(public_path('assets/media/logos/logo.png'), 0.3, true)
@@ -321,20 +382,29 @@ class OrderController extends Controller
         $amountPaid = $Order->payments()->whereRaw('lower(status)="paid"')->sum('amount');
         $remaining = $amountToPay - $amountPaid;
 
-        return view('admin.sales._search', compact('Order', 'amountPaid', 'remaining', 'amountToPay'));
+        return view('admin.orders._search', compact('Order', 'amountPaid', 'remaining', 'amountToPay'));
     }
 
     /**
-     * @param int $amountPaid
-     * @param float|int $total_amount
-     * @param Order $order
-     * @return void
+     * @throws Exception
      */
-    public function updateCustomerBalance(int $amountPaid, float|int $total_amount, Order $order): void
+    public function pendingDeliveries()
     {
-        if ($amountPaid > $total_amount) {
-            $customer = Customer::find($order->customer_id);
-            $customer->balance += $amountPaid - $total_amount;
+        if (\request()->ajax()) {
+            $orders = Order::query()
+                ->with(['customer'])
+                ->withCount('items')
+                ->withSum('items', DB::raw("quantity * unit_price"))
+                ->where('order_status', 'approved')
+                ->whereDoesntHave('deliveries'); // only approved & not yet assigned
+            return datatables($orders)
+                ->addColumn('action', fn(Order $order) => view('admin.orders.actions._pending_deliveries', compact('order')))
+                ->rawColumns(['action'])
+                ->make(true);
         }
+
+        $deliveryPersons = User::permission(Permission::DELIVERY_PRODUCTS)->get();
+        return view('admin.orders.pending_deliveries', compact('deliveryPersons'));
     }
+
 }

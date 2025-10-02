@@ -19,6 +19,10 @@ use Illuminate\Support\Carbon;
  * @property string $unit_price
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ * @property-read \App\Models\Product $product
+ * @property-read \App\Models\Purchase $purchase
+ * @property-read mixed $total
+ * @method static \Database\Factories\PurchaseItemFactory factory($count = null, $state = [])
  * @method static Builder<static>|PurchaseItem newModelQuery()
  * @method static Builder<static>|PurchaseItem newQuery()
  * @method static Builder<static>|PurchaseItem query()

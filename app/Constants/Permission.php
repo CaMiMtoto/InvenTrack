@@ -12,10 +12,14 @@ class Permission
     const NEW_ORDER = 'NEW_ORDER';
     const VIEW_ORDERS='VIEW_ORDERS';
     const APPROVE_ORDERS='APPROVE_ORDERS';
+    const ASSIGN_DELIVERY='ASSIGN_DELIVERY';
+    const DELIVERY_PRODUCTS='DELIVERY_PRODUCTS';
+    public const MANAGE_DELIVERIES = 'MANAGE_DELIVERIES';
+
+    const VIEW_DELIVERIES='VIEW_DELIVERIES';
     public const  VIEW_PERMISSIONS = 'view_permissions';
     public const MANAGE_CATEGORIES = 'manage_categories';
     public const MANAGE_PRODUCTS = 'manage_products';
-    public const MANAGE_ORDERS_DELIVERY = 'MANAGE_ORDERS_DELIVERY';
 
     public const MANAGE_SUPPLIERS = 'manage_suppliers';
     public const MANAGE_STOCK = 'manage_stock';
@@ -52,7 +56,8 @@ class Permission
             self::VIEW_PERMISSIONS,
             self::MANAGE_CATEGORIES,
             self::MANAGE_PRODUCTS,
-            self::MANAGE_ORDERS_DELIVERY,
+            self::DELIVERY_PRODUCTS,
+            self::VIEW_DELIVERIES,
             self::MANAGE_SUPPLIERS,
             self::MANAGE_STOCK,
         ];
@@ -70,6 +75,13 @@ class Permission
     {
         return [
             self::NEW_ORDER,
+        ];
+    }
+    public static function ManageOrderDeliveries(): array
+    {
+        return [
+            self::VIEW_DELIVERIES,
+            self::MANAGE_DELIVERIES,
         ];
     }
 

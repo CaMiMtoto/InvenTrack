@@ -20,107 +20,91 @@
                     <!--end::Logo-->
 
                     <!--begin::Action-->
-                    <a href="{{ route('admin.orders.print',encodeId($saleOrder->id)) }}" target="_blank"
-                       class="btn btn-sm btn-danger">
-                        <i class="bi bi-file-pdf"></i>
-                        Print Order
-                    </a>
+
                     <!--end::Action-->
                 </div>
                 <!--end::Top-->
 
                 <!--begin::Wrapper-->
                 <div class="m-0">
-                    <!--begin::Label-->
-                    <div class=" fs-3 text-gray-800 mb-8">Invoice #
-                        <strong>{{ $saleOrder->invoice_number }}</strong></div>
-                    <!--end::Label-->
+
 
                     <!--begin::Row-->
                     <div class="row g-5 mb-11">
                         <!--end::Col-->
                         <div class="col-sm-6">
+                            <div class=" fs-3 text-gray-800 mb-8">Order #
+                                <strong>{{ $saleOrder->order_number }}</strong>
+                            </div>
                             <!--end::Label-->
-                            <div class="fw-semibold fs-7 text-gray-600 mb-1">Delivery Date:</div>
+                            <div class="fw-semibold fs-7 text-gray-600 mb-1">Order Date:</div>
                             <!--end::Label-->
-
                             <!--end::Col-->
-                            <div class="fw-bold fs-6 text-gray-800">
+                            <div class="fw-bold fs-6 text-gray-800 mb-3">
                                 {{ $saleOrder->order_date->format('d M Y') }}
                             </div>
                             <!--end::Col-->
+                            <!--end::Label-->
+                            <div class="fw-semibold fs-7 text-gray-600 mb-1">Order Status:</div>
+                            <!--end::Label-->
+                            <!--end::Col-->
+                            <div class="fw-bold fs-6 text-gray-800 mb-3">
+                                <span class="badge bg-{{$saleOrder->status_color}}-subtle fw-bold text-{{$saleOrder->statusColor}} ">
+                                    {{ $saleOrder->status }}
+                                </span>
+                            </div>
+                            <!--end::Col-->
                         </div>
                         <!--end::Col-->
 
                         <!--end::Col-->
                         <div class="col-sm-6">
-                            <!--end::Label-->
-                            <div class="fw-semibold fs-7 text-gray-600 mb-1">Print Date:</div>
-                            <!--end::Label-->
-
-                            <!--end::Info-->
-                            <div class="fw-bold fs-6 text-gray-800 d-flex align-items-center flex-wrap">
-                                <span class="pe-2">{{ now()->format('d M Y, H:i:s') }}</span>
-                            </div>
-                            <!--end::Info-->
+                           <div class="row">
+                               <!--end::Label-->
+                               <div class="fw-semibold fs-7 text-gray-600 mb-1">Customer Name:</div>
+                               <!--end::Label-->
+                               <!--end::Info-->
+                               <div class="fw-bold fs-6 text-gray-800 d-flex align-items-center flex-wrap mb-3">
+                                   <span class="pe-2">{{ $saleOrder->customer->name }}</span>
+                               </div>
+                               <!--end::Info-->
+                               <!--end::Label-->
+                               <div class="fw-semibold fs-7 text-gray-600 mb-1">Address:</div>
+                               <!--end::Label-->
+                               <!--end::Info-->
+                               <div class="fw-bold fs-6 text-gray-800 d-flex align-items-center flex-wrap mb-3">
+                                   <span class="pe-2">{{ $saleOrder->customer->address }}</span>
+                               </div>
+                               <!--end::Info-->
+                               <!--end::Label-->
+                               <div class="fw-semibold fs-7 text-gray-600 mb-1">Phone:</div>
+                               <!--end::Label-->
+                               <!--end::Info-->
+                               <div class="fw-bold fs-6 text-gray-800 d-flex align-items-center flex-wrap">
+                                   <span class="pe-2">{{ $saleOrder->customer->phone }}</span>
+                               </div>
+                               <!--end::Info-->
+                           </div>
                         </div>
                         <!--end::Col-->
                     </div>
                     <!--end::Row-->
 
-                    <!--begin::Row-->
-                    <div class="row g-5 mb-12">
-                        <!--end::Col-->
-                        <div class="col-sm-6">
-                            <!--end::Label-->
-                            <div class="fw-semibold fs-7 text-gray-600 mb-1">Issue For:</div>
-                            <!--end::Label-->
-
-                            <!--end::Text-->
-                            <div class="fw-bold fs-6 text-gray-800">
-                                Global Engineering Agency
-                            </div>
-                            <!--end::Text-->
-
-                            <!--end::Description-->
-                            <div class="fw-semibold fs-7 text-gray-600">
-                                KG 33 Avenue Road Gakiriro Road<br>
-                                Umukindo house ,2nd floor front wing Kigali Gasabo
-                            </div>
-                            <!--end::Description-->
-                        </div>
-                        <!--end::Col-->
-
-                        <!--end::Col-->
-                        <div class="col-sm-6">
-                            <!--end::Label-->
-                            <div class="fw-semibold fs-7 text-gray-600 mb-1">Issued By:</div>
-                            <!--end::Label-->
-
-                            <!--end::Text-->
-                            <div class="fw-bold fs-6 text-gray-800">
-                                {{ $saleOrder->customer->name }}
-                            </div>
-                            <!--end::Text-->
-
-                            <!--end::Description-->
-                            <div class="fw-semibold fs-7 text-gray-600">
-                                {{ $saleOrder->customer->address }}
-                            </div>
-                            <!--end::Description-->
-                        </div>
-                        <!--end::Col-->
-                    </div>
-                    <!--end::Row-->
-
+                    <hr>
+                    <h4>
+                        Products
+                    </h4>
+                    <p>
+                        Below are the list of items ordered
+                    </p>
 
                     <!--begin::Content-->
                     <div class="flex-grow-1">
                         <!--begin::Table-->
                         <div class="table-responsive border-bottom mb-9">
-                            <table class="table mb-3 table-striped table-hover">
+                            <table class="table mb-3 table-striped table-hover  table-row-dashed table-row-gray-300">
                                 <thead>
-                                <tr class="border-bottom fs-6 fw-bold text-muted">
+                                <tr class=" fs-6 fw-bold text-uppercase text-gray-800">
                                     <th class="min-w-175px pb-2">Product</th>
                                     <th class="min-w-70px  pb-2">Price</th>
                                     <th class="min-w-80px  pb-2">Qty</th>
@@ -131,15 +115,15 @@
                                 <tbody>
                                 @foreach($saleOrder->items as $item)
                                     <tr class="">
-                                        <td class="d-flex align-items-center pt-6">
+                                        <td class="pt-6">
                                             {{ $item->product->name }}
                                         </td>
 
                                         <td class="pt-6">
-                                            {{number_format($item->price, 0)}}
+                                            {{number_format($item->unit_price, 0)}}
                                         </td>
                                         <td class="pt-6">
-                                            {{ number_format($item->quantity,2) }} {{ $item->product->unit_measure }}
+                                            {{ number_format($item->quantity,0) }} {{ $item->product->unit_measure }}
                                         </td>
                                         <td class="pt-6 text-dark fw-bolder">
                                             {{ number_format($item->total, 0) }}

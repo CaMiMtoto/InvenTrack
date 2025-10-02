@@ -61,7 +61,6 @@
                         <th>Created At</th>
                         <th>Name</th>
                         <th>Email</th>
-                        <th>Merchant</th>
                         <th>Status</th>
                         <th>Options</th>
                     </tr>
@@ -104,19 +103,7 @@
                                 <label for="email" class="form-label">Email</label>
                                 <input type="text" class="form-control" id="email" name="email" placeholder=""/>
                             </div>
-                            @if(is_null(auth()->user()->merchant_id))
-                                <div class="mb-3">
-                                    <label for="merchant_id" class="form-label">Merchant</label>
-                                    <select name="merchant_id" id="merchant_id" class="form-select">
-                                        <option value=""></option>
-                                        @foreach($merchants as $item)
-                                            <option value="{{ $item->id }}">{{ $item->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            @else
-                                <input type="hidden" name="merchant_id" value="{{ auth()->user()->merchant_id }}"/>
-                            @endif
+
                             <div class="mb-3">
                                 <label for="phone" class="form-label">Phone</label>
                                 <input type="text" class="form-control" id="phone" name="phone" placeholder=""/>
@@ -183,7 +170,6 @@
                     },
                     {data: 'name', name: 'name'},
                     {data: 'email', name: 'email'},
-                    {data: 'merchant.name', name: 'merchant.name'},
                     {
                         data: 'status',
                         name: 'status',

@@ -52,11 +52,62 @@
                                 <span class="menu-title">Pending Orders</span>
                             </a>
                         @endcan
+                        @can(\App\Constants\Permission::ASSIGN_DELIVERY)
+                            <a class="menu-link {{ request()->fullUrl()==route('admin.orders.index',['status'=>'approved'])?'active':'' }}"
+                               href="{{ route('admin.orders.index',['status'=>'approved']) }}">
+                                <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                                <span class="menu-title">Approved Orders</span>
+                            </a>
+                        @endcan
 
                         <a class="menu-link {{ request()->fullUrl()==route('admin.orders.index')?'active':'' }}"
                            href="{{ route('admin.orders.index',['start_date'=>date('Y-m-d'), 'end_date'=>date('Y-m-d')]) }}">
                             <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
                             <span class="menu-title">All Orders</span>
+                        </a>
+                        <!--end:Menu link-->
+
+                    </div>
+                    <!--end:Menu item-->
+                </div>
+            @endcanany
+
+            @canany([\App\Constants\Permission::ManageOrderDeliveries()])
+                <div data-kt-menu-trigger="click"
+                     class="menu-item menu-accordion {{ Str::of(request()->url())->contains('/admin/deliveries')?'show':'' }}">
+                    <!--begin:Menu link-->
+                    <span class="menu-link">
+                        <span class="menu-icon">
+                           <x-lucide-bike class="tw-w-6 tw-h-6"/>
+                        </span>
+                        <span class="menu-title">
+                           Delivery
+                        </span>
+                    <span class="menu-arrow"></span>
+                </span>
+                    <!--end:Menu link-->
+                    <!--begin:Menu sub-->
+                    <div class="menu-sub menu-sub-accordion">
+                        @can(\App\Constants\Permission::NEW_ORDER)
+                            <a class="menu-link {{ request()->url()==route('admin.deliveries.pending')?'active':'' }}"
+                               href="{{ route('admin.deliveries.pending') }}">
+                                <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                                <span class="menu-title">Pending Deliveries</span>
+                            </a>
+                        @endcan
+                        @can(\App\Constants\Permission::APPROVE_ORDERS)
+                            <a class="menu-link {{ request()->fullUrl()==route('admin.deliveries.assigned-to-me')?'active':'' }}"
+                               href="{{ route('admin.deliveries.assigned-to-me') }}">
+                                <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                                <span class="menu-title">My Deliveries</span>
+                            </a>
+                        @endcan
+
+
+                        <a class="menu-link {{ request()->fullUrl()==route('admin.deliveries.index')?'active':'' }}"
+                           href="{{ route('admin.deliveries.index') }}">
+                            <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                            <span class="menu-title">All Deliveries</span>
                         </a>
                         <!--end:Menu link-->
 

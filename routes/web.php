@@ -37,9 +37,15 @@ Route::group(['middleware' => ['auth', PasswordChanged::class, EnsureUserIsActiv
         Route::get('/{saleOrder}/show', [App\Http\Controllers\OrderController::class, 'show'])->name('show');
         Route::delete('/{order}/destroy', [App\Http\Controllers\OrderController::class, 'destroy'])->name('destroy');
         Route::get('/{order}/edit', [App\Http\Controllers\OrderController::class, 'edit'])->name('edit');
-        Route::put('/{order}/update', [App\Http\Controllers\OrderController::class, 'update'])->name('update');
+        Route::patch('/{order}/update-status', [App\Http\Controllers\OrderController::class, 'updateStatus'])->name('update-status');
         Route::get('/{order}/print', [App\Http\Controllers\OrderController::class, 'print'])->name('print');
         Route::put('/{order}/cancel', [App\Http\Controllers\OrderController::class, 'cancel'])->name('cancel');
+    });
+
+    Route::group(['prefix' => "deliveries", "as" => "deliveries."], function () {
+        Route::get('/pending', [App\Http\Controllers\OrderController::class, 'pendingDeliveries'])->name('pending');
+        Route::get('/', [App\Http\Controllers\DeliveryController::class, 'index'])->name('index');
+        Route::get('/assigned-to-me', [App\Http\Controllers\DeliveryController::class, 'myDeliveries'])->name('assigned-to-me');
     });
     Route::get('/sales/{saleOrder}/deliveries', [App\Http\Controllers\SaleDeliveryController::class, 'index'])->name('sale-deliveries.index');
     Route::post('/sales/{saleOrder}/deliveries/store', [App\Http\Controllers\SaleDeliveryController::class, 'store'])->name('sale-deliveries.store');
@@ -69,7 +75,6 @@ Route::group(['middleware' => ['auth', PasswordChanged::class, EnsureUserIsActiv
         Route::delete('/categories/{category}/destroy', [CategoryController::class, 'destroy'])->name('categories.destroy');
 
     });
-
 
 
     Route::group(["prefix" => "settings", "as" => "settings."], function () {
@@ -119,7 +124,6 @@ Route::group(['middleware' => ['auth', PasswordChanged::class, EnsureUserIsActiv
 
 
     Route::get('/dashboard', [App\Http\Controllers\HomeController::class, 'dashboard'])->name('dashboard');
-
 
 
     Route::group(['prefix' => 'reports', 'as' => 'reports.'], function () {

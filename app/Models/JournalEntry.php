@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $created_by
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read Model|\Eloquent $reference
  * @method static \Illuminate\Database\Eloquent\Builder<static>|JournalEntry newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|JournalEntry newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|JournalEntry query()
