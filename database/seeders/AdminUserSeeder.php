@@ -17,14 +17,64 @@ class AdminUserSeeder extends Seeder
             return;
         }
 
-        User::query()->create([
-            'name' => 'Super Admin',
-            'email' => 'admin@domain.rw',
-            'password' => bcrypt('password'),
-            'is_super_admin' => true,
-            'phone_number' => '0780000000',
-            'email_verified_at' => now(),
-            'password_changed_at' => now()
-        ]);
+        $attributes = [
+            [
+                'name' => 'Super Admin',
+                'email' => 'admin@domain.rw',
+                'password' => bcrypt('password'),
+                'is_super_admin' => true,
+                'phone_number' => '0780000000',
+                'email_verified_at' => now(),
+                'password_changed_at' => now()
+            ],
+            [
+                'name' => 'Customer Care',
+                'email' => 'cc@domain.rw',
+                'password' => bcrypt('password'),
+                'is_super_admin' => true,
+                'phone_number' => '0780000000',
+                'email_verified_at' => now(),
+                'password_changed_at' => now()
+            ],
+            [
+                'name' => 'Store Keeper',
+                'email' => 'sk@domain.rw',
+                'password' => bcrypt('password'),
+                'is_super_admin' => true,
+                'phone_number' => '0780000000',
+                'email_verified_at' => now(),
+                'password_changed_at' => now()
+            ],
+            [
+                'name' => 'Delivery Person',
+                'email' => 'delivery@domain.rw',
+                'password' => bcrypt('password'),
+                'is_super_admin' => true,
+                'phone_number' => '0780000000',
+                'email_verified_at' => now(),
+                'password_changed_at' => now()
+            ],
+            [
+                'name' => 'Finance User',
+                'email' => 'finance@domain.rw',
+                'password' => bcrypt('password'),
+                'is_super_admin' => true,
+                'phone_number' => '0780000000',
+                'email_verified_at' => now(),
+                'password_changed_at' => now()
+            ],
+            [
+                'name' => 'Sales Manager',
+                'email' => 'sales@domain.rw',
+                'password' => bcrypt('password'),
+                'is_super_admin' => true,
+                'phone_number' => '0780000000',
+                'email_verified_at' => now(),
+                'password_changed_at' => now()
+            ]
+        ];
+
+        \DB::table('users')->insert($attributes);
+
     }
 }

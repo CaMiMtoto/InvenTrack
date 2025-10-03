@@ -68,6 +68,8 @@ Route::group(['middleware' => ['auth', PasswordChanged::class, EnsureUserIsActiv
         Route::post('/store', [ProductController::class, 'store'])->name('store');
         Route::delete('/{product}/destroy', [ProductController::class, 'destroy'])->name('destroy');
         Route::get('/export-excel', [ProductController::class, 'exportExcel'])->name('excel-export');
+// routes/web.php
+        Route::post('/upload-temp-images', [ProductController::class, 'uploadTempImages'])->name('uploadTempImages');
 
         // categories
         Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');

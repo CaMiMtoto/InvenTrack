@@ -25,7 +25,7 @@ $line-height-base: 1.6;
 @import "datatables.net-bs5/css/dataTables.bootstrap5.min.css";
 @import "datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css";
 @import "pikaday/scss/pikaday";
-
+@import "../../public/assets/plugins/global/plugins.bundle.css";
 .modal-header {
     display: flex;
     justify-content: space-between;

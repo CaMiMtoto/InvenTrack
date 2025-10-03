@@ -10,17 +10,17 @@ class Permission
     const VIEW_PURCHASES = 'VIEW_PURCHASES';
     const ADD_PURCHASE = 'ADD_PURCHASE';
     const NEW_ORDER = 'NEW_ORDER';
-    const VIEW_ORDERS='VIEW_ORDERS';
-    const APPROVE_ORDERS='APPROVE_ORDERS';
-    const ASSIGN_DELIVERY='ASSIGN_DELIVERY';
-    const DELIVERY_PRODUCTS='DELIVERY_PRODUCTS';
+    const VIEW_ORDERS = 'VIEW_ORDERS';
+    const APPROVE_ORDERS = 'APPROVE_ORDERS';
+    const ASSIGN_DELIVERY = 'ASSIGN_DELIVERY';
+    const DELIVERY_PRODUCTS = 'DELIVERY_PRODUCTS';
     public const MANAGE_DELIVERIES = 'MANAGE_DELIVERIES';
 
-    const VIEW_DELIVERIES='VIEW_DELIVERIES';
+    const VIEW_DELIVERIES = 'VIEW_DELIVERIES';
     public const  VIEW_PERMISSIONS = 'view_permissions';
     public const MANAGE_CATEGORIES = 'manage_categories';
     public const MANAGE_PRODUCTS = 'manage_products';
-
+    const VIEW_PRODUCT_CATALOG = 'VIEW_PRODUCT_CATALOG';
     public const MANAGE_SUPPLIERS = 'manage_suppliers';
     public const MANAGE_STOCK = 'manage_stock';
     public const MANAGE_STOCK_ADJUSTMENT = 'manage_stock_adjustment';
@@ -60,6 +60,8 @@ class Permission
             self::VIEW_DELIVERIES,
             self::MANAGE_SUPPLIERS,
             self::MANAGE_STOCK,
+            self::MANAGE_CUSTOMERS,
+            self::VIEW_PRODUCT_CATALOG
         ];
     }
 
@@ -77,6 +79,7 @@ class Permission
             self::NEW_ORDER,
         ];
     }
+
     public static function ManageOrderDeliveries(): array
     {
         return [
@@ -92,6 +95,7 @@ class Permission
             self::MANAGE_CATEGORIES
         ];
     }
+
     public static function ManageStock(): array
     {
         return [

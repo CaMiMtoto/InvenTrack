@@ -1,5 +1,8 @@
 @extends('layouts.master')
 @section('title', 'Products')
+@section('styles')
+    <script src="https://unpkg.com/dropzone@6.0.0-beta.1/dist/dropzone-min.js"></script>
+@endsection
 @section('content')
     <div>
         <!--begin::Toolbar-->
@@ -83,8 +86,6 @@
                                 <input class="form-control" id="unit_measure" name="unit_measure" type="text"/>
                             </div>
                         </div>
-
-
                         <div class="row">
 
 
@@ -99,6 +100,29 @@
                         <div class="mb-3">
                             <label for="description" class="form-label">Description</label>
                             <textarea class="form-control" id="description" name="description"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <!--begin::Input group-->
+                            <div class="fv-row">
+                                <!--begin::Dropzone-->
+                                <div class="dropzone rounded-1" id="productImagesDropzone">
+                                    <!--begin::Message-->
+                                    <div class="dz-message needsclick">
+                                    <span class="text-primary">
+                                           <x-lucide-upload-cloud class="tw-10 tw-h-10"/>
+                                    </span>
+
+                                        <!--begin::Info-->
+                                        <div class="ms-4">
+                                            <h3 class="fs-5 fw-bold text-gray-900 mb-1">Drop files here or click to upload.</h3>
+                                            <span class="fs-7 fw-semibold text-gray-500">Upload up to 10 files</span>
+                                        </div>
+                                        <!--end::Info-->
+                                    </div>
+                                </div>
+                                <!--end::Dropzone-->
+                            </div>
+                            <!--end::Input group-->
                         </div>
                     </div>
 
@@ -118,6 +142,25 @@
 @push('scripts')
     <script>
         $(function () {
+            Dropzone.autoDiscover = false;
+            let uploadedImages = [];
+            const myDropzone = new Dropzone("#productImagesDropzone", {
+                url: "{{ route('admin.products.uploadTempImages') }}",
+                paramName: "file",
+                maxFilesize: 10,
+                acceptedFiles: "image/*",
+                addRemoveLinks: true,
+                headers: {'X-CSRF-TOKEN': "{{ csrf_token() }}"},
+                success: function(file, response) {
+                    uploadedImages.push(response.image_id);
+                },
+                removedfile: function(file) {
+                    let index = uploadedImages.indexOf(file.upload?.response?.image_id);
+                    if (index > -1) uploadedImages.splice(index, 1);
+                    file.previewElement.remove();
+                }
+            });
+
             window.dt = $('#myTable').DataTable({
                 processing: true,
                 serverSide: true,
@@ -179,24 +222,23 @@
             $('#addBtn').click(function () {
                 $('#myModal').modal('show');
             });
-            $('#sold_in_square_meters').change(function () {
-                if ($(this).is(':checked')) {
-                    $('#box_coverage_div').show();
-                } else {
-                    $('#box_coverage_div').hide();
-                }
-            });
+
             $('#myModal').on('hidden.bs.modal', function () {
                 $('#submitForm').trigger('reset');
                 $('#id').val(0);
+                myDropzone.removeAllFiles(true);
+                uploadedImages = []; // reset the array too
             });
 
             let submitForm = $('#submitForm');
             submitForm.submit(function (e) {
                 e.preventDefault();
                 let $this = $(this);
-                let formData = new FormData(this);
-                let id = $('#id').val();
+                let body = $this.serialize();
+                uploadedImages.forEach(function(id) {
+                    body += '&image_ids[]=' + id;
+                });
+
                 let url = $this.attr('action');
                 let btn = $(this).find('[type="submit"]');
                 btn.prop('disabled', true);
@@ -208,9 +250,7 @@
                 $.ajax({
                     url: url,
                     type: 'POST',
-                    data: formData,
-                    processData: false,
-                    contentType: false,
+                    data: body,
                     success: function (data) {
                         dt.ajax.reload();
                         $('#myModal').modal('hide');

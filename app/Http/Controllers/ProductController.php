@@ -4,11 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Exports\ProductsExport;
 use App\Models\Category;
+use App\Models\Image;
 use App\Models\Product;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Exception;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
+use Storage;
 use Yajra\DataTables\DataTables;
 
 class ProductController extends Controller
@@ -51,39 +53,42 @@ class ProductController extends Controller
             'id' => ['required'],
             'name' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:255'],
-            'category_id' => ['required', 'integer','exists:categories,id'],
+            'category_id' => ['required', 'integer', 'exists:categories,id'],
             'price' => ['required', 'numeric', 'min:0'],
             'sku' => ['nullable', 'string', 'max:255'],
             'unit_measure' => ['required', 'string', 'max:255'],
             'min_stock' => ['required', 'integer', 'min:0'],
-            'image' => ['nullable', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
+            'image_ids' => 'nullable|array',
+
         ]);
         if (empty($data['sku'])) {
             $data['sku'] = Product::generateSku($data['name'], $data['category_id']);
         }
-        // Handle image upload
-        if ($request->hasFile('image')) {
-            $imageName = basename($request->file('image')->store(Product::IMAGE_PATH));
-            $data['image'] = $imageName;
-        }
-
+        unset($data['image_ids']);
         if (empty($data['id'])) {
             // Create new product
             $data['stock'] = 0;
-            Product::create($data);
+            $product = Product::create($data);
         } else {
             // Update existing product
             $product = Product::findOrFail($data['id']);
+            $product->update($data);
+        }
+        if ($request->filled('image_ids')) {
+            foreach ($request->image_ids as $id) {
+                $image = Image::find($id);
+                if ($image) {
+                    // Move file from tmp to permanent folder
+                    $newPath = 'products/' . basename($image->path);
+                    Storage::move($image->path, $newPath);
 
-            if (isset($data['image'])) {
-                // Delete old image
-                $oldPath = Product::IMAGE_PATH . $product->image;
-                if (\Storage::exists($oldPath)) {
-                    \Storage::delete($oldPath);
+                    // Update database record
+                    $image->update([
+                        'path' => $newPath,
+                        'imageable_id' => $product->id,
+                    ]);
                 }
             }
-
-            $product->update($data);
         }
 
         return response()->json(['success' => 'Product saved successfully.']);
@@ -115,4 +120,25 @@ class ProductController extends Controller
     {
         return Excel::download(new ProductsExport, 'products.xlsx');
     }
+
+    public function uploadTempImages(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|image|max:5120', // 5MB
+        ]);
+
+        // Store temporarily
+        $path = $request->file('file')->store('tmp/products');
+
+        // Save to database as pending (no product yet)
+        $image = Image::query()->create([
+            'path' => $path,
+            'imageable_type' => Product::class, // will associate later
+            'imageable_id' => null, // not linked yet
+            'is_primary' => false,
+        ]);
+
+        return response()->json(['image_id' => $image->id]);
+    }
+
 }
