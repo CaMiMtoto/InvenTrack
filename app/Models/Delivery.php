@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\HasEncodedId;
 use App\Traits\HasStatusColor;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
@@ -34,7 +35,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Delivery extends Model
 {
-    use HasStatusColor;
+    use HasStatusColor,HasEncodedId;
     protected $appends=['status_color'];
     protected $guarded = [];
 

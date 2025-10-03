@@ -1,3 +1,3 @@
-<a href="" class="btn btn-sm btn-light-primary">
+<button type="button" data-url="{{ route('admin.deliveries.show',encodeId($delivery->id)) }}" class="btn btn-sm btn-light-primary js-details">
     Details
-</a>
+</button>

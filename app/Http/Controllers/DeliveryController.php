@@ -82,7 +82,7 @@ class DeliveryController extends Controller
     /**
      * @throws Throwable
      */
-    public function updateOrderStatus(Request $request, Delivery $delivery)
+    public function updateStatus(Request $request, Delivery $delivery)
     {
 
         $data = $request->validate([
@@ -153,5 +153,11 @@ class DeliveryController extends Controller
                 ->make(true);
         }
         return view('admin.deliveries.my_deliveries');
+    }
+
+    public function show(Delivery $delivery)
+    {
+        $delivery->load(['order.customer','items.orderItem.product']);
+        return view('admin.deliveries._show', compact('delivery'));
     }
 }

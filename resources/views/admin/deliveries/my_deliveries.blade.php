@@ -24,6 +24,27 @@
             </table>
         </div>
     </div>
+
+    <div class="modal fade" tabindex="-1" id="myModal">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">
+                        Delivery Details
+                    </h3>
+
+                    <!--begin::Close-->
+                    <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-bs-dismiss="modal"
+                         aria-label="Close">
+                        <i class="bi bi-x"></i>
+                    </div>
+                    <!--end::Close-->
+                </div>
+                <div id="results"></div>
+            </div>
+        </div>
+    </div>
+
 @endsection
 
 @push('scripts')
@@ -51,7 +72,7 @@
                         data: 'order.total_amount',
                         name: 'order.total_amount',
                         render: function (data, type, row, meta) {
-                            return Number(data).toLocaleString("en-US",{
+                            return Number(data).toLocaleString("en-US", {
                                 style: 'currency',
                                 currency: 'RWF'
                             })
@@ -65,6 +86,29 @@
                     },
                     {data: 'action', name: 'action', orderable: false, searchable: false},
                 ]
+            });
+
+            $(document).on('click', '.js-details', function (e) {
+                e.preventDefault();
+                let $btn = $(this);
+                const url = $btn.data('url');
+                let htmlValue = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...';
+                $btn.prop('disabled', true)
+                    .html(htmlValue);
+
+                $.ajax({
+                    url: url,
+                    type: 'GET',
+                    success: function (data) {
+                        $('#results').html(data);
+                        $('#myModal').modal('show');
+                    },
+                    complete: function () {
+                        $btn.prop('disabled', false)
+                            .html('Details');
+                    }
+                });
+
             });
         });
     </script>

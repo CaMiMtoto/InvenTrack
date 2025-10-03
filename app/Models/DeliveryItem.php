@@ -37,10 +37,10 @@ class DeliveryItem extends Model
         return $this->belongsTo(Delivery::class);
     }
 
-    public function product(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function orderItem(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(Product::class);
-    }
+        return $this->belongsTo(OrderItem::class);
+   }
     protected static function booted(): void
     {
         static::saved(function (DeliveryItem $item) {
