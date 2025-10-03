@@ -21,6 +21,20 @@
                     <span class="menu-title">Dashboard</span>
                 </a>
             </div>
+            @can(\App\Constants\Permission::VIEW_PRODUCT_CATALOG)
+                <div class="menu-item ">
+                    <a href="{{ route('admin.products.catalog') }}"
+                       class="menu-link {{ Str::of(route('admin.products.catalog'))->contains('admin/products/catalog')?'active':'' }}">
+                        <div class="menu-icon">
+                            <x-lucide-list-checks class="tw-w-6 tw-h-6"/>
+                        </div>
+                        <span class="menu-title">
+                        Product Catalog
+                    </span>
+                    </a>
+                </div>
+            @endcan
+
 
             @canany([\App\Constants\Permission::ManageSalesOrders()])
                 <div data-kt-menu-trigger="click"

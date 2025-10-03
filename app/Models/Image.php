@@ -16,6 +16,6 @@ class Image extends Model
     // Accessor for full URL
     public function getUrlAttribute(): string
     {
-        return asset('storage/' . $this->path);
+        return \Storage::url($this->path);
     }
 }

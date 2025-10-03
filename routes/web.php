@@ -70,6 +70,7 @@ Route::group(['middleware' => ['auth', PasswordChanged::class, EnsureUserIsActiv
         Route::get('/export-excel', [ProductController::class, 'exportExcel'])->name('excel-export');
 // routes/web.php
         Route::post('/upload-temp-images', [ProductController::class, 'uploadTempImages'])->name('uploadTempImages');
+        Route::get('/catalog',[ProductController::class, 'catalog'])->name('catalog');
 
         // categories
         Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');

@@ -141,4 +141,11 @@ class ProductController extends Controller
         return response()->json(['image_id' => $image->id]);
     }
 
+    public function catalog()
+    {
+        $products = Product::query()->with(['images','category'])
+            ->latest()
+            ->paginate(12)->withQueryString();
+        return view('admin.products.catalog', compact('products'));
+    }
 }
