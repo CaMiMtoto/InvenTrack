@@ -50,7 +50,7 @@ class DeliveryController extends Controller
                     'order_id' => $order->id,
                     'delivery_person_id' => $deliveryPerson->id,
                     'status' => 'pending',
-                    'comment' => $data['comment'] ?? null
+                    'notes' => $data['comment'] ?? null
                 ]);
 
                 // Create delivery items for each order item

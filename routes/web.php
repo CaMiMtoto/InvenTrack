@@ -44,6 +44,7 @@ Route::group(['middleware' => ['auth', PasswordChanged::class, EnsureUserIsActiv
 
     Route::group(['prefix' => "deliveries", "as" => "deliveries."], function () {
         Route::get('/pending', [App\Http\Controllers\OrderController::class, 'pendingDeliveries'])->name('pending');
+        Route::post('/assign', [App\Http\Controllers\DeliveryController::class, 'bulkAssign'])->name('bulk-assign');
         Route::get('/', [App\Http\Controllers\DeliveryController::class, 'index'])->name('index');
         Route::get('/assigned-to-me', [App\Http\Controllers\DeliveryController::class, 'myDeliveries'])->name('assigned-to-me');
     });

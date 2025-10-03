@@ -24,7 +24,7 @@
         "proengsoft/laravel-jsvalidation": "^4.9",
         "spatie/laravel-medialibrary": "^11.9",
         "spatie/laravel-permission": "^6.21",
-        "sqids/sqids": "^0.4.1",
+        "sqids/sqids": "^0.5.0",
         "tinify/tinify": "^1.6",
         "yajra/laravel-datatables": "v12.0.0",
         "yajra/laravel-datatables-oracle": "^v12.4.0"

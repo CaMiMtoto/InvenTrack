@@ -3,7 +3,7 @@
 @section('content')
     <!--begin::Toolbar-->
     <x-toolbar title="Pending Deliveries"
-    :breadcrumbs="[
+               :breadcrumbs="[
     ['label'=>'Pending Delivery']
 ]"
     />
@@ -55,9 +55,8 @@
                     <!--end::Close-->
                 </div>
 
-                <form action="{{ route('admin.products.categories.store') }}" id="submitForm" method="post">
+                <form action="{{ route('admin.deliveries.bulk-assign') }}" id="submitForm" method="post">
                     @csrf
-
                     <div class="modal-body">
                         <input type="hidden" id="id" name="id" value="0"/>
                         <div class="mb-3">
@@ -68,6 +67,10 @@
                                     <option value="{{ $deliveryPerson->id }}">{{ $deliveryPerson->name }}</option>
                                 @endforeach
                             </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="comment" class="form-label">Comment</label>
+                            <textarea name="comment" class="form-control" id="comment" rows="3"></textarea>
                         </div>
 
                     </div>
@@ -97,7 +100,7 @@
                     {
                         data: 'id', name: 'id', render: function (data, type, row, meta) {
                             return ` <div class="form-check">
-                                <input class="form-check-input chec_order_id" value="${data}" type="checkbox" name="check_all" >
+                                <input class="form-check-input chec_order_id" value="${data}" type="checkbox" name="order_ids[]" >
                             </div>`;
                         }, orderable: false, searchable: false
                     },
@@ -156,6 +159,46 @@
                 let checked = $('.chec_order_id:checked').length;
                 $('#check_all').prop('checked', total === checked);
                 $('#btnAssign').prop('disabled', checked === 0);
+            });
+
+            $('#submitForm').on('submit', function (e) {
+                e.preventDefault();
+                let $this = $(this);
+                // Collect order_ids from checked checkboxes
+                let order_ids = [];
+                $('input[name="order_ids[]"]:checked').each(function () {
+                    order_ids.push($(this).val());
+                });
+
+                let comment = $('#comment').val();
+                let delivery_person_id = $('#delivery_person_id').val();
+                let $submitBtn = $this.find('button[type="submit"]');
+                $submitBtn.prop('disabled', true)
+                    .html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...');
+                $.ajax({
+                    url: $(this).attr('action'),
+                    method: 'POST',
+                    data: {
+                        order_ids: order_ids,
+                        comment: comment,
+                        delivery_person_id: delivery_person_id,
+                        _token: $('input[name="_token"]').val()
+                    },
+                    success: function (response) {
+                        // Handle success (e.g., show a success message)
+                        Swal.fire('Success', 'Orders assigned successfully!', 'success');
+                        $('#myModal').modal('hide');
+                        dt.ajax.reload();
+                    },
+                    error: function (xhr) {
+                        // Handle error
+                        Swal.fire('Error', 'Something went wrong.', 'error');
+                    },
+                    complete:function () {
+                        $submitBtn.prop('disabled', false)
+                            .html('Save Changes');
+                    }
+                });
             });
 
 
