@@ -403,7 +403,7 @@ class OrderController extends Controller
                 ->make(true);
         }
 
-        $deliveryPersons = User::permission(Permission::DELIVERY_PRODUCTS)->get();
+        $deliveryPersons = User::permission(Permission::DELIVER_PRODUCTS)->get();
         return view('admin.orders.pending_deliveries', compact('deliveryPersons'));
     }
 

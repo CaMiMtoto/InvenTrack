@@ -26,7 +26,6 @@ class DeliveryController extends Controller
     // Show form to assign deliveries
 
 
-
     // Store bulk assignment
     /**
      * @throws Throwable
@@ -40,7 +39,7 @@ class DeliveryController extends Controller
             'comment' => 'nullable|string|max:255'
         ]);
 
-        DB::transaction(function() use ($data) {
+        DB::transaction(function () use ($data) {
             $deliveryPerson = User::findOrFail($data['delivery_person_id']);
 
             foreach ($data['order_ids'] as $orderId) {
@@ -91,10 +90,10 @@ class DeliveryController extends Controller
             'comment' => 'nullable|string|max:255'
         ]);
 
-        DB::transaction(function() use ($delivery, $data) {
+        DB::transaction(function () use ($delivery, $data) {
             $delivery->status = $data['status'];
             $delivery->notes = $data['comment'] ?? null;
-            $delivery->delivered_at= now();
+            $delivery->delivered_at = now();
             $delivery->save();
 
             // Update item-level status only if fully delivered
@@ -105,9 +104,9 @@ class DeliveryController extends Controller
                         $item->save();
 
                         // Adjust stock
-                      /*  $product = $item->orderItem->product;
-                        $product->stock -= $item->quantity;
-                        $product->save();*/
+                        /*  $product = $item->orderItem->product;
+                          $product->stock -= $item->quantity;
+                          $product->save();*/
 
                         // Record flow history
                         FlowHistory::create([
@@ -137,8 +136,22 @@ class DeliveryController extends Controller
         return redirect()->back()->with('success', 'Delivery updated successfully.');
     }
 
+    /**
+     * @throws Exception
+     */
     public function myDeliveries()
     {
-
+        if (\request()->ajax()) {
+            $source = Delivery::query()
+                ->with(['order.customer'])
+                ->withCount('items')
+                ->where('delivery_person_id','=',auth()->id());
+            return datatables($source)
+                ->addIndexColumn()
+                ->addColumn('action', fn(Delivery $delivery) => view('admin.deliveries._actions', compact('delivery')))
+                ->rawColumns(['action'])
+                ->make(true);
+        }
+        return view('admin.deliveries.my_deliveries');
     }
 }

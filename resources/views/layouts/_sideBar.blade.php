@@ -109,7 +109,7 @@
                                 <span class="menu-title">Pending Deliveries</span>
                             </a>
                         @endcan
-                        @can(\App\Constants\Permission::APPROVE_ORDERS)
+                        @can(\App\Constants\Permission::DELIVER_PRODUCTS)
                             <a class="menu-link {{ request()->fullUrl()==route('admin.deliveries.assigned-to-me')?'active':'' }}"
                                href="{{ route('admin.deliveries.assigned-to-me') }}">
                                 <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>

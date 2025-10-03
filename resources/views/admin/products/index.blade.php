@@ -22,7 +22,7 @@
         <!--begin::Content-->
         <div class="my-3">
             <div class="table-responsive">
-                <table class="table ps-2 align-middle border rounded table-row-dashed fs-6 g-5" id="myTable">
+                <table class="table ps-2 align-middle  rounded table-row-dashed fs-6 g-5" id="myTable">
                     <thead>
                     <tr class="text-start text-gray-800 fw-bold fs-7 text-uppercase">
                         <th>Created At</th>

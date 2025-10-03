@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Traits\HasStatusColor;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -32,6 +34,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Delivery extends Model
 {
+    use HasStatusColor;
+    protected $appends=['status_color'];
     protected $guarded = [];
 
     public function order(): \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -49,4 +53,11 @@ class Delivery extends Model
         return $this->hasMany(DeliveryItem::class);
     }
 
+
+    public function status():Attribute
+    {
+        return  Attribute::make(
+            get:fn() => ucfirst($this->attributes['status'])
+        );
+    }
 }

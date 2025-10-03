@@ -13,7 +13,7 @@ class Permission
     const VIEW_ORDERS = 'VIEW_ORDERS';
     const APPROVE_ORDERS = 'APPROVE_ORDERS';
     const ASSIGN_DELIVERY = 'ASSIGN_DELIVERY';
-    const DELIVERY_PRODUCTS = 'DELIVERY_PRODUCTS';
+    const DELIVER_PRODUCTS = 'DELIVER_PRODUCTS';
     public const MANAGE_DELIVERIES = 'MANAGE_DELIVERIES';
 
     const VIEW_DELIVERIES = 'VIEW_DELIVERIES';
@@ -56,7 +56,7 @@ class Permission
             self::VIEW_PERMISSIONS,
             self::MANAGE_CATEGORIES,
             self::MANAGE_PRODUCTS,
-            self::DELIVERY_PRODUCTS,
+            self::DELIVER_PRODUCTS,
             self::VIEW_DELIVERIES,
             self::MANAGE_SUPPLIERS,
             self::MANAGE_STOCK,
