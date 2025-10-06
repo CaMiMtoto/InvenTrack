@@ -47,6 +47,7 @@ Route::group(['middleware' => ['auth', PasswordChanged::class, EnsureUserIsActiv
         Route::post('/assign', [App\Http\Controllers\DeliveryController::class, 'bulkAssign'])->name('bulk-assign');
         Route::get('/', [App\Http\Controllers\DeliveryController::class, 'index'])->name('index');
         Route::get('/{delivery}/show', [App\Http\Controllers\DeliveryController::class, 'show'])->name('show');
+        Route::patch('/{delivery}/update-status', [App\Http\Controllers\DeliveryController::class, 'updateStatus'])->name('update-status');
         Route::get('/assigned-to-me', [App\Http\Controllers\DeliveryController::class, 'myDeliveries'])->name('assigned-to-me');
     });
     Route::get('/sales/{saleOrder}/deliveries', [App\Http\Controllers\SaleDeliveryController::class, 'index'])->name('sale-deliveries.index');
@@ -71,7 +72,7 @@ Route::group(['middleware' => ['auth', PasswordChanged::class, EnsureUserIsActiv
         Route::get('/export-excel', [ProductController::class, 'exportExcel'])->name('excel-export');
 // routes/web.php
         Route::post('/upload-temp-images', [ProductController::class, 'uploadTempImages'])->name('uploadTempImages');
-        Route::get('/catalog',[ProductController::class, 'catalog'])->name('catalog');
+        Route::get('/catalog', [ProductController::class, 'catalog'])->name('catalog');
 
         // categories
         Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
@@ -144,8 +145,8 @@ Route::group(['middleware' => ['auth', PasswordChanged::class, EnsureUserIsActiv
         Route::get('/print-payments', [App\Http\Controllers\ReportsController::class, 'printPayments'])->name('print-payments');
 
 
-        Route::get('/purchase-orders/history', [App\Http\Controllers\PurchaseOrderController::class, 'history'])->name('purchase-orders.history');
-        Route::get('/purchase-orders/history/export', [App\Http\Controllers\PurchaseOrderController::class, 'exportHistory'])->name('purchase-orders.history.export');
+        Route::get('/purchase-orders/history', [App\Http\Controllers\PurchaseController::class, 'history'])->name('purchase-orders.history');
+        Route::get('/purchase-orders/history/export', [App\Http\Controllers\PurchaseController::class, 'exportHistory'])->name('purchase-orders.history.export');
         Route::get('/items', [App\Http\Controllers\ReportsController::class, 'itemsReport'])->name('items');
         Route::get('/expenses', [App\Http\Controllers\ReportsController::class, 'expensesReport'])->name('expenses');
 

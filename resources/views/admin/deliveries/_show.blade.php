@@ -1,3 +1,4 @@
+@php use App\Constants\Status; @endphp
 <div class="modal-body">
     <div class="d-flex flex-column flex-xl-row">
         <!--begin::Content-->
@@ -131,46 +132,49 @@
     </div>
     <!--end::Content-->
 
-    <div class=" mt-4">
-        <div>
-            <h1>Update Status</h1>
-            <p>
-                Please review the delivery details above and choose appropriate status. You may also leave a comment.
-            </p>
+    @if(strtolower($delivery->status)!=Status::Delivered)
+        <div class=" mt-4">
+            <div>
+                <h1>Update Status</h1>
+                <p>
+                    Please review the delivery details above and choose appropriate status. You may also leave a
+                    comment.
+                </p>
+            </div>
+            <form action="{{ route('admin.deliveries.update-status', encodeId($delivery->id)) }}" method="POST"
+                  id="updateDeliveryStatusForm">
+                @csrf
+                @method('PATCH')
+                <div class="mb-3">
+                    <label for="status" class="form-label">Status</label>
+                    <select class="form-select" id="status" name="status">
+                        <option value=""></option>
+                        <option value="transit">Transit</option>
+                        <option value="delivered">Delivered</option>
+                        <option value="partially_delivered">Partially Delivered</option>
+                    </select>
+                </div>
+
+                {{-- Comment --}}
+                <div class="mb-3">
+                    <label for="comment" class="form-label">Comment (optional)</label>
+                    <textarea name="comment" id="comment" rows="3" class="form-control"
+                              placeholder="Leave a note if any"></textarea>
+                    @error('comment')
+                    <div class="text-danger small">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                {{-- Buttons --}}
+                <div class="d-flex gap-2">
+                    <button type="submit" name="action" value="approved" class="btn btn-success">
+                        Save Changes
+                    </button>
+                </div>
+            </form>
+
         </div>
-        <form action="{{ route('admin.orders.update-status', encodeId($delivery->id)) }}" method="POST"
-              id="submitDecisionForm">
-            @csrf
-            @method('PATCH')
-            <div class="mb-3">
-                <label for="status" class="form-label">Status</label>
-                <select class="form-select" id="status" name="status">
-                    <option value=""></option>
-                    <option value="transit">Transit</option>
-                    <option value="delivered">Delivered</option>
-                    <option value="partially_delivered">Partially Delivered</option>
-                </select>
-            </div>
-
-            {{-- Comment --}}
-            <div class="mb-3">
-                <label for="comment" class="form-label">Comment (optional)</label>
-                <textarea name="comment" id="comment" rows="3" class="form-control"
-                          placeholder="Leave a note if any"></textarea>
-                @error('comment')
-                <div class="text-danger small">{{ $message }}</div>
-                @enderror
-            </div>
-
-            {{-- Buttons --}}
-            <div class="d-flex gap-2">
-                <button type="submit" name="action" value="approved" class="btn btn-success">
-                    Save Changes
-                </button>
-            </div>
-        </form>
-
-    </div>
+    @endif
 
 
 </div>

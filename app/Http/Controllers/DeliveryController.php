@@ -87,17 +87,18 @@ class DeliveryController extends Controller
 
         $data = $request->validate([
             'status' => 'required|in:pending,transit,delivered,partially_delivered',
-            'comment' => 'nullable|string|max:255'
+            'comment' => 'required|string|max:255'
         ]);
 
         DB::transaction(function () use ($delivery, $data) {
             $delivery->status = $data['status'];
             $delivery->notes = $data['comment'] ?? null;
-            $delivery->delivered_at = now();
             $delivery->save();
 
             // Update item-level status only if fully delivered
             if ($data['status'] === 'delivered') {
+                $delivery->delivered_at = now();
+                $delivery->save();
                 foreach ($delivery->items as $item) {
                     if ($item->status !== 'returned') {
                         $item->status = 'delivered';
@@ -145,7 +146,7 @@ class DeliveryController extends Controller
             $source = Delivery::query()
                 ->with(['order.customer'])
                 ->withCount('items')
-                ->where('delivery_person_id','=',auth()->id());
+                ->where('delivery_person_id', '=', auth()->id());
             return datatables($source)
                 ->addIndexColumn()
                 ->addColumn('action', fn(Delivery $delivery) => view('admin.deliveries._actions', compact('delivery')))
@@ -157,7 +158,7 @@ class DeliveryController extends Controller
 
     public function show(Delivery $delivery)
     {
-        $delivery->load(['order.customer','items.orderItem.product']);
+        $delivery->load(['order.customer', 'items.orderItem.product']);
         return view('admin.deliveries._show', compact('delivery'));
     }
 }

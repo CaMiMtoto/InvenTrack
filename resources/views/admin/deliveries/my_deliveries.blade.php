@@ -110,6 +110,62 @@
                 });
 
             });
+
+            $(document).on('submit','#updateDeliveryStatusForm',function (e) {
+                e.preventDefault();
+                let $form = $(this);
+                let $submitBtn = $form.find('button[type="submit"]');
+                let originalBtnText = $submitBtn.html();
+
+                // Disable button and show loader
+                $submitBtn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...');
+
+                $.ajax({
+                    url: $form.attr('action'),
+                    type: $form.attr('method'),
+                    data: $form.serialize(),
+                    dataType: 'json', // Expect a JSON response from the server
+                    success: function (response) {
+                        // Use SweetAlert for a better user experience
+                        Swal.fire({
+                            text: response.message || "Delivery status updated successfully!",
+                            icon: "success",
+                            buttonsStyling: false,
+                            confirmButtonText: "Ok, got it!",
+                            customClass: {
+                                confirmButton: "btn btn-primary"
+                            }
+                        }).then(function (result) {
+                            if (result.isConfirmed) {
+                                $('#myModal').modal('hide'); // Hide the modal on success
+                                window.dt.ajax.reload(null, false); // Reload the datatable without resetting pagination
+                            }
+                        });
+                    },
+                    error: function (xhr) {
+                        // Default error message
+                        let errorMessage = "An unexpected error occurred. Please try again.";
+                        // Check for a custom error message from the server
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            errorMessage = xhr.responseJSON.message;
+                        }
+
+                        Swal.fire({
+                            text: errorMessage,
+                            icon: "error",
+                            buttonsStyling: false,
+                            confirmButtonText: "Ok, got it!",
+                            customClass: {
+                                confirmButton: "btn btn-danger"
+                            }
+                        });
+                    },
+                    complete: function () {
+                        // Re-enable the button and restore its original text
+                        $submitBtn.prop('disabled', false).html(originalBtnText);
+                    }
+                });
+            });
         });
     </script>
 @endpush

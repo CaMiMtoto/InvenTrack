@@ -24,7 +24,7 @@
             @can(\App\Constants\Permission::VIEW_PRODUCT_CATALOG)
                 <div class="menu-item ">
                     <a href="{{ route('admin.products.catalog') }}"
-                       class="menu-link {{ Str::of(route('admin.products.catalog'))->contains('admin/products/catalog')?'active':'' }}">
+                       class="menu-link {{ Str::of(request()->url())->contains('admin/products/catalog')?'active':'' }}">
                         <div class="menu-icon">
                             <x-lucide-list-checks class="tw-w-6 tw-h-6"/>
                         </div>
@@ -166,7 +166,7 @@
             @endcanany
             @canany([\App\Constants\Permission::ManageProducts()])
                 <div data-kt-menu-trigger="click"
-                     class="menu-item menu-accordion {{ Str::of(request()->url())->contains('/admin/products')?'show':'' }}">
+                     class="menu-item menu-accordion {{ Str::of(request()->fullUrl())->contains('/admin/products')?'show':'' }}">
                     <!--begin:Menu link-->
                     <span class="menu-link">
                         <span class="menu-icon">
@@ -199,7 +199,6 @@
                     <!--end:Menu item-->
                 </div>
             @endcanany
-
             @canany([\App\Constants\Permission::ManageStock()])
                 <div data-kt-menu-trigger="click"
                      class="menu-item menu-accordion {{ Str::of(request()->url())->contains('/admin/stock')?'show':'' }}">
@@ -251,7 +250,6 @@
                     <!--end:Menu link-->
                 </div>
             @endcan
-
             @canany([\App\Constants\Permission::ManageSettings()])
                 <div data-kt-menu-trigger="click"
                      class="menu-item menu-accordion {{ Str::of(request()->url())->contains('/admin/settings')?'show':'' }}">
@@ -301,8 +299,6 @@
                     <!--end:Menu item-->
                 </div>
             @endcanany
-
-
             @canany([\App\Constants\Permission::MANAGE_ROLES,\App\Constants\Permission::MANAGE_PERMISSIONS,\App\Constants\Permission::MANAGE_USERS])
                 <div data-kt-menu-trigger="click"
                      class="menu-item menu-accordion {{ Str::of(request()->url())->contains('/admin/system')?'show':'' }}">
@@ -355,6 +351,70 @@
                     <!--end:Menu item-->
                 </div>
             @endcanany
+            <div data-kt-menu-trigger="click"
+                 class="menu-item menu-accordion {{ Str::of(request()->url())->contains('/admin/reports')?'show':'' }}">
+                <!--begin:Menu link-->
+                <span class="menu-link">
+                           <span class="menu-icon">
+                               <i class="bi bi-printer fs-2"></i>
+                           </span>
+                           <span class="menu-title">
+                               Reports
+                           </span>
+                       <span class="menu-arrow"></span>
+                   </span>
+                <!--end:Menu link-->
+                <!--begin:Menu sub-->
+                <div class="menu-sub menu-sub-accordion">
+                    <!--begin:Menu item-->
+                    @can(\App\Constants\Permission::VIEW_SALES_REPORTS)
+                        <a class="menu-link {{ \Illuminate\Support\Str::of(request()->url())==route('admin.reports.sales')?'active':'' }}"
+                           href="{{ route('admin.reports.sales') }}">
+                            <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                            <span class="menu-title">
+                                   Sales Report
+                               </span>
+                        </a>
+                    @endcan
+                    @can(\App\Constants\Permission::VIEW_SALES_PAYMENT_REPORTS)
+                        <a class="menu-link {{ \Illuminate\Support\Str::of(request()->url())==route('admin.reports.payments')?'active':'' }}"
+                           href="{{ route('admin.reports.payments') }}">
+                            <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                            <span class="menu-title">
+                                   Sales Payments Report
+                               </span>
+                        </a>
+                    @endcan
+                    <!--end:Menu link-->
+                    @can(\App\Constants\Permission::VIEW_PURCHASE_REPORTS)
+                        <a class="menu-link {{ request()->url()==route('admin.reports.purchase-orders.history')?'active':'' }}"
+                           href="{{ route('admin.reports.purchase-orders.history') }}">
+                            <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                            <span class="menu-title">Purchase Report</span>
+                        </a>
+                    @endcan
+                    <!--end:Menu link-->
+                    <!--end:Menu link-->
+                    @can(\App\Constants\Permission::VIEW_ITEMS_REPORTS)
+                        <a class="menu-link {{ request()->url()==route('admin.reports.items')?'active':'' }}"
+                           href="{{ route('admin.reports.items') }}">
+                            <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                            <span class="menu-title">Items Report</span>
+                        </a>
+                    @endcan
+                    <!--end:Menu link-->
+                    <!--end:Menu link-->
+                    @can(\App\Constants\Permission::VIEW_EXPENSES_REPORTS)
+                        <a class="menu-link {{ request()->url()==route('admin.reports.expenses')?'active':'' }}"
+                           href="{{ route('admin.reports.expenses') }}">
+                            <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                            <span class="menu-title">Expenses Report</span>
+                        </a>
+                    @endcan
+                    <!--end:Menu link-->
+                </div>
+                <!--end:Menu item-->
+            </div>
         </div>
 
 

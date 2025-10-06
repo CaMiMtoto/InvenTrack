@@ -15,6 +15,7 @@ trait HasStatusColor
 
             strtolower(Status::Submitted),
             strtolower(Status::InProgress),
+            strtolower(Status::Transit),
             strtolower(Status::Approved) => 'info',
 
             strtolower(Status::Completed),

@@ -95,5 +95,10 @@ class Order extends Model
         return $this->hasMany(Delivery::class);
     }
 
+    public function doneBy(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(User::class,'created_by');
+    }
+
 
 }

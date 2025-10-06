@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('order_id')->constrained();
             $table->foreignId('delivery_person_id')->constrained('users');
-            $table->enum('status', ['pending', 'in_transit', 'delivered', 'partially_returned', 'returned', 'cancelled'])->default('pending');
+            $table->enum('status', ['pending', 'transit', 'delivered', 'partially_returned', 'returned', 'cancelled'])->default('pending');
             $table->text('notes')->nullable();
             $table->timestamp('delivered_at')->nullable();
             $table->timestamps();

@@ -90,4 +90,9 @@ class Product extends Model
     {
         return $this->morphMany(Image::class, 'imageable');
     }
+
+    public function purchases(): \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Relations\HasMany|Product
+    {
+        return $this->hasMany(PurchaseItem::class);
+    }
 }

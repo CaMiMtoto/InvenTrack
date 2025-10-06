@@ -7,6 +7,7 @@ class Status
 
     const Completed = 'completed';
     const InProgress = 'in_progress';
+    const Transit = 'transit';
     const Confirmed = 'confirmed';
     const Submitted = 'submitted';
     const Pending = 'pending';
