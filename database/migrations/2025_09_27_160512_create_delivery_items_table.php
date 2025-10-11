@@ -16,8 +16,8 @@ return new class extends Migration
             $table->foreignId('delivery_id')->constrained();
             $table->foreignId('order_item_id')->constrained();
             $table->integer('quantity')->default(0);
-            $table->string('status')->default('pending');
-            $table->text('comment')->nullable();
+            $table->integer('delivered_quantity')->default(0); //
+            $table->integer('returned_quantity')->default(0);
             $table->timestamps();
         });
     }

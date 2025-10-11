@@ -87,93 +87,68 @@
     </p>
 
     <!--begin::Content-->
-    <div>
+    <form action="{{ route('admin.deliveries.process-returns',encodeId($delivery->id)) }}" id="processReturnForm">
+        @csrf
         <!--begin::Table-->
-        <div class="table-responsive mb-9">
+        <div class="table-responsive">
             <table class="table mb-3 table-striped table-hover border rounded table-row-dashed table-row-gray-300 gy-2">
                 <thead>
                 <tr class=" fs-6 fw-bold text-uppercase text-gray-800">
                     <th class="px-2">Product</th>
-                    <th class="px-2">Price</th>
-                    <th class="px-2">Qty</th>
-                    <th class="px-2">Total</th>
+                    <th class="px-2">Ordered</th>
+                    <th class="px-2">Delivered</th>
+                    <th class="px-2">Returns</th>
+                    <th class="px-2">Reason</th>
                 </tr>
                 </thead>
 
                 <tbody>
                 @foreach($delivery->items as $item)
+
                     <tr class="">
                         <td class="px-2">
-                            {{ $item->orderItem->product->name }}
-                        </td>
-
+                            <input type="hidden" name="product_ids[]" value="{{$item->orderItem->product_id}}"/>
+                            {{ $item->orderItem->product->name }}</td>
+                        <td class="px-2">{{ $item->quantity }}</td>
                         <td class="px-2">
-                            {{number_format($item->orderItem->unit_price, 0)}}
+                            <span class="js-delivered">{{$item->quantity}}</span>
                         </td>
                         <td class="px-2">
-                            {{ number_format($item->orderItem->quantity,0) }} {{ $item->orderItem->product->unit_measure }}
+                            <input type="number" max="{{ $item->orderItem->quantity }}" min="0" value="0" required
+                                   class="form-control form-control-sm js-item-returns" name="returns[]"/>
                         </td>
-                        <td class="px-2 text-dark fw-bolder">
-                            {{ number_format($item->orderItem->total, 0) }}
+                        <td class="px-2">
+                            <select name="return_reasons[]" class="form-select form-select-sm" >
+                                <option value="">Select reason</option>
+                                @foreach($reasons as $reason)
+                                    <option value="{{$reason->id}}">
+                                        {{ $reason->name }}
+                                    </option>
+                                @endforeach
+                            </select>
                         </td>
                     </tr>
                 @endforeach
-                <tr>
-                    <td colspan="3" class="text-end fw-bold text-gray-800 pt-6">Total</td>
-                    <td class=" fw-bold text-gray-800 pt-6">
-                        {{ number_format($delivery->order->total, 0) }}
-                    </td>
-                </tr>
-
                 </tbody>
             </table>
         </div>
         <!--end::Table-->
-    </div>
-    <!--end::Content-->
-
-    @if($delivery->statusCanBeUpdated())
-        <div class=" mt-4">
-            <div>
-                <h1>Update Status</h1>
-                <p>
-                    Please review the delivery details above and choose appropriate status. You may also leave a
-                    comment.
-                </p>
-            </div>
-            <form action="{{ route('admin.deliveries.update-status', encodeId($delivery->id)) }}" method="POST"
-                  id="updateDeliveryStatusForm">
-                @csrf
-                @method('PATCH')
-                <div class="mb-3">
-                    <label for="status" class="form-label">Status</label>
-                    <select class="form-select" id="status" name="status">
-                        <option value=""></option>
-                        <option value="transit">Transit</option>
-                        <option value="partially delivered">Partially Delivered</option>
-                        <option value="delivered">Delivered</option>
-                    </select>
-                </div>
-
-                {{-- Comment --}}
-                <div class="mb-3">
-                    <label for="comment" class="form-label">Comment (optional)</label>
-                    <textarea name="comment" id="comment" rows="3" class="form-control"
-                              placeholder="Leave a note if any"></textarea>
-                    @error('comment')
-                    <div class="text-danger small">{{ $message }}</div>
-                    @enderror
-                </div>
-                {{-- Buttons --}}
-                <div class="d-flex gap-2">
-                    <button type="submit" name="action" value="approved" class="btn btn-success">
-                        Save Changes
-                    </button>
-                </div>
-            </form>
-
+        {{-- Comment --}}
+        <div class="mb-3">
+            <label for="comment" class="form-label">Comment (optional)</label>
+            <textarea name="comment" id="comment" rows="3" class="form-control"
+                      placeholder="Add any additional details..."></textarea>
         </div>
-    @endif
+
+        {{-- Submit --}}
+        <div class="d-flex justify-content-end">
+            <button type="submit" class="btn btn-primary">
+                Submit Return Request
+            </button>
+        </div>
+    </form>
+    <!--end::Content-->
 
 
 </div>
+

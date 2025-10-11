@@ -59,7 +59,6 @@ class ProductController extends Controller
             'unit_measure' => ['required', 'string', 'max:255'],
             'min_stock' => ['required', 'integer', 'min:0'],
             'image_ids' => 'nullable|array',
-
         ]);
         if (empty($data['sku'])) {
             $data['sku'] = Product::generateSku($data['name'], $data['category_id']);

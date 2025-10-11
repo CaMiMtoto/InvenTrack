@@ -11,13 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('deliveries', function (Blueprint $table) {
+        Schema::create('returns', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('order_id')->constrained();
-            $table->foreignId('delivery_person_id')->constrained('users');
+            $table->foreignId('delivery_id')->constrained();
+            $table->foreignId('order_id')->nullable()->constrained();
+            $table->foreignId('done_by')->constrained('users');
+            $table->text('reason')->nullable();
             $table->string('status')->default('pending');
             $table->text('notes')->nullable();
-            $table->timestamp('delivered_at')->nullable();
+            $table->foreignId('approved_by')->nullable()->constrained('users');
+            $table->timestamp('approved_at')->nullable();
             $table->timestamps();
         });
     }
@@ -27,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('deliveries');
+        Schema::dropIfExists('returns');
     }
 };

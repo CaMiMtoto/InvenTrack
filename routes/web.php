@@ -47,6 +47,8 @@ Route::group(['middleware' => ['auth', PasswordChanged::class, EnsureUserIsActiv
         Route::post('/assign', [App\Http\Controllers\DeliveryController::class, 'bulkAssign'])->name('bulk-assign');
         Route::get('/', [App\Http\Controllers\DeliveryController::class, 'index'])->name('index');
         Route::get('/{delivery}/show', [App\Http\Controllers\DeliveryController::class, 'show'])->name('show');
+        Route::get('/{delivery}/returns', [App\Http\Controllers\DeliveryController::class, 'returns'])->name('returns');
+        Route::post('/{delivery}/process-returns', [App\Http\Controllers\DeliveryController::class, 'processReturn'])->name('process-returns');
         Route::patch('/{delivery}/update-status', [App\Http\Controllers\DeliveryController::class, 'updateStatus'])->name('update-status');
         Route::get('/assigned-to-me', [App\Http\Controllers\DeliveryController::class, 'myDeliveries'])->name('assigned-to-me');
     });

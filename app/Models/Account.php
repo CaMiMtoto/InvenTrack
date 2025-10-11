@@ -22,10 +22,11 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Account extends Model
 {
-    const INVENTORY_ID=1;
-    const ACCOUNTS_RECEIVABLE_ID=4;
-    const ACCOUNTS_PAYABLE_ID=5;
-    const CASH_ID=3;
-    const BANK_ID=4;
-    const  SALES_REVENUE_ID=9;
+    const INVENTORY_ID = 1;
+    const ACCOUNTS_RECEIVABLE_ID = 4;
+    const ACCOUNTS_PAYABLE_ID = 5;
+    const CASH_ID = 3;
+    const BANK_ID = 4;
+    const  SALES_REVENUE_ID = 9;
+    const COST_OF_GOODS_SOLD_ID = 11;
 }

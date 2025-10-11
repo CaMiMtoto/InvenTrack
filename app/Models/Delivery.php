@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Constants\Status;
 use App\Traits\HasEncodedId;
 use App\Traits\HasStatusColor;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -17,6 +18,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\User $deliveryPerson
+ * @property-read string $status_color
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\DeliveryItem> $items
  * @property-read int|null $items_count
  * @property-read \App\Models\Order $order
@@ -58,7 +60,21 @@ class Delivery extends Model
     public function status():Attribute
     {
         return  Attribute::make(
-            get:fn() => ucfirst($this->attributes['status'])
+            get:fn() => ucwords(
+                \Str::of($this->attributes['status'])
+            )
         );
+    }
+
+    public function returns(): \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Relations\HasMany|Delivery
+    {
+        return $this->hasMany(ReturnModel::class,'delivery_id');
+    }
+
+    public function statusCanBeUpdated(): bool
+    {
+        if (strtolower($this->status)!=strtolower(Status::PartiallyDelivered) && strtolower($this->status)!=strtolower(Status::Delivered))
+            return true;
+        return false;
     }
 }

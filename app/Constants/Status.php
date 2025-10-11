@@ -6,7 +6,6 @@ class Status
 {
 
     const Completed = 'completed';
-    const InProgress = 'in_progress';
     const Transit = 'transit';
     const Confirmed = 'confirmed';
     const Submitted = 'submitted';
@@ -18,14 +17,15 @@ class Status
     const Active = 'active';
     const Successful = 'successful';
     const Failed = 'failed';
-    const Delivered='delivered';
-    const Reconciled='reconciled';
+    const Delivered = 'delivered';
+    const PartiallyDelivered = 'partially delivered';
+    const Reconciled = 'reconciled';
+    const Returned = 'returned';
 
     public static function getStatuses(): array
     {
         return [
             self::Completed,
-            self::InProgress,
             self::Confirmed,
             self::Submitted,
             self::Pending,

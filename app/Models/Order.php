@@ -26,6 +26,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property-read \App\Models\Customer $customer
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Delivery> $deliveries
  * @property-read int|null $deliveries_count
+ * @property-read \App\Models\User $doneBy
  * @property-read string $status
  * @property-read string $status_color
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\OrderItem> $items

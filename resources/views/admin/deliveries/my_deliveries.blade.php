@@ -45,6 +45,26 @@
         </div>
     </div>
 
+    <div class="modal fade" tabindex="-1" id="returnModal">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">
+                        Delivery Returns
+                    </h3>
+
+                    <!--begin::Close-->
+                    <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-bs-dismiss="modal"
+                         aria-label="Close">
+                        <i class="bi bi-x"></i>
+                    </div>
+                    <!--end::Close-->
+                </div>
+                <div id="delivery_results"></div>
+            </div>
+        </div>
+    </div>
+
 @endsection
 
 @push('scripts')
@@ -146,6 +166,110 @@
                         // Default error message
                         let errorMessage = "An unexpected error occurred. Please try again.";
                         // Check for a custom error message from the server
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            errorMessage = xhr.responseJSON.message;
+                        }
+
+                        Swal.fire({
+                            text: errorMessage,
+                            icon: "error",
+                            buttonsStyling: false,
+                            confirmButtonText: "Ok, got it!",
+                            customClass: {
+                                confirmButton: "btn btn-danger"
+                            }
+                        });
+                    },
+                    complete: function () {
+                        // Re-enable the button and restore its original text
+                        $submitBtn.prop('disabled', false).html(originalBtnText);
+                    }
+                });
+            });
+
+
+            $(document).on('click','.js-returns', function (e) {
+                e.preventDefault();
+                let $btn = $(this);
+                const url = $btn.attr('href');
+                let htmlValue = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...';
+                $btn.prop('disabled', true)
+                    .html(htmlValue);
+
+                $.ajax({
+                    url: url,
+                    type: 'GET',
+                    success: function (data) {
+                        $('#delivery_results').html(data);
+                        $('#returnModal').modal('show');
+                    },
+                    complete: function () {
+                        $btn.prop('disabled', false)
+                            .html('Details');
+                    }
+                });
+
+            });
+            $(document).on('input', '.js-item-returns', function () {
+                var $this = $(this);
+                const $row = $this.closest('tr');
+                const $deliveredCell = $row.find('.js-delivered');
+
+                // Get the original ordered quantity from the second column in the row
+                const orderedQty = parseInt($row.find('td:nth-child(2)').text().trim(), 10);
+
+                // Get the current value from the returns input
+                let returnsQty = parseInt($this.val(), 10);
+
+                // If the input is empty or not a number, treat it as 0
+                if (isNaN(returnsQty)) {
+                    returnsQty = 0;
+                }
+
+                // Calculate the new delivered quantity
+                const newDeliveredQty = orderedQty - returnsQty;
+
+                // Update the "Delivered" cell, ensuring it doesn't go below 0
+                if (newDeliveredQty >= 0) {
+                    $deliveredCell.text(newDeliveredQty);
+                } else {
+                    // If returns exceed ordered, cap delivered at 0
+                    $deliveredCell.text(0);
+                }
+            });
+            $(document).on('submit','#processReturnForm',function (e) {
+                e.preventDefault();
+                let $form = $(this);
+                let $submitBtn = $form.find('button[type="submit"]');
+                let originalBtnText = $submitBtn.html();
+
+                // Disable button and show loader
+                $submitBtn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...');
+
+                $.ajax({
+                    url: $form.attr('action'),
+                    type: 'POST', // Explicitly set to POST for form submission
+                    data: $form.serialize(),
+                    dataType: 'json',
+                    success: function (response) {
+                        Swal.fire({
+                            text: response.message || "Return processed successfully!",
+                            icon: "success",
+                            buttonsStyling: false,
+                            confirmButtonText: "Ok, got it!",
+                            customClass: {
+                                confirmButton: "btn btn-primary"
+                            }
+                        }).then(function (result) {
+                            if (result.isConfirmed) {
+                                $('#returnModal').modal('hide'); // Hide the return modal
+                                window.dt.ajax.reload(null, false); // Reload the datatable
+                            }
+                        });
+                    },
+                    error: function (xhr) {
+                        let errorMessage = "An unexpected error occurred. Please try again.";
+                        // Check for a custom error message from the server (e.g., validation errors)
                         if (xhr.responseJSON && xhr.responseJSON.message) {
                             errorMessage = xhr.responseJSON.message;
                         }

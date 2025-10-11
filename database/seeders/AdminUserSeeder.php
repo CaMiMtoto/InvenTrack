@@ -31,7 +31,7 @@ class AdminUserSeeder extends Seeder
                 'name' => 'Customer Care',
                 'email' => 'cc@domain.rw',
                 'password' => bcrypt('password'),
-                'is_super_admin' => true,
+                'is_super_admin' => false,
                 'phone_number' => '0780000000',
                 'email_verified_at' => now(),
                 'password_changed_at' => now()
@@ -40,7 +40,7 @@ class AdminUserSeeder extends Seeder
                 'name' => 'Store Keeper',
                 'email' => 'sk@domain.rw',
                 'password' => bcrypt('password'),
-                'is_super_admin' => true,
+                'is_super_admin' => false,
                 'phone_number' => '0780000000',
                 'email_verified_at' => now(),
                 'password_changed_at' => now()
@@ -49,7 +49,7 @@ class AdminUserSeeder extends Seeder
                 'name' => 'Delivery Person',
                 'email' => 'delivery@domain.rw',
                 'password' => bcrypt('password'),
-                'is_super_admin' => true,
+                'is_super_admin' => false,
                 'phone_number' => '0780000000',
                 'email_verified_at' => now(),
                 'password_changed_at' => now()
@@ -58,7 +58,7 @@ class AdminUserSeeder extends Seeder
                 'name' => 'Finance User',
                 'email' => 'finance@domain.rw',
                 'password' => bcrypt('password'),
-                'is_super_admin' => true,
+                'is_super_admin' => false,
                 'phone_number' => '0780000000',
                 'email_verified_at' => now(),
                 'password_changed_at' => now()
@@ -67,7 +67,7 @@ class AdminUserSeeder extends Seeder
                 'name' => 'Sales Manager',
                 'email' => 'sales@domain.rw',
                 'password' => bcrypt('password'),
-                'is_super_admin' => true,
+                'is_super_admin' => false,
                 'phone_number' => '0780000000',
                 'email_verified_at' => now(),
                 'password_changed_at' => now()

@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\Delivery $delivery
- * @property-read \App\Models\Product|null $product
+ * @property-read \App\Models\OrderItem $orderItem
  * @method static \Illuminate\Database\Eloquent\Builder<static>|DeliveryItem newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|DeliveryItem newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|DeliveryItem query()
