@@ -356,7 +356,7 @@
                 <!--begin:Menu link-->
                 <span class="menu-link">
                            <span class="menu-icon">
-                               <i class="bi bi-printer fs-2"></i>
+                              <x-lucide-printer class="tw-h-6 tw-w-6"/>
                            </span>
                            <span class="menu-title">
                                Reports
