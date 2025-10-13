@@ -8,7 +8,11 @@ use App\Http\Controllers\SupplierController;
 use App\Http\Middleware\EnsureUserIsActive;
 use App\Http\Middleware\PasswordChanged;
 use Illuminate\Support\Facades\Route;
-
+Route::get('/create-storage-link', function () {
+    Artisan::call('storage:link');
+    Artisan::call('optimize:clear');
+    return 'Storage link created!';
+});
 Route::get('/', function () {
     return redirect()->route('admin.dashboard');
 });

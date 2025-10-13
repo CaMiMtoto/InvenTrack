@@ -16,10 +16,11 @@ use App\Models\Product;
 use App\Models\StockMovement;
 use App\Models\User;
 use Auth;
+use Barryvdh\DomPDF\Facade\Pdf;
 use DB;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
-use PragmaRX\Google2FA\Support\QRCode;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Yajra\DataTables\Exceptions\Exception;
 
 class OrderController extends Controller
@@ -340,7 +341,7 @@ class OrderController extends Controller
 //            ->merge(public_path('assets/media/logos/logo.png'), 0.3, true)
             ->errorCorrection('M')
             ->generate(
-                route('home.order-verify', encodeId($order->id))
+                route('admin.deliveries.show', encodeId($order->id))
             );
         $downloadName = 'sales-order-' . $order->invoice_number . now()->toDateTimeLocalString() . '.pdf';
         $pdf = Pdf::loadView('admin.sales.print', compact('saleOrder', 'data'));

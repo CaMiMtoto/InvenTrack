@@ -76,7 +76,6 @@ class UsersController extends Controller
         }
         $user->roles()->sync($request->input('roles'));
 
-
         DB::commit();
         return response()->json([
             'message' => 'User saved successfully',

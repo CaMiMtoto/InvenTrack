@@ -45,7 +45,7 @@
 
             @auth
                 <!--begin::User menu-->
-                <div class="app-navbar-item ms-3 ms-lg-4 me-lg-2" id="kt_header_user_menu_toggle">
+                <div class="app-navbar-item ms-3 ms-lg-4 m-2" id="kt_header_user_menu_toggle">
                     <!--begin::Menu wrapper-->
                     <div class="cursor-pointer symbol symbol-30px symbol-lg-40px"
                          data-kt-menu-trigger="{default: 'click', lg: 'hover'}" data-kt-menu-attach="parent"
@@ -162,26 +162,7 @@
 
             <!--begin::Action-->
             <!--end::Action-->
-            <!--begin::Header menu toggle-->
-            <div class="app-navbar-item ms-3 ms-lg-4 ms-n2 me-3 d-flex d-lg-none">
-                <div
-                    class="btn btn-icon btn-custom btn-color-gray-600 btn-active-color-primary w-35px h-35px w-md-40px h-md-40px"
-                    id="kt_app_aside_mobile_toggle">
-                    <i class="ki-duotone ki-burger-menu-2 fs-2">
-                        <span class="path1"></span>
-                        <span class="path2"></span>
-                        <span class="path3"></span>
-                        <span class="path4"></span>
-                        <span class="path5"></span>
-                        <span class="path6"></span>
-                        <span class="path7"></span>
-                        <span class="path8"></span>
-                        <span class="path9"></span>
-                        <span class="path10"></span>
-                    </i>
-                </div>
-            </div>
-            <!--end::Header menu toggle-->
+
         </div>
         <!--end::Navbar-->
     </div>

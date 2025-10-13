@@ -5,15 +5,12 @@
     </button>
     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
         <a class="dropdown-item" href="{{ route('admin.orders.show', encodeId($saleOrder->id)) }}">Details</a>
-        <a class="dropdown-item" href="{{route('admin.orders.print',encodeId( $saleOrder->id))}}"
-           target="_blank">Print</a>
-        @if($saleOrder->status != \App\Constants\Status::Cancelled && auth()->user()->can(\App\Constants\Permission::VIEW_DELIVERIES))
-            <a class="dropdown-item" href="">Deliveries</a>
-        @endif
+        <a class="dropdown-item" href="{{route('admin.orders.print',encodeId( $saleOrder->id))}}" target="_blank">Print</a>
+
         @if( auth()->user()->can(\App\Constants\Permission::CANCEL_SALES_ORDERS))
-            <a class="dropdown-item js-cancel"
+         {{--   <a class="dropdown-item js-cancel"
                href="{{route('admin.orders.cancel', encodeId($saleOrder->id))}}">Cancel</a>
-            <a class="dropdown-item js-edit" href="{{ route('admin.orders.edit', encodeId($saleOrder->id)) }}">Edit</a>
+            <a class="dropdown-item js-edit" href="{{ route('admin.orders.edit', encodeId($saleOrder->id)) }}">Edit</a>--}}
         @endif
         {{--        <a class="dropdown-item js-delete" href="{{ route(route('admin.sale-orders.destroy', $saleOrder->id)) }}">Delete</a>--}}
     </div>

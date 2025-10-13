@@ -43,5 +43,10 @@ class ReturnItem extends Model
         return $this->belongsTo(ReturnModel::class,'return_id');
     }
 
+    public function reason(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(ReturnReason::class,'return_reason_id');
+    }
+
 
 }

@@ -32,10 +32,10 @@
 @php
     $statusColors = [
         \App\Constants\Status::Cancelled => 'red',
-        \App\Constants\Status::DELIVERED => 'green',
-        \App\Constants\Status::ORDER => 'blue',
-        \App\Constants\Status::PARTIALLY_DELIVERED => 'purple',
-        \App\Constants\Status::PAID => 'green',
+        \App\Constants\Status::Delivered => 'green',
+        \App\Constants\Status::Approved => 'blue',
+        \App\Constants\Status::PartiallyDelivered => 'purple',
+        \App\Constants\Status::Completed => 'green',
     ];
     $color = $statusColors[$saleOrder->status] ?? 'silver';
 @endphp
@@ -54,8 +54,15 @@
     <table class="table mb-5">
         <tr>
             <td>
+                @php
+                    $path = public_path('assets/media/logos/logo.png'); // Adjust path as needed
+               $type = pathinfo($path, PATHINFO_EXTENSION);
+               $data = file_get_contents($path);
+               $base64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
 
-                <img src="{{ asset('assets/media/logos/logo.png') }}"
+                @endphp
+
+                <img src="{{ $base64 }}"
                      class="" style="width: 200px" alt="Logo">
             </td>
             <td class="text-end">
@@ -71,7 +78,7 @@
         <tr>
             <td>
                 <div class="tw-text-xs text-uppercase">Invoice #:</div>
-                <strong class="small">{{ $saleOrder->invoice_number }}</strong>
+                <strong class="small">{{ $saleOrder->order_number }}</strong>
             </td>
             <td>
                 <div>
@@ -122,7 +129,7 @@
                 </td>
 
                 <td class=" tw-p-2">
-                    {{number_format($item->price, 2)}}
+                    {{number_format($item->unit_price, 2)}}
                 </td>
                 <td class=" tw-p-2">
                     {{number_format( $item->quantity, 2)}} {{ $item->product->unit_measure }}
@@ -151,30 +158,31 @@
 
                     <div class="tw-text-sm tw-text-gray-800">
                         <strong>
-                            Global Engineering Agency
+                            {{ config('services.company.name') }}
                         </strong>
                     </div>
                     <div class="tw-text-xs tw-text-gray-600 tw-mb-1">
-                        Kigali Gasabo <br/>
-                        KG 33 Avenue Road Gakiriro Road<br>
-                        Umukindo house ,Ground floor front wing.
-                        {{--                        website--}}
-                        <div class="tw-text-xs tw-text-gray-600 tw-mb-1">
-                            <strong> Visit:</strong> <a class="text-muted text-decoration-none" href="https://globalengineeringagency.com/">
-                                https://globalengineeringagency.com
-                            </a>
-                        </div>
+                        {{ config('services.company.address_1') }} <br/>
+                        {{ config('services.company.address_2') }}
+
 
                         {{--                        tel--}}
                         <div class="tw-text-xs tw-text-gray-600 tw-mb-1">
-                            <strong> Tel:</strong> <a class="text-muted text-decoration-none" href="tel:+250 788 632 620">+250 788 632 620</a>
+                            <strong> Tel:</strong>
+                            <a class="text-muted text-decoration-none"
+                               href="tel:{{ config('services.company.phone') }}">{{ config('services.company.phone') }}
+                            </a>
                         </div>
                         {{--                        email--}}
-                        <div class="tw-text-xs tw-text-gray-600 tw-mb-1">
-                            <strong> Email:</strong> <a class="text-muted text-decoration-none" href="mailto:fulluchris@gmail.com">fulluchris@gmail.com</a>
+                        @if(config('services.company.email'))
+                            <div class="tw-text-xs tw-text-gray-600 tw-mb-1">
+                                <strong> Email:</strong> <a class="text-muted text-decoration-none"
+                                                            href="mailto:{{ config('services.company.email') }}">{{ config('services.company.email') }}</a>
 
 
-                        </div>
+                            </div>
+                        @endif
+
                         <div class="tw-text-xs tw-text-gray-600 tw-mb-1 text-uppercase">Issued By:</div>
                         <div class="tw-text-sm tw-text-gray-800">
                             <strong> {{ $saleOrder->doneBy?->name }}</strong>

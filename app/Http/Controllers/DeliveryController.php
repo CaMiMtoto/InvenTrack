@@ -100,6 +100,9 @@ class DeliveryController extends Controller
             $delivery->save();
             if (strtolower($data['status']) === strtolower(Status::Delivered)) {
                 $delivery->delivered_at = now();
+                $delivery->order()->update([
+                    'order_status' => Status::Delivered
+                ]);
                 $delivery->save();
                 foreach ($delivery->items as $item) {
                     $item->delivered_quantity = $item->quantity;
