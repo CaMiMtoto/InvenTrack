@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AddressController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ExpenseController;
@@ -8,6 +9,7 @@ use App\Http\Controllers\SupplierController;
 use App\Http\Middleware\EnsureUserIsActive;
 use App\Http\Middleware\PasswordChanged;
 use Illuminate\Support\Facades\Route;
+
 Route::get('/create-storage-link', function () {
     Artisan::call('storage:link');
     Artisan::call('optimize:clear');
@@ -19,6 +21,10 @@ Route::get('/', function () {
 
 Auth::routes();
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+Route::get('/districts/{district}/sectors', [AddressController::class, 'getSectors'])->name('districts.sectors');
+Route::get('/sectors/{sector}/cells', [AddressController::class, 'getCells'])->name('sectors.cells');
+Route::get('/cells/{cell}/villages', [AddressController::class, 'getVillages'])->name('cells.villages');
 
 Route::group(['middleware' => ['auth', PasswordChanged::class, EnsureUserIsActive::class], 'prefix' => '/admin', 'as' => 'admin.'], function () {
 

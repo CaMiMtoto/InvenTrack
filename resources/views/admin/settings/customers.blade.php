@@ -3,51 +3,11 @@
 @section('content')
     <div>
         <!--begin::Toolbar-->
-        <div class="mb-5">
-            <div class="app-toolbar-wrapper d-flex flex-stack flex-wrap gap-4 w-100">
-                <!--begin::Page title-->
-                <div class="page-title d-flex flex-column gap-1 me-3 mb-2">
-                    <!--begin::Breadcrumb-->
-                    <ul class="breadcrumb breadcrumb-separatorless fw-semibold mb-6">
-                        <!--begin::Item-->
-                        <li class="breadcrumb-item text-gray-700 fw-bold lh-1">
-                            <a href="{{ route('admin.dashboard') }}" class="text-gray-500">
-                                <i class="bi bi-house fs-3 text-gray-400 me-n1"></i>
-                            </a>
-                        </li>
-                        <!--end::Item-->
-                        <!--begin::Item-->
-                        <li class="breadcrumb-item text-gray-700 fw-bold lh-1">
-                            Customers
-                        </li>
-                        <!--end::Item-->
-                        <!--begin::Item-->
-                        <li class="breadcrumb-item">
-                            <i class="bi bi-chevron-right fs-4 text-gray-700 mx-n1"></i>
-                        </li>
-                        <!--end::Item-->
-                        <!--begin::Item-->
-                        <li class="breadcrumb-item text-gray-700">
-                            Manage Customers
-                        </li>
-                        <!--end::Item-->
-                    </ul>
-                    <!--end::Breadcrumb-->
-                    <!--begin::Title-->
-                    <h1 class="page-heading d-flex flex-column justify-content-center text-dark fw-bolder fs-1 lh-0">
-                        Customers
-                    </h1>
-                    <!--end::Title-->
-                </div>
-                <!--end::Page title-->
-                <!--begin::Actions-->
-                <button type="button" class="btn btn-sm btn-light-primary px-4 py-3" id="addBtn">
-                    <i class="bi bi-plus fs-3"></i>
-                    Add New
-                </button>
-                <!--end::Actions-->
-            </div>
-        </div>
+        <x-toolbar title="Manage Customers"
+                   :breadcrumbs="[
+    ['label'=>'Customers']
+]"
+        />
         <!--end::Toolbar-->
         <!--begin::Content-->
         <div class="my-3">
@@ -70,7 +30,7 @@
 
 
     <div class="modal fade" tabindex="-1" id="myModal">
-        <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <h3 class="modal-title">
@@ -85,29 +45,103 @@
                     <!--end::Close-->
                 </div>
 
-                <form action="{{ route('admin.settings.customers.store') }}" id="submitForm" method="post">
+                <form action="{{ route('admin.settings.customers.store') }}" id="submitForm" method="post"
+                      enctype="multipart/form-data">
                     @csrf
 
                     <div class="modal-body">
-                        <input type="hidden" id="id" name="id" value="0"/>
-                        <div class="mb-3">
-                            <label for="name" class="form-label">Name</label>
-                            <input type="text" class="form-control" id="name" name="name" placeholder=""/>
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <input type="hidden" id="id" name="id" value="0"/>
+                                <div class="mb-3">
+                                    <label for="name" class="form-label">Name</label>
+                                    <input type="text" class="form-control" id="name" name="name" placeholder=""/>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">Email</label>
+                                    <input type="text" class="form-control" id="email" name="email" placeholder=""/>
+                                </div>
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Email</label>
-                            <input type="text" class="form-control" id="email" name="email" placeholder=""/>
-                        </div>
-                        <div class="mb-3">
-                            <label for="phone" class="form-label">Phone</label>
-                            <input type="text" class="form-control" id="phone" name="phone" placeholder=""/>
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="mb-3">
+                                    <label for="phone" class="form-label">Phone</label>
+                                    <input type="text" class="form-control" id="phone" name="phone" placeholder=""/>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="mb-3">
+                                    <label for="address" class="form-label">Address</label>
+                                    <input class="form-control" id="address" name="address"/>
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="mb-3">
-                            <label for="address" class="form-label">Address</label>
-                            <input class="form-control" id="address" name="address"/>
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="mb-3">
+                                    <label for="landmark" class="form-label">Landmark</label>
+                                    <input type="text" class="form-control" id="landmark" name="landmark"
+                                           placeholder=""/>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="mb-3">
+                                    <label for="nickname" class="form-label">Nickname</label>
+                                    <input type="text" class="form-control" id="nickname" name="nickname"/>
+                                </div>
+                            </div>
                         </div>
-
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="mb-3">
+                                    <label for="district_id" class="form-label">District</label>
+                                    <select name="district_id" id="district_id" class="form-select">
+                                        <option value=""></option>
+                                        @foreach($districts as $item)
+                                            <option value="{{$item->id}}">{{$item->name}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="mb-3">
+                                    <label for="sector_id" class="form-label">Sector</label>
+                                    <select name="sector_id" id="sector_id" class="form-select">
+                                        <option value=""></option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="mb-3">
+                                    <label for="cell_id" class="form-label">Cell</label>
+                                    <select name="cell_id" id="cell_id" class="form-select">
+                                        <option value=""></option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="mb-3">
+                                    <label for="village_id" class="form-label">Village</label>
+                                    <select name="village_id" id="village_id" class="form-select">
+                                        <option value=""></option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="mb-3">
+                                    <label for="address_photo">Address Photo</label>
+                                    <input type="file" class="form-control" id="address_photo" name="address_photo"/>
+                                </div>
+                            </div>
+                        </div>
 
                     </div>
 
@@ -126,7 +160,128 @@
 
 @push('scripts')
     <script>
+        const getSectors = function (districtId, selectedId = null) {
+            let url = '{{ route('districts.sectors',':id') }}';
+            url = url.replace(':id', districtId);
+            let $sectorElement = $('#sector_id');
+
+            // Clear dependent dropdowns
+            $sectorElement.empty().append('<option value=""></option>');
+            $('#cell_id').empty().append('<option value=""></option>');
+            $('#village_id').empty().append('<option value=""></option>');
+
+            if (!districtId) return;
+
+            $.ajax({
+                url: url,
+                method: 'GET',
+                dataType: 'json',
+                success: function (data) {
+                    $sectorElement.append('<option value="">Select Sector</option>');
+                    $.each(data, function (index, sector) {
+                        $sectorElement.append($('<option>', {
+                            value: sector.id,
+                            text: sector.name
+                        }));
+                    });
+
+                    if (selectedId) {
+                        $sectorElement.val(selectedId).trigger('change');
+                    }
+                },
+                error: function (xhr) {
+                    console.error("Error fetching sectors:", xhr.responseText);
+                }
+            });
+        };
+
+        const getCells = function (sectorId, selectedId = null) {
+            let url = '{{ route('sectors.cells',':id') }}';
+            url = url.replace(':id', sectorId);
+            let $cellElement = $('#cell_id');
+
+            $cellElement.empty().append('<option value=""></option>');
+            $('#village_id').empty().append('<option value=""></option>');
+
+            if (!sectorId) return;
+
+            $.ajax({
+                url: url,
+                method: 'GET',
+                dataType: 'json',
+                success: function (data) {
+                    $cellElement.append('<option value="">Select Cell</option>');
+                    $.each(data, function (index, cell) {
+                        $cellElement.append($('<option>', {
+                            value: cell.id,
+                            text: cell.name
+                        }));
+                    });
+
+                    if (selectedId) {
+                        $cellElement.val(selectedId).trigger('change');
+                    }
+                },
+                error: function (xhr) {
+                    console.error("Error fetching cells:", xhr.responseText);
+                }
+            });
+        };
+
+        const getVillages = function (cellId, selectedId = null) {
+            let url = '{{ route('cells.villages',':id') }}';
+            url = url.replace(':id', cellId);
+            let $villageElement = $('#village_id');
+
+            $villageElement.empty().append('<option value=""></option>');
+
+            if (!cellId) return;
+
+            $.ajax({
+                url: url,
+                method: 'GET',
+                dataType: 'json',
+                success: function (data) {
+                    $villageElement.append('<option value="">Select Village</option>');
+                    $.each(data, function (index, village) {
+                        $villageElement.append($('<option>', {
+                            value: village.id,
+                            text: village.name
+                        }));
+                    });
+
+                    if (selectedId) {
+                        $villageElement.val(selectedId).trigger('change');
+                    }
+                },
+                error: function (xhr) {
+                    console.error("Error fetching villages:", xhr.responseText);
+                }
+            });
+        };
+
+
         $(function () {
+            // Initialize Select2 on all select elements within the modal
+            /*    $('#myModal').find('select').select2({
+                    dropdownParent: $('#myModal'),
+                    placeholder: "Select an option",
+                    allowClear: true
+                });*/
+
+            // Event listeners for dropdown changes
+            $('#district_id').on('change', function () {
+                getSectors($(this).val());
+            });
+
+            $('#sector_id').on('change', function () {
+                getCells($(this).val());
+            });
+
+            $('#cell_id').on('change', function () {
+                getVillages($(this).val());
+            });
+
             let myTable = $('#myTable').DataTable({
                 processing: true,
                 serverSide: true,
@@ -151,20 +306,29 @@
                 ],
             });
 
+            let $myModal = $('#myModal');
+            let $submitForm = $('#submitForm');
             $('#addBtn').click(function () {
-                $('#myModal').modal('show');
-            });
-            $('#myModal').on('hidden.bs.modal', function () {
-                $('#submitForm').trigger('reset');
+                $submitForm.trigger('reset');
                 $('#id').val(0);
+                // Reset select2 fields
+                $myModal.find('select').val(null).trigger('change');
+                $myModal.modal('show');
             });
 
-            let submitForm = $('#submitForm');
-            submitForm.submit(function (e) {
+            $myModal.on('hidden.bs.modal', function () {
+                $submitForm.trigger('reset');
+                $('#id').val(0);
+                $myModal.find('select').val(null).trigger('change');
+                // Clear validation errors
+                $submitForm.find('.is-invalid').removeClass('is-invalid');
+                $submitForm.find('.invalid-feedback').remove();
+            });
+
+            $submitForm.submit(function (e) {
                 e.preventDefault();
                 let $this = $(this);
                 let formData = new FormData(this);
-                let id = $('#id').val();
                 let url = $this.attr('action');
                 let btn = $(this).find('[type="submit"]');
                 btn.prop('disabled', true);
@@ -181,13 +345,11 @@
                     contentType: false,
                     success: function (data) {
                         myTable.ajax.reload();
-                        $('#myModal').modal('hide');
+                        $myModal.modal('hide');
                         Swal.fire({
                             icon: 'success',
                             title: 'Success!',
                             text: 'Record has been saved successfully.',
-                            // showConfirmButton: false,
-                            // timer: 1500
                         });
 
                     },
@@ -195,10 +357,15 @@
                         if (xhr.status === 422) {
                             let errors = xhr.responseJSON.errors;
                             $.each(errors, function (key, value) {
-                                let $1 = $('#' + key);
-                                $1.addClass('is-invalid');
-                                // create span element under the input field with a class of invalid-feedback and add the error text returned by the validator
-                                $1.parent().append('<span class="invalid-feedback">' + value[0] + '</span>');
+                                let field = $('#' + key);
+                                field.addClass('is-invalid');
+                                field.parent().append('<span class="invalid-feedback">' + value[0] + '</span>');
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error!',
+                                text: 'An unexpected error occurred.',
                             });
                         }
                     },
@@ -211,18 +378,30 @@
 
             $(document).on('click', '.js-edit', function (e) {
                 e.preventDefault();
-                let id = $(this).data('id');
-                let url = $(this).attr('href')
+                let url = $(this).attr('href');
                 $.ajax({
                     url: url,
                     type: 'GET',
+                    dataType: 'json',
                     success: function (data) {
                         $('#id').val(data.id);
                         $('#name').val(data.name);
                         $('#email').val(data.email);
                         $('#phone').val(data.phone);
                         $('#address').val(data.address);
-                        $('#myModal').modal('show');
+                        $('#landmark').val(data.landmark);
+                        $('#nickname').val(data.nickname);
+
+                        // Set district and trigger change to load sectors
+                        $('#district_id').val(data.district_id);
+
+                        // The dependent data will be loaded via chained AJAX calls
+                        // We pass the IDs to pre-select them once the options are loaded
+                        getSectors(data.district_id, data.sector_id);
+                        getCells(data.sector_id, data.cell_id);
+                        getVillages(data.cell_id, data.village_id);
+
+                        $myModal.modal('show');
                     }
                 });
             });

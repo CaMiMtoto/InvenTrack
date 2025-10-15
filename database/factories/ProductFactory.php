@@ -20,7 +20,7 @@ class ProductFactory extends Factory
             'min_stock' => $this->faker->randomNumber(),
             'image' => fake()->imageUrl(),
             'stock' => $this->faker->randomNumber(),
-            'price' => $this->faker->randomFloat(),
+            'price' => $this->faker->numberBetween(1000,100000),
             'description' => $this->faker->text(),
             'category_id' => Category::query()->inRandomOrder()->first()->id,
             'name' => $this->faker->name(),

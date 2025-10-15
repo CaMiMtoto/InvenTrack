@@ -9,7 +9,7 @@
 
     <div class="my-4">
         <div class="row">
-            @foreach($products as $item)
+            @forelse($products as $item)
                 <div class="col-md-4 col-xl-3 col-sm-6 my-3">
                     <div class="card ">
                         {{--                        <img src="https://picsum.photos/seed/picsum/200/300" class="card-img-top tw-h-72" alt="...">--}}
@@ -56,7 +56,35 @@
                         </div>
                     </div>
                 </div>
-            @endforeach
+            @empty
+                <div class="col-12">
+                    <div class="card-body py-15 py-lg-20 d-flex justify-content-center align-items-center flex-column">
+
+                        <!--begin::Title-->
+                        <h1 class="fw-bolder fs-2hx text-gray-900 mb-4">
+                            Oops!
+                        </h1>
+                        <!--end::Title-->
+
+                        <!--begin::Text-->
+                        <div class="fw-semibold fs-6 text-gray-500 mb-7">
+                            No products found.
+                        </div>
+                        <!--end::Text-->
+
+                        <!--begin::Illustration-->
+                        <div class="mb-3">
+                          <x-lucide-shopping-basket class="tw-h-20"/>
+                        </div>
+                        <!--end::Illustration-->
+
+                        <!--begin::Link-->
+
+                        <!--end::Link-->
+
+                    </div>
+                </div>
+            @endforelse
         </div>
         {{ $products->links() }}
     </div>

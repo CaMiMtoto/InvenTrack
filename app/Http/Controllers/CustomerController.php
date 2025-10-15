@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Customer;
+use App\Models\District;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
+use Storage;
 use Yajra\DataTables\Exceptions\Exception;
 
 class CustomerController extends Controller
@@ -36,34 +38,55 @@ class CustomerController extends Controller
                 ->rawColumns(['action'])
                 ->make(true);
         }
-
-        return view('admin.settings.customers');
+        $districts = District::query()->get();
+        return view('admin.settings.customers', compact('districts'));
     }
 
 
     /**
      * Store a newly created resource in storage.
      */
+
     public function store(Request $request)
     {
         $data = $request->validate([
             'id' => ['required', 'integer', 'min:0'],
             'name' => ['required', 'string'],
             'email' => ['nullable', 'email', 'string'],
-            'phone' => ['required', 'string', 'max:20',
-                // phone numbers must be digits only
-                'regex:/^[0-9]+$/'
-            ],
+            'phone' => ['required', 'string', 'max:20' ],
             'address' => ['required', 'string'],
+            'tin' => ['sometimes', 'regex:/^[0-9]{9}$/'],
+            'landmark' => ['required', 'max:255'],
+            'nickname' => ['nullable', 'max:255'],
+            'id_number' => ['sometimes', 'regex:/^[0-9]{16}$/'],
+            'district_id' => ['required', 'exists:districts,id'],
+            'sector_id' => ['required', 'exists:sectors,id'],
+            'cell_id' => ['required', 'exists:cells,id'],
+            'village_id' => ['nullable', 'exists:villages,id'],
+            'address_photo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:1024'],
         ]);
 
+        // Handle file upload
+        if ($request->hasFile('address_photo')) {
+            // If updating, delete an old photo
+            if ($data['id'] != 0) {
+                $existing = Customer::find($data['id']);
+                if ($existing && $existing->address_photo) {
+                    Storage::delete($existing->address_photo);
+                }
+            }
+            // Store new photo
+            $data['address_photo'] = $request->file('address_photo')->store('address_photos');
+        }
 
+        // Create or update a customer
         if ($data['id'] == 0) {
-            Customer::insert($data);
+            Customer::create($data);
         } else {
             Customer::where('id', $data['id'])->update($data);
         }
-        return response()->json(['success' => 'Supplier Added successfully.']);
+
+        return response()->json(['success' => 'Customer saved successfully.']);
     }
 
     /**
