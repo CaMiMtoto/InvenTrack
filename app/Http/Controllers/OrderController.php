@@ -17,6 +17,7 @@ use App\Models\StockMovement;
 use App\Models\User;
 use Auth;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Darryldecode\Cart\Cart;
 use DB;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -55,15 +56,19 @@ class OrderController extends Controller
 
     /**
      * Show the form for creating a new resource.
+     * @throws \Exception
      */
     public function create()
     {
+
+        if (\Cart::session(auth()->id())->isEmpty()) {
+            return back()->with([
+                'error' => 'Please add items before checkout'
+            ]);
+        }
+
         $customers = Customer::all();
-        $products = Product::query()
-            ->where('stock', '>', 0)
-            ->get();
-        $paymentMethods = PaymentMethod::query()->get();
-        return view('admin.sales.create', compact('customers', 'products', 'paymentMethods'));
+        return view('admin.sales.create', compact('customers'));
     }
 
     /**
@@ -128,7 +133,8 @@ class OrderController extends Controller
             }
 
             $order->update(['total_amount' => $total_amount]);
-
+            /// clear car
+            \Cart::session(auth()->id())->clear();
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack(); // Rollback in case of error
@@ -408,4 +414,29 @@ class OrderController extends Controller
         return view('admin.orders.pending_deliveries', compact('deliveryPersons'));
     }
 
+    /**
+     * @throws \Exception
+     */
+    public function updateCart(Request $request)
+    {
+        $data = $request->validate([
+            'product_id' => 'required|integer',
+            'quantity' => 'required|integer|min:1',
+        ]);
+
+        $cart = \Cart::session(auth()->id());
+
+        $cart->update($data['product_id'], [
+            'quantity' => [
+                'relative' => false,
+                'value' => $data['quantity']
+            ],
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'subtotal' => number_format($cart->getSubTotal()),
+            'total' => number_format($cart->getTotal()),
+        ]);
+    }
 }

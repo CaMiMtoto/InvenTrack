@@ -48,14 +48,15 @@ class Product extends Model
 {
     use HasFactory;
 
-    const IMAGE_PATH ='images/products';
+    const IMAGE_PATH = 'images/products';
 
-    protected $appends=['actual_qty'];
+    protected $appends = ['actual_qty'];
 
     public function category(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Category::class);
     }
+
     public function increaseStock(int $qty): void
     {
         $this->increment('stock', $qty);
@@ -98,5 +99,10 @@ class Product extends Model
     public function purchases(): \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Relations\HasMany|Product
     {
         return $this->hasMany(PurchaseItem::class);
+    }
+
+    public function getPrice(): float
+    {
+        return $this->price;
     }
 }

@@ -53,7 +53,7 @@ class CustomerController extends Controller
             'id' => ['required', 'integer', 'min:0'],
             'name' => ['required', 'string'],
             'email' => ['nullable', 'email', 'string'],
-            'phone' => ['required', 'string', 'max:20' ],
+            'phone' => ['required', 'string', 'max:20'],
             'address' => ['required', 'string'],
             'tin' => ['sometimes', 'regex:/^[0-9]{9}$/'],
             'landmark' => ['required', 'max:255'],
@@ -105,5 +105,11 @@ class CustomerController extends Controller
     {
         $customer->delete();
         return response()->json(['success' => 'Customer deleted successfully.']);
+    }
+
+    public function details(Customer $customer)
+    {
+        $customer->load(['district', 'sector', 'cell', 'village']);
+        return view('admin.settings.customers._details', compact('customer'));
     }
 }

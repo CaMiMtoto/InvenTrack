@@ -10,117 +10,130 @@
         ['label' => 'Sales Orders', 'url' => route('admin.orders.index')],
         ['label' => 'New Order', 'url' => '']
     ]"
-            title="New Order"
-            :actions="[
-                 ['label' => 'Go Back', 'url' => route('admin.orders.index'), 'class'=>'btn-light-primary', 'icon'=>'<i class=\'bi bi-arrow-left fs-4\'></i>']
-            ]"
-        />
+            title="New Order"/>
 
         <!--end::Toolbar-->
         <!--begin::Content-->
         <form action="{{ route('admin.orders.store') }}" method="post" class="my-3" id="submitForm">
             @csrf
 
-            @if($errors->count() >0)
-                <div class="alert alert-danger">
-                    <ul>
-                        @foreach($errors->all() as $error)
-                            <li>{{ $error }}</li>
+            <div class="row g-5">
+                <div class="col-md-5 order-md-last">
+                    <h4
+                        class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="text-primary">Items</span>
+                        <span class="badge bg-primary-subtle text-primary fw-bolder rounded-pill">
+                                {{ \Cart::session(auth()->id())->getContent()->count() }}
+                            </span>
+                    </h4>
+                    <p class="">
+                        Below are list of products you are about to order
+                    </p>
+                    <ul class="list-group mb-3">
+                        @foreach(\Cart::getContent() as $item)
+                            <li class="list-group-item d-flex justify-content-between bg-transparent">
+                                <div>
+                                    <h6 class="">
+                                        {{ $item->name }}
+                                    </h6>
+                                    <div>
+                                            <span
+                                                class="badge bg-secondary-subtle "> RF  {{ number_format($item->price) }}</span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <input type="hidden" name="prices[]" value="{{$item->price}}">
+                                    <input type="hidden" name="product_ids[]" value="{{$item->id}}">
+                                    <input class="form-control w-50px form-control-sm js-qty" type="number"
+                                           name="quantities[]"
+                                           value="{{ $item->quantity }}"/>
+                                </div>
+                            </li>
                         @endforeach
                     </ul>
+                    <ol class="list-group list-group-flush mt-10">
+                        <li class="list-group-item d-flex justify-content-between align-items-start bg-transparent">
+                            <div class="ms-2 me-auto">
+                                <div class="fw-bold">Subtotal</div>
+                            </div>
+                            <span class="fw-bolder">
+                                  RF  <span
+                                    id="subtotal">{{ number_format(\Cart::session(auth()->id())->getSubTotal()) }}</span>
+                                </span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-start bg-transparent">
+                            <div class="ms-2 me-auto">
+                                <div class="fw-bold">Shipping</div>
+                            </div>
+                            <span class="fw-bolder">0</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-start bg-transparent">
+                            <div class="ms-2 me-auto">
+                                <div class="fw-bold">
+                                    Order Total
+                                </div>
+                            </div>
+                            <span class="fw-bolder">
+                                   RF <span
+                                    id="total">{{ number_format(\Cart::session(auth()->id())->getTotal()) }}</span>
+                                </span>
+                        </li>
+                    </ol>
                 </div>
-            @endif
+                <div class="col-md-7">
+                    <h4 class="mb-3">Order Information</h4>
+                    <div class="row g-3">
+                        <div class="col-sm-12">
+                            <div class="mb-3">
+                                <label for="order_date" class="form-label">Order Date</label>
+                                <input type="date" class="form-control" id="order_date" name="order_date" placeholder=""
+                                       value="{{ now()->toDateString() }}"/>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <label for="customer_id" class="form-label">Customer</label>
+                            <select class="form-select" id="customer_id" name="customer_id">
+                                <option value=""></option>
+                                @foreach($customers as $item)
+                                    <option value="{{$item->id}}"
+                                            data-url="{{ route('admin.settings.customers.details',encodeId($item->id)) }}">
+                                        {{$item->name}} - {{$item->address}}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
 
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label for="order_date" class="form-label">Order Date</label>
-                        <input type="date" class="form-control" id="order_date" required
-                               max="{{ now()->format('Y-m-d') }}"
-                               name="order_date">
                     </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label for="customer_id" class="form-label">Customer</label>
-                        <select class="selectize form-select" id="customer_id" name="customer_id" required>
-                            <option value="">Select Customer</option>
-                            @foreach($customers as $item)
-                                <option value="{{ $item->id }}">{{ $item->name }} - {{ $item->address }}</option>
-                            @endforeach
-                        </select>
+                    <div id="customer_details_results" class="mt-10">
+                        <!--begin::Alert-->
+                        <div class="alert alert-info border">
+                            <!--begin::Icon-->
+                            <span class="svg-icon svg-icon-2hx svg-icon-info me-3">
+                                    <x-lucide-info class="tw-h-10 tw-w-10"/>
+                                </span>
+                            <!--end::Icon-->
+
+                            <!--begin::Wrapper-->
+                            <div class="d-flex flex-column">
+                                <!--begin::Title-->
+                                <h5 class="mb-1">
+                                    Customer info
+                                </h5>
+                                <!--end::Title-->
+                                <!--begin::Content-->
+                                <span>
+                                        This is where customer information wil show up.
+                                    </span>
+                                <!--end::Content-->
+                            </div>
+                            <!--end::Wrapper-->
+                        </div>
+                        <!--end::Alert-->
                     </div>
+                    <button class="w-100 btn btn-primary btn-lg mt-10" type="submit">
+                        Place Order
+                    </button>
                 </div>
-            </div>
-
-            <div class="my-3">
-                <h4>Items</h4>
-                <p>
-                    Below are the items you want to order. You can add multiple items to the order.
-                </p>
-            </div>
-            <table class="table table-borderless table-hover table-striped" id="orderTable">
-                <thead>
-                <tr class="text-uppercase fw-semibold">
-                    <th>Product</th>
-                    <th class="tw-w-52">Price</th>
-                    <th class="tw-w-44">Quantity</th>
-                    <th class="tw-w-52">Total</th>
-                    <th></th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td>
-                        <select class="selectize js-product form-select" name="product_ids[]" required>
-                            <option value="">Select Product</option>
-                            @foreach($products as $product)
-                                <option value="{{ $product->id }}" data-id="{{ $product->id }}"
-                                        data-quantity="{{ $product->actual_qty }}"
-                                        data-price="{{ $product->price }}">
-                                    {{ $product->name }}
-                                    ({{ $product->actual_qty }} {{$product->unit_measure}})
-                                </option>
-                            @endforeach
-                        </select>
-                    </td>
-                    <td>
-                        <input type="number" class="form-control  js-price tw-w-44" required
-                               name="prices[]"/>
-                    </td>
-                    <td>
-                        <input type="number" class="form-control  js-qty tw-w-32" required step="0.01"
-                               name="quantities[]"/>
-                    </td>
-                    <td>
-                        <input type="text" disabled class="form-control  js-total" name="total"/>
-                    </td>
-                    <td>
-                        <button class="btn btn-icon  btn-light-danger js-remove">
-                            <i class="bi bi-trash fs-2"></i>
-                        </button>
-                    </td>
-                </tr>
-                </tbody>
-                <tfoot>
-                <tr>
-                    <td colspan="4" class="text-end">
-                        Total : <span class="fw-bold" id="totalAmount">0</span>
-                    </td>
-                </tr>
-                </tfoot>
-            </table>
-
-
-            <div class="my-3 d-flex justify-content-between align-items-center">
-                <button class="btn btn-sm btn-light-primary" id="addRow" type="button">
-                    <i class="bi bi-plus"></i>
-                    New Row
-                </button>
-                <button class="btn btn-sm btn-primary" type="submit">
-                    <i class="bi bi-save"></i>
-                    Save Order
-                </button>
             </div>
 
 
@@ -131,157 +144,164 @@
 @push('scripts')
     <script>
         $(function () {
+            // Initialize Select2 on the customer dropdown
+            let $customerId = $('#customer_id');
 
+            $customerId.on('change', function (e) {
+                const $selectedOption = $(this).find('option:selected');
+                const url = $selectedOption.data('url');
+                const $detailsContainer = $('#customer_details_results');
 
-            $('#addRow').on('click', function () {
-                let uniqueId = new Date().getTime();
-                let row = `
-                    <tr>
-                        <td>
-                            <select class="selectize js-product form-select" name="product_ids[]" required id="product_ids_${uniqueId}">
-                                <option value="">Select Product</option>
-                                @foreach($products as $product)
-                <option value="{{ $product->id }}" data-id="{{ $product->id }}" data-quantity="{{ $product->actual_qty }}"
-                                                                            data-price="{{ $product->price }}" >{{ $product->name }} ({{ $product->actual_qty }} {{$product->unit_measure}})
-                                                </option>
-                                @endforeach
-                </select>
-            </td>
-             <td>
-                <input type="number" class="form-control  js-price tw-w-44" name="prices[]" required/>
-            </td>
-            <td>
-                <input type="number" class="form-control  js-qty  tw-w-32" nin="0" name="quantities[]" required step="0.01"/>
-            </td>
-            <td>
-                <input type="text" disabled class="form-control  js-total" name="total"/>
-            </td>
-            <td>
-                <button class="btn btn-sm btn-icon  btn-light-danger js-remove">
-                    <i class="bi bi-trash fs-2"></i>
-                </button>
-            </td>
-        </tr>
-`;
-                $('table tbody').append(row);
-                $('#product_ids_' + uniqueId).selectize();
-            });
+                // If a customer is selected (and not the placeholder)
+                if (url) {
+                    // Show a loading spinner
+                    $detailsContainer.html('<div class="d-flex justify-content-center p-10"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>');
 
-            let $table = $('table');
-
-            function calculateTotal() {
-                let total = 0;
-                $table.find('.js-total').each(function () {
-                    let valueWithCommas = $(this).val();
-                    const realValue = valueWithCommas.replace(/,/g, '');
-                    total += Number(realValue);
-                });
-                $('#totalAmount').text(total.toLocaleString());
-                // update amount_paid max value
-                $('#amount_paid').attr('max', total);
-            }
-
-            $table.on('click', '.js-remove', function () {
-                $(this).closest('tr').remove();
-                calculateTotal();
-            });
-
-            $table.on('change', '.js-qty, .js-price', function () {
-                let qty = $(this).closest('tr').find('.js-qty').val();
-                let price = $(this).closest('tr').find('.js-price').val();
-                let total = qty * price;
-                $(this).closest('tr').find('.js-total').val(Number(total).toLocaleString());
-                calculateTotal();
-            });
-
-            $table.on('change', '.js-qty', function () {
-                let total = $(this).val();
-                // validate the qty with the selected product quantity
-                let $productElement = $(this).closest('tr').find('.js-product');
-                let productQuantity = $productElement.find(':selected').data('quantity');
-                console.log(total, productQuantity);
-                if (total > productQuantity) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: 'Quantity exceeds available stock!',
+                    // Make the AJAX request
+                    $.ajax({
+                        url: url,
+                        type: 'GET',
+                        success: function (response) {
+                            // Replace the content with the response from the server
+                            $detailsContainer.html(response);
+                        },
+                        error: function (xhr) {
+                            // Handle errors, e.g., show an error message
+                            console.error("Error fetching customer details:", xhr.responseText);
+                            $detailsContainer.html('<div class="alert alert-danger">Could not load customer details. Please try again.</div>');
+                        }
                     });
-                    $(this).val('').trigger('change');
-                }
-                calculateTotal();
-            });
-
-            $table.on('change', '.js-product', function () {
-                let $row = $(this).closest('tr');
-
-                // Get the price of the selected product and set it in the price input field
-                let price = $(this).find(':selected').data('price');
-                $row.find('.js-price').val(price);
-
-                // Get the selected product ID
-                let productId = $(this).val();
-                if (!productId) {
-                    return;
-                }
-
-                // Check for duplicate products (exclude the current row)
-                let duplicateFound = false;
-                $table.find('.js-product').not(this).each(function () {
-                    if (Number($(this).val()) === Number(productId)) {
-                        duplicateFound = true;
-                        return false; // exit loop
-                    }
-                });
-
-                if (duplicateFound) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: 'Product already selected!',
-                    });
-                    // Optionally reset the current product selection to prevent duplicates
-                    $(this).val('').trigger('change');
+                } else {
+                    // If the placeholder is selected, show the default info message
+                    $detailsContainer.html(`
+                        <div class="alert alert-info border">
+                            <div class="d-flex flex-column">
+                                <h5 class="mb-1">Customer info</h5>
+                                <span>Select a customer to see their information.</span>
+                            </div>
+                        </div>
+                    `);
                 }
             });
 
+            // Handle the order submission
             $('#submitForm').on('submit', function (e) {
                 e.preventDefault();
+                let $form = $(this);
+                let $submitBtn = $form.find('button[type="submit"]');
+                let originalBtnText = $submitBtn.html();
 
-                const amountPaid = $('#amount_paid').val();
-                let totalAmountToPay = 0;
+                // Disable button and show loader
+                $submitBtn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Placing Order...');
 
-                // Loop through each row and calculate the total
-                $('#orderTable tr').each(function () {
-                    const quantity = $(this).find('.js-qty').val();
-                    const price = $(this).find('.js-price').val();
+                // Clear previous validation errors
+                $('.is-invalid').removeClass('is-invalid');
+                $('.invalid-feedback').remove();
 
-                    if (quantity && price) {
-                        const itemTotal = Number(quantity) * Number(price);
-                        totalAmountToPay += itemTotal;
+                $.ajax({
+                    url: $form.attr('action'),
+                    type: $form.attr('method'),
+                    data: $form.serialize(),
+                    dataType: 'json',
+                    success: function (response) {
+                        Swal.fire({
+                            text: response.message || "Order placed successfully!",
+                            icon: "success",
+                            buttonsStyling: false,
+                            confirmButtonText: "Ok, got it!",
+                            customClass: {
+                                confirmButton: "btn btn-primary"
+                            }
+                        }).then(function (result) {
+                            if (result.isConfirmed) {
+                                // Redirect to the orders index page
+                                window.location.href = "{{ route('admin.orders.index') }}";
+                            }
+                        });
+                    },
+                    error: function (xhr) {
+                        if (xhr.status === 422) {
+                            // Handle validation errors
+                            let errors = xhr.responseJSON.errors;
+                            $.each(errors, function (key, value) {
+                                let field = $('#' + key);
+                                field.addClass('is-invalid');
+                                field.closest('.form-control').after('<div class="invalid-feedback">' + value[0] + '</div>');
+                            });
+                            Swal.fire({
+                                text: "Sorry, it looks like there are some errors detected, please try again.",
+                                icon: "error",
+                                buttonsStyling: false,
+                                confirmButtonText: "Ok, got it!",
+                                customClass: {
+                                    confirmButton: "btn btn-danger"
+                                }
+                            });
+                        } else {
+                            // Handle other errors
+                            Swal.fire({
+                                text: "An unexpected error occurred. Please try again.",
+                                icon: "error",
+                                buttonsStyling: false,
+                                confirmButtonText: "Ok, got it!",
+                                customClass: {
+                                    confirmButton: "btn btn-danger"
+                                }
+                            });
+                        }
+                    },
+                    complete: function () {
+                        // Re-enable the button and restore its original text
+                        $submitBtn.prop('disabled', false).html(originalBtnText);
                     }
                 });
+            });
+// Debounce function to prevent excessive AJAX calls
+            const debounce = (func, delay) => {
+                let timeout;
+                return function (...args) {
+                    const context = this;
+                    clearTimeout(timeout);
+                    timeout = setTimeout(() => func.apply(context, args), delay);
+                };
+            };
+            const updateCartTotals = function (element) {
+                let $this = $(element);
+                let quantity = $this.val();
+                let $listItem = $this.closest('li');
+                let productId = $listItem.find('input[name="product_ids[]"]').val();
 
-                console.log(amountPaid);
-                console.log(totalAmountToPay);
-                // Validate the amount paid
-                if (amountPaid > totalAmountToPay) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: "Please enter a valid amount paid! Total amount must be equal to or less than the total amount to pay."
-                    });
-                    return;
+                // Ensure quantity is at least 1
+                if (quantity < 1) {
+                    quantity = 1;
+                    $this.val(1);
                 }
 
-                // Disable the submit button and change its text
-                const submitBtn = $(this).find('[type="submit"]');
-                submitBtn.attr('disabled', true);
-                submitBtn.html('Saving...');
+                $.ajax({
+                    url: '{{ route("admin.orders.cart.update") }}',
+                    type: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        product_id: productId,
+                        quantity: quantity
+                    },
+                    dataType: 'json',
+                    success: function (response) {
+                        if (response.success) {
+                            $('#subtotal').text(response.subtotal);
+                            $('#total').text(response.total);
+                        }
+                    },
+                    error: function (xhr) {
+                        console.error('Error updating cart quantity:', xhr.responseText);
+                        // You could add a user-facing error message here if desired
+                    }
+                });
+            };
 
-                // Submit the form
-                e.target.submit();
-            });
-
+            $(document).on('input', '.js-qty', debounce(function () {
+                updateCartTotals(this);
+            }, 500)); // 500ms delay
 
         });
     </script>

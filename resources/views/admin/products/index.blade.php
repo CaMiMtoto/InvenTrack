@@ -296,14 +296,7 @@
                         $('#stock_quantity').val(data.stock_quantity);
                         $('#description').val(data.description);
                         $('#unit_measure').val(data.unit_measure);
-                        $('#reorder_level').val(data.reorder_level);
-                        $('#sold_in_square_meters').prop('checked', data.sold_in_square_meters);
-                        if (data.sold_in_square_meters) {
-                            $('#box_coverage_div').show();
-                        } else {
-                            $('#box_coverage_div').hide();
-                        }
-                        $('#box_coverage').val(data.box_coverage);
+                        $('#min_stock').val(data.min_stock);
                         $('#stock_unit_measure').val(data.stock_unit_measure);
                         $('#myModal').modal('show');
                     }

@@ -142,9 +142,7 @@ class ProductController extends Controller
 
     public function catalog()
     {
-        $products = Product::query()->with(['images','category'])
-            ->latest()
-            ->paginate(12)->withQueryString();
-        return view('admin.products.catalog', compact('products'));
+
+        return view('admin.products.catalog');
     }
 }

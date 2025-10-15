@@ -4,6 +4,7 @@ use App\Http\Controllers\AddressController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ExpenseController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Middleware\EnsureUserIsActive;
@@ -50,6 +51,7 @@ Route::group(['middleware' => ['auth', PasswordChanged::class, EnsureUserIsActiv
         Route::patch('/{order}/update-status', [App\Http\Controllers\OrderController::class, 'updateStatus'])->name('update-status');
         Route::get('/{order}/print', [App\Http\Controllers\OrderController::class, 'print'])->name('print');
         Route::put('/{order}/cancel', [App\Http\Controllers\OrderController::class, 'cancel'])->name('cancel');
+        Route::post('/cart/update', [OrderController::class, 'updateCart'])->name('cart.update');
     });
 
     Route::group(['prefix' => "deliveries", "as" => "deliveries."], function () {
@@ -106,6 +108,7 @@ Route::group(['middleware' => ['auth', PasswordChanged::class, EnsureUserIsActiv
         Route::get('/customers/{customer}/show', [CustomerController::class, 'show'])->name('customers.show');
         Route::post('/customers/store', [CustomerController::class, 'store'])->name('customers.store');
         Route::delete('/customers/{customer}', [CustomerController::class, 'destroy'])->name('customers.destroy');
+        Route::get('/customers/{customer}/details', [CustomerController::class, 'details'])->name('customers.details');
 
         Route::prefix('payment-methods')->group(function () {
             Route::get('/', [App\Http\Controllers\PaymentMethodController::class, 'index'])->name('payment-methods.index');

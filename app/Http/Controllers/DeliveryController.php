@@ -21,10 +21,20 @@ use Yajra\DataTables\Exceptions\Exception;
 class DeliveryController extends Controller
 {
     // List all deliveries
+    /**
+     * @throws Exception
+     */
     public function index()
     {
-        $deliveries = Delivery::with(['order', 'deliveryPerson'])->get();
-        return view('admin.deliveries.index', compact('deliveries'));
+        if (\request()->ajax()){
+            $source = Delivery::with(['order', 'deliveryPerson']);
+            return datatables($source)
+                ->addIndexColumn()
+                ->addColumn('action', fn(Delivery $delivery) => view('admin.deliveries._actions', compact('delivery')))
+                ->rawColumns(['action'])
+                ->make(true);
+        }
+        return view('admin.deliveries.index');
     }
 
     // Show form to assign deliveries
