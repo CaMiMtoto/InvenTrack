@@ -52,13 +52,6 @@
                     <!--end:Menu link-->
                     <!--begin:Menu sub-->
                     <div class="menu-sub menu-sub-accordion">
-                        @can(\App\Constants\Permission::NEW_ORDER)
-                            <a class="menu-link {{ request()->url()==route('admin.orders.create')?'active':'' }}"
-                               href="{{ route('admin.orders.create') }}">
-                                <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
-                                <span class="menu-title">New Order</span>
-                            </a>
-                        @endcan
                         @can(\App\Constants\Permission::APPROVE_ORDERS)
                             <a class="menu-link {{ request()->fullUrl()==route('admin.orders.index',['status'=>'pending'])?'active':'' }}"
                                href="{{ route('admin.orders.index',['status'=>'pending']) }}">
@@ -377,13 +370,13 @@
                         </a>
                     @endcan
                     @can(\App\Constants\Permission::VIEW_SALES_PAYMENT_REPORTS)
-                     {{--   <a class="menu-link {{ \Illuminate\Support\Str::of(request()->url())==route('admin.reports.payments')?'active':'' }}"
-                           href="{{ route('admin.reports.payments') }}">
-                            <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
-                            <span class="menu-title">
-                                   Sales Payments Report
-                               </span>
-                        </a>--}}
+                        {{--   <a class="menu-link {{ \Illuminate\Support\Str::of(request()->url())==route('admin.reports.payments')?'active':'' }}"
+                              href="{{ route('admin.reports.payments') }}">
+                               <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                               <span class="menu-title">
+                                      Sales Payments Report
+                                  </span>
+                           </a>--}}
                     @endcan
                     <!--end:Menu link-->
                     @can(\App\Constants\Permission::VIEW_PURCHASE_REPORTS)
@@ -396,20 +389,20 @@
                     <!--end:Menu link-->
                     <!--end:Menu link-->
                     @can(\App\Constants\Permission::VIEW_ITEMS_REPORTS)
-                {{--        <a class="menu-link {{ request()->url()==route('admin.reports.items')?'active':'' }}"
-                           href="{{ route('admin.reports.items') }}">
-                            <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
-                            <span class="menu-title">Items Report</span>
-                        </a>--}}
+                        {{--        <a class="menu-link {{ request()->url()==route('admin.reports.items')?'active':'' }}"
+                                   href="{{ route('admin.reports.items') }}">
+                                    <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                                    <span class="menu-title">Items Report</span>
+                                </a>--}}
                     @endcan
                     <!--end:Menu link-->
                     <!--end:Menu link-->
                     @can(\App\Constants\Permission::VIEW_EXPENSES_REPORTS)
-                  {{--      <a class="menu-link {{ request()->url()==route('admin.reports.expenses')?'active':'' }}"
-                           href="{{ route('admin.reports.expenses') }}">
-                            <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
-                            <span class="menu-title">Expenses Report</span>
-                        </a>--}}
+                        {{--      <a class="menu-link {{ request()->url()==route('admin.reports.expenses')?'active':'' }}"
+                                 href="{{ route('admin.reports.expenses') }}">
+                                  <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                                  <span class="menu-title">Expenses Report</span>
+                              </a>--}}
                     @endcan
                     <!--end:Menu link-->
                 </div>

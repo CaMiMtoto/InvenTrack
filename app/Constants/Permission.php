@@ -77,6 +77,8 @@ class Permission
     {
         return [
             self::NEW_ORDER,
+            self::APPROVE_ORDERS,
+            self::ASSIGN_DELIVERY
         ];
     }
 

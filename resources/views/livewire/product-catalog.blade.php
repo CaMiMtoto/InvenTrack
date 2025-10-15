@@ -35,7 +35,7 @@
                         </span>
                         <!--end::Svg Icon-->
                         <a href="{{ route('admin.orders.create') }}"
-                            class="fw-bolder position-absolute translate-middle top-0 start-75 tw-h-5 tw-w-5 bg-danger-subtle d-flex align-items-center justify-content-center rounded-pill text-danger p-4">
+                           class="fw-bolder position-absolute translate-middle top-0 start-75 tw-h-5 tw-w-5 bg-danger-subtle d-flex align-items-center justify-content-center rounded-pill text-danger p-4">
                             {{ \Cart::session(auth()->id())->getContent()->count() }}
                         </a>
                     </div>
@@ -86,17 +86,19 @@
                         </h5>
                         <div class="d-flex justify-content-between align-items-center">
                             <strong>  {{ number_format($item->price) }} RWF</strong>
-                            @if ($this->isInCart($item->id))
-                                <button wire:click="remove({{ $item->id }})" type="button"
-                                        class="btn btn-light-danger btn-sm rounded-pill btn-icon">
-                                    <x-lucide-trash class="tw-h-5 tw-w-5"/>
-                                </button>
-                            @else
-                                <button class="btn btn-light-primary btn-sm rounded-pill btn-icon" type="button"
-                                        wire:click="add({{$item->id}})">
-                                    <x-lucide-plus class="tw-h-5 tw-w-5"/>
-                                </button>
-                            @endif
+                            @can(\App\Constants\Permission::NEW_ORDER)
+                                @if ($this->isInCart($item->id))
+                                    <button wire:click="remove({{ $item->id }})" type="button"
+                                            class="btn btn-light-danger btn-sm rounded-pill btn-icon">
+                                        <x-lucide-trash class="tw-h-5 tw-w-5"/>
+                                    </button>
+                                @else
+                                    <button class="btn btn-light-primary btn-sm rounded-pill btn-icon" type="button"
+                                            wire:click="add({{$item->id}})">
+                                        <x-lucide-plus class="tw-h-5 tw-w-5"/>
+                                    </button>
+                                @endif
+                            @endcan
                         </div>
                     </div>
                 </div>
