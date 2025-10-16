@@ -4,8 +4,8 @@
             <ul class="breadcrumb breadcrumb-separatorless fw-semibold mb-6">
                 <!--begin::Item-->
                 <li class="breadcrumb-item text-gray-700 fw-bold">
-                    <a href="{{ route('admin.dashboard') }}" class="text-gray-500 d-flex align-items-center justify-content-center">
-                        <x-lucide-house class="tw-h-5 tw-w-5 text-gray-400"/>
+                    <a href="{{ route('admin.dashboard') }}" class="text-gray-700 d-flex align-items-center justify-content-center">
+                        <x-lucide-house class="tw-h-5 tw-w-5 text-gray-700"/>
                         <span>Dashboard</span>
                     </a>
                 </li>
@@ -32,9 +32,12 @@
 
         <div class="d-flex align-items-center gap-2">
             @foreach($actions as $action)
-                <a href="{{ $action['url'] }}" id="{{$action['id']??''}}" class="btn btn-sm {{ $action['class'] ?? 'btn-light-primary' }}">
-                    {!! $action['icon'] ?? '' !!} {{ $action['label'] }}
-                </a>
+                @if($action !=null)
+                    <a href="{{ $action['url'] }}" id="{{$action['id']??''}}" class="btn btn-sm {{ $action['class'] ?? 'btn-light-primary' }}">
+                        {!! $action['icon'] ?? '' !!} {{ $action['label'] }}
+                    </a>
+                @endif
+
             @endforeach
         </div>
     </div>

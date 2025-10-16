@@ -22,8 +22,9 @@ class Permission
     public const MANAGE_PRODUCTS = 'manage_products';
     const VIEW_PRODUCT_CATALOG = 'VIEW_PRODUCT_CATALOG';
     public const MANAGE_SUPPLIERS = 'manage_suppliers';
-    public const MANAGE_STOCK = 'manage_stock';
-    public const MANAGE_STOCK_ADJUSTMENT = 'manage_stock_adjustment';
+
+    const REQUEST_STOCK_ADJUSTMENT = 'REQUEST_STOCK_ADJUSTMENT';
+    public const APPROVE_STOCK_ADJUSTMENT = 'approve_stock_adjustment';
     public const VIEW_STOCK_ADJUSTMENT = 'view_stock_adjustment';
     public const VIEW_STOCK_MOVEMENT = 'view_stock_movement';
     const MANAGE_CUSTOMERS = 'manage_customers';
@@ -59,7 +60,9 @@ class Permission
             self::DELIVER_PRODUCTS,
             self::VIEW_DELIVERIES,
             self::MANAGE_SUPPLIERS,
-            self::MANAGE_STOCK,
+            self::REQUEST_STOCK_ADJUSTMENT,
+            self::VIEW_STOCK_ADJUSTMENT,
+            self::APPROVE_STOCK_ADJUSTMENT,
             self::MANAGE_CUSTOMERS,
             self::VIEW_PRODUCT_CATALOG
         ];
@@ -101,8 +104,8 @@ class Permission
     public static function ManageStock(): array
     {
         return [
-            self::MANAGE_STOCK,
-            self::MANAGE_STOCK_ADJUSTMENT,
+            self::REQUEST_STOCK_ADJUSTMENT,
+            self::APPROVE_STOCK_ADJUSTMENT,
             self::VIEW_STOCK_ADJUSTMENT,
             self::VIEW_STOCK_MOVEMENT
         ];

@@ -70,7 +70,7 @@
             </div>
             <!--end::Card title-->
             <!--begin::Card toolbar-->
-            <form action="{{ request()->fullUrl() }}" method="get" autocomplete="off"
+            <form action="{!! request()->fullUrl() !!}" method="get" autocomplete="off"
                   class="card-toolbar flex-row-fluid justify-content-lg-end gap-5">
                 <div class="w-100 w-lg-auto">
                     <input type="text" class="form-control datepicker form-control-sm" name="start_date"
@@ -88,11 +88,7 @@
                         <i class="bi bi-funnel"></i>
                         Filter
                     </button>
-                    <a href="{{ route('admin.reports.export-sales') }}" class="btn btn-success btn-sm js-export"
-                       type="button">
-                        Export
-                        <i class="bi bi-filetype-xlsx"></i>
-                    </a>
+
                 </div>
             </form>
             <!--end::Card toolbar-->

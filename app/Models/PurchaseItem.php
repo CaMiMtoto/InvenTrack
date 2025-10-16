@@ -39,6 +39,10 @@ class PurchaseItem extends Model
 {
     use HasFactory;
 
+    protected $casts = [
+        'expiration_date' => 'date'
+    ];
+
     public function purchase(): BelongsTo
     {
         return $this->belongsTo(Purchase::class);

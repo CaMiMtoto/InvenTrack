@@ -51,7 +51,7 @@ class PurchaseController extends Controller
                                 </button>
                                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                     <a class="dropdown-item" href="' . route('admin.purchases.show', encodeId($purchaseOrder->id)) . '" >Details</a>
-                                    <a class="dropdown-item" href="' . route('admin.purchases.print',encodeId($purchaseOrder->id)) . '" >Print</a>
+                                    <a class="dropdown-item" href="' . route('admin.purchases.print', encodeId($purchaseOrder->id)) . '" >Print</a>
                                     <a class="dropdown-item js-edit" href="' . route('admin.purchases.edit', encodeId($purchaseOrder->id)) . '" >Edit</a>
                                     <a class="dropdown-item js-delete" href="' . route('admin.purchases.destroy', encodeId($purchaseOrder->id)) . '">Delete</a>
                                 </div>
@@ -81,7 +81,6 @@ class PurchaseController extends Controller
     public function store(Request $request)
     {
 //        return $request->all();
-
         $data = $this->validatePurchaseOrder($request);
         try {
             DB::transaction(function () use ($data) {
@@ -117,6 +116,8 @@ class PurchaseController extends Controller
             'product_ids' => ['required', 'array'],
             'quantities' => ['required', 'array'],
             'prices' => ['required', 'array'],
+            'exp_dates' => ['sometimes', 'array'],
+            'exp_dates.*' => ['nullable', 'date', 'after:today']
         ]);
 
         if (count($data['product_ids']) !== count($data['quantities']) ||
@@ -133,7 +134,7 @@ class PurchaseController extends Controller
             'supplier_id' => $data['supplier_id'],
             'purchased_at' => $data['purchased_at'],
             'user_id' => auth()->id(),
-            'total_amount'=>0
+            'total_amount' => 0
         ]);
 
         $purchaseOrder->generateInvoiceNumber();
@@ -150,7 +151,7 @@ class PurchaseController extends Controller
         foreach ($data['product_ids'] as $index => $product_id) {
             $qty = $data['quantities'][$index];
             $price = $data['prices'][$index];
-
+            $exp_date = $data['exp_dates'][$index];
             if ($qty <= 0) {
                 throw new \Exception("Invalid quantity for product ID: {$product_id}");
             }
@@ -159,6 +160,7 @@ class PurchaseController extends Controller
                 'product_id' => $product_id,
                 'quantity' => $qty,
                 'unit_price' => $price,
+                'expiration_date' => $exp_date
             ]);
 
             $product = Product::findOrFail($product_id);

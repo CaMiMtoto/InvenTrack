@@ -13,8 +13,8 @@ return new class extends Migration {
             $table->text('reason')->nullable();
             $table->string('status')->default(Status::Pending);
             $table->foreignId('requested_by')->constrained('users');
-            $table->foreignId('approved_by')->nullable()->constrained('users');
-            $table->timestamp('approved_at')->nullable();
+            $table->foreignId('reviewed_by')->nullable()->constrained('users');
+            $table->timestamp('reviewed_at')->nullable();
             $table->timestamps();
         });
     }

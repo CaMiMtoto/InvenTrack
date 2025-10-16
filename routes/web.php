@@ -6,6 +6,7 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\StockAdjustmentController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Middleware\EnsureUserIsActive;
 use App\Http\Middleware\PasswordChanged;
@@ -47,7 +48,6 @@ Route::group(['middleware' => ['auth', PasswordChanged::class, EnsureUserIsActiv
         Route::post('/store', [App\Http\Controllers\OrderController::class, 'store'])->name('store');
         Route::get('/{saleOrder}/show', [App\Http\Controllers\OrderController::class, 'show'])->name('show');
         Route::delete('/{order}/destroy', [App\Http\Controllers\OrderController::class, 'destroy'])->name('destroy');
-        Route::get('/{order}/edit', [App\Http\Controllers\OrderController::class, 'edit'])->name('edit');
         Route::patch('/{order}/update-status', [App\Http\Controllers\OrderController::class, 'updateStatus'])->name('update-status');
         Route::get('/{order}/print', [App\Http\Controllers\OrderController::class, 'print'])->name('print');
         Route::put('/{order}/cancel', [App\Http\Controllers\OrderController::class, 'cancel'])->name('cancel');
@@ -64,13 +64,14 @@ Route::group(['middleware' => ['auth', PasswordChanged::class, EnsureUserIsActiv
         Route::patch('/{delivery}/update-status', [App\Http\Controllers\DeliveryController::class, 'updateStatus'])->name('update-status');
         Route::get('/assigned-to-me', [App\Http\Controllers\DeliveryController::class, 'myDeliveries'])->name('assigned-to-me');
     });
-    Route::get('/sales/{saleOrder}/deliveries', [App\Http\Controllers\SaleDeliveryController::class, 'index'])->name('sale-deliveries.index');
-    Route::post('/sales/{saleOrder}/deliveries/store', [App\Http\Controllers\SaleDeliveryController::class, 'store'])->name('sale-deliveries.store');
-    Route::get('/sales/deliveries/{saleDelivery}/print', [App\Http\Controllers\SaleDeliveryController::class, 'print'])->name('sale-deliveries.print');
 
-    Route::get('/stock/movements', [StockTransactionController::class, 'index'])->name('stock-transaction.index');
-    Route::get('/stock/adjustments', [StockTransactionController::class, 'adjustments'])->name('stock-transaction.adjustments');
-    Route::post('/stock/adjustments', [StockTransactionController::class, 'adjustStock'])->name('stock-transaction.adjust-stock');
+    Route::group(['prefix' => 'stock-adjustments', 'as' => 'stock-adjustments.'], function () {
+        Route::get('/', [StockAdjustmentController::class, 'index'])->name('index');
+        Route::get('/create', [StockAdjustmentController::class, 'create'])->name('create');
+        Route::post('/', [StockAdjustmentController::class, 'store'])->name('store');
+        Route::get('/{stockAdjustment}', [StockAdjustmentController::class, 'show'])->name('show');
+        Route::post('/{stockAdjustment}/review', [StockAdjustmentController::class, 'review'])->name('review');
+    });
 
     Route::get('/expenses', [ExpenseController::class, 'index'])->name('expenses.index');
     Route::post('/expenses/store', [ExpenseController::class, 'store'])->name('expenses.store');

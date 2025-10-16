@@ -26,8 +26,8 @@ class DeliveryController extends Controller
      */
     public function index()
     {
-        if (\request()->ajax()){
-            $source = Delivery::with(['order', 'deliveryPerson']);
+        if (\request()->ajax()) {
+            $source = Delivery::with(['order.customer', 'deliveryPerson'])->withCount('items');
             return datatables($source)
                 ->addIndexColumn()
                 ->addColumn('action', fn(Delivery $delivery) => view('admin.deliveries._actions', compact('delivery')))
@@ -75,12 +75,22 @@ class DeliveryController extends Controller
                         'delivered_quantity' => 0
                     ]);
                 }
-
-                // Record flow history for each delivery
+                $order->update([
+                    'order_status' => Status::PendingDelivery
+                ]);
                 FlowHistory::create([
-                    'reference_type' => Delivery::class,
+                    'reference_type' => $order->getMorphClass(),
+                    'reference_id' => $order->id,
+                    'status' => Status::PendingDelivery,
+                    'comment' => 'Assigned to ' . $deliveryPerson->name,
+                    'user_id' => auth()->id()
+                ]);
+                // Record flow history for each delivery
+
+                FlowHistory::create([
+                    'reference_type' => $delivery->getMorphClass(),
                     'reference_id' => $delivery->id,
-                    'action' => 'assigned',
+                    'status' => Status::Pending,
                     'comment' => 'Assigned to ' . $deliveryPerson->name,
                     'user_id' => auth()->id()
                 ]);
@@ -100,7 +110,7 @@ class DeliveryController extends Controller
     {
 
         $data = $request->validate([
-            'status' => 'required|in:pending,transit,delivered,partially delivered',
+            'status' => 'required|in:transit,delivered,partially delivered',
             'comment' => 'required|string|max:255'
         ]);
 
@@ -110,19 +120,27 @@ class DeliveryController extends Controller
             $delivery->save();
             if (strtolower($data['status']) === strtolower(Status::Delivered)) {
                 $delivery->delivered_at = now();
-                $delivery->order()->update([
-                    'order_status' => Status::Delivered
-                ]);
                 $delivery->save();
                 foreach ($delivery->items as $item) {
                     $item->delivered_quantity = $item->quantity;
                     $item->save();
                 }
             }
+            $order = $delivery->order;
+            $order->update([
+                'order_status' => $data['status']
+            ]);
+            FlowHistory::create([
+                'reference_type' => $order->getMorphClass(),
+                'reference_id' => $order->id,
+                'status' => $data['status'],
+                'comment' => $data['comment'] ?? null,
+                'user_id' => auth()->id()
+            ]);
             FlowHistory::create([
                 'reference_type' => Delivery::class,
                 'reference_id' => $delivery->id,
-                'action' => $data['status'],
+                'status' => $data['status'],
                 'comment' => $data['comment'] ?? null,
                 'user_id' => auth()->id()
             ]);

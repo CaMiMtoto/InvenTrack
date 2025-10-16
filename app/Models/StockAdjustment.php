@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\HasEncodedId;
 use App\Traits\HasStatusColor;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -11,13 +12,15 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class StockAdjustment extends Model
 {
-    use HasFactory, HasStatusColor;
+    use HasStatusColor,HasEncodedId;
 
     protected $guarded = [];
 
     protected $casts = [
         'approved_at' => 'datetime',
     ];
+
+    protected $appends=['status_color'];
 
     public function items(): HasMany
     {

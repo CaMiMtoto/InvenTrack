@@ -15,17 +15,29 @@ use App\Models\PaymentMethod;
 use App\Models\Product;
 use App\Models\StockMovement;
 use App\Models\User;
+use App\Services\FlowHistoryService;
 use Auth;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Darryldecode\Cart\Cart;
+use DataTables;
 use DB;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use Throwable;
 use Yajra\DataTables\Exceptions\Exception;
 
 class OrderController extends Controller
 {
+    private FlowHistoryService $flowHistoryService;
+
+
+    public function __construct()
+    {
+        $this->flowHistoryService = new FlowHistoryService();
+    }
+
+
     /**
      * Display a listing of the resource.
      * @throws \Exception
@@ -46,7 +58,7 @@ class OrderController extends Controller
                 ->when($endDate, fn($query, $endDate) => $query->whereDate('order_date', '<=', $endDate))
                 ->when($status, fn($query, $status) => $query->where('order_status', $status));
 
-            return \DataTables::of($data)
+            return DataTables::of($data)
                 ->addColumn('action', fn(Order $saleOrder) => view('admin.sales.partials.actions', compact('saleOrder')))
                 ->rawColumns(['action'])
                 ->make(true);
@@ -73,7 +85,7 @@ class OrderController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function store(Request $request)
     {
@@ -133,6 +145,14 @@ class OrderController extends Controller
             }
 
             $order->update(['total_amount' => $total_amount]);
+            $this->flowHistoryService->saveFlow(
+                $order->getMorphClass(),
+                $order->id,
+                "Order Created Successfully",
+                Status::Pending,
+                false,
+                auth()->id()
+            );
             /// clear car
             \Cart::session(auth()->id())->clear();
             DB::commit();
@@ -153,7 +173,7 @@ class OrderController extends Controller
     // 2. Approve order (storekeeper)
 
     /**
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function updateStatus(Request $request, Order $order)
     {
@@ -184,9 +204,18 @@ class OrderController extends Controller
             if ($data['action'] === 'approved') {
                 $this->processApprovedOrder($order);
             }
+
+            $this->flowHistoryService->saveFlow(
+                $order->getMorphClass(),
+                $order->id,
+                "Order {$data['action']} successfully . ",
+                $data['action'],
+                false,
+                auth()->id()
+            );
         });
 
-        return response()->json(['success' => "Order {$data['action']} successfully."]);
+        return response()->json(['success' => "Order {$data['action']} successfully . "]);
     }
 
     /**
@@ -199,7 +228,9 @@ class OrderController extends Controller
             $product = $item->product;
 
             if ($product->stock < $item->quantity) {
-                throw new \Exception("Not enough stock for product: {$product->name}");
+                throw new \Exception("Not enough stock for product: {
+                    $product->name}
+                    ");
             }
 
             $product->stock -= $item->quantity;
@@ -238,51 +269,9 @@ class OrderController extends Controller
             'type' => TransactionType::CREDIT,
             'amount' => $totalAmount,
         ]);
+
     }
 
-
-    public function assignDelivery(Order $order, Request $request)
-    {
-        $request->validate([
-            'delivery_person_id' => 'required|exists:users,id',
-        ]);
-
-        $order->update([
-            'delivery_person_id' => $request->delivery_person_id,
-            'status' => 'assigned',
-        ]);
-
-        return back()->with('success', "Order {$order->order_number} assigned for delivery.");
-    }
-
-    public function markDelivered(Order $order)
-    {
-        $order->update(['status' => 'delivered']);
-        return back()->with('success', "Order {$order->order_number} marked as delivered.");
-    }
-
-    public function markReturned(Order $order, Request $request)
-    {
-        $request->validate([
-            'items' => 'required|array',
-            'items.*.order_item_id' => 'required|exists:order_items,id',
-            'items.*.returned_qty' => 'required|integer|min:1',
-        ]);
-
-        foreach ($request->items as $ret) {
-            $orderItem = OrderItem::find($ret['order_item_id']);
-            $orderItem->update([
-                'returned_qty' => $orderItem->returned_qty + $ret['returned_qty'],
-            ]);
-
-            // TODO: Add stock back
-            $orderItem->product->increment('stock', $ret['returned_qty']);
-        }
-
-        $order->update(['status' => 'returned']);
-
-        return back()->with('success', "Order {$order->order_number} updated with returns.");
-    }
 
     /**
      * Display the specified resource.
@@ -293,19 +282,10 @@ class OrderController extends Controller
         return view('admin.sales.show', compact('saleOrder'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Order $Order)
-    {
-        $customers = Customer::all();
-        $products = Product::all();
-        return view('admin.purchase.edit', compact('Order', 'customers', 'products'));
-    }
 
     /**
      * Remove the specified resource from storage.
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function destroy(Order $Order)
     {
@@ -322,17 +302,25 @@ class OrderController extends Controller
     }
 
     /**
-     * @throws \Throwable
+     * @throws Throwable
      */
-    public function cancel(Order $Order)
+    public function cancel(Order $order)
     {
-        if ($Order->status !== Status::Pending) {
+        if ($order->status !== Status::Pending) {
             return response()->json(['error' => 'Only pending orders can be canceled.']);
         }
         DB::beginTransaction();
-        $Order->update(['status' => Status::Cancelled]);
+        $order->update(['status' => Status::Cancelled]);
         // rollback stock
-        $this->rollbackStock($Order);
+        $this->rollbackStock($order);
+        $this->flowHistoryService->saveFlow(
+            $order->getMorphClass(),
+            $order->id,
+            "Order Cancelled Successfully",
+            Status::Cancelled,
+            false,
+            auth()->id()
+        );
         DB::commit();
         return response()->json(['success' => 'Sales order canceled successfully.']);
     }

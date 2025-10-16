@@ -69,11 +69,12 @@
                                 <!--end::Logo-->
 
                                 <!--begin::Action-->
-                                <a href="{{ route('admin.purchases.print',encodeId($purchaseOrder->id)) }}" target="_blank"
+                              {{--  <a href="{{ route('admin.purchases.print',encodeId($purchaseOrder->id)) }}"
+                                   target="_blank"
                                    class="btn btn-sm btn-danger">
                                     <i class="bi bi-file-pdf"></i>
                                     Print Order
-                                </a>
+                                </a>--}}
                                 <!--end::Action-->
                             </div>
                             <!--end::Top-->
@@ -167,21 +168,25 @@
                                 <div class="flex-grow-1">
                                     <!--begin::Table-->
                                     <div class="table-responsive border-bottom mb-9">
-                                        <table class="table mb-3">
+                                        <table class="table mb-3 table-row-dashed table-row-gray-400">
                                             <thead>
-                                            <tr class="border-bottom fs-6 fw-bold text-muted">
-                                                <th class="min-w-175px pb-2">Product</th>
-                                                <th class="min-w-70px text-end pb-2">Price</th>
-                                                <th class="min-w-80px text-end pb-2">Qty</th>
-                                                <th class="min-w-100px text-end pb-2">Total</th>
+                                            <tr class="fw-bold text-uppercase text-gray-800">
+                                                <th class="min-w-175px   pb-2">Product</th>
+                                                <th class="min-w-70px pb-2">Exp.Date</th>
+                                                <th class="min-w-70px pb-2">Price</th>
+                                                <th class="min-w-80px pb-2">Qty</th>
+                                                <th class="min-w-100px pb-2">Total</th>
                                             </tr>
                                             </thead>
 
                                             <tbody>
                                             @foreach($purchaseOrder->items as $item)
-                                                <tr class="fw-bold text-gray-700 fs-5 text-end">
-                                                    <td class="d-flex align-items-center pt-6">
+                                                <tr>
+                                                    <td class="pt-6">
                                                         {{ $item->product->name }}
+                                                    </td>
+                                                    <td class="pt-6">
+                                                        {{ optional($item->expiration_date)->format('d M Y')??'N/A' }}
                                                     </td>
 
                                                     <td class="pt-6">

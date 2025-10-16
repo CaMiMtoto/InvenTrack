@@ -63,6 +63,7 @@
                     <thead>
                     <tr class="text-uppercase fw-semibold">
                         <th>Product</th>
+                        <th>Exp.Date</th>
                         <th>Price</th>
                         <th>Quantity</th>
                         <th>Total</th>
@@ -81,6 +82,10 @@
                                         {{ $product->name }}</option>
                                 @endforeach
                             </select>
+                        </td>
+                        <td>
+                            <input type="date" class="form-control  tw-w-44"
+                                   name="exp_dates[]"/>
                         </td>
                         <td>
                             <input type="number" class="form-control  js-price tw-w-44" required
@@ -117,7 +122,7 @@
                     </button>
                     <button class="btn btn-sm btn-primary" type="submit">
                         <i class="bi bi-save"></i>
-                        Save Order
+                        Save Purchase
                     </button>
                 </div>
 
@@ -144,6 +149,9 @@
                                             data-price="{{ $product->price }}" >{{ $product->name }} </option>
                                 @endforeach
                 </select>
+            </td>
+             <td>
+                <input type="date" class="form-control   tw-w-44" name="exp_dates[]"/>
             </td>
              <td>
                 <input type="number" class="form-control  js-price tw-w-44" name="prices[]" required/>
