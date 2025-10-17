@@ -16,9 +16,67 @@
     ['url'=>route('admin.orders.print',encodeId($saleOrder->id)),'label'=>'Print Order','icon'=>'<i class=\'bi bi-file-pdf\'></i>','class'=>'btn-danger']
 ]"
     />
-    <!--end::Toolbar-->
-    <x-order-details :saleOrder="$saleOrder"/>
-    {{--    review section--}}
+    <ul class="nav nav-tabs nav-line-tabs nav-line-tabs-2x mb-5 fs-6">
+        <li class="nav-item">
+            <a class="nav-link active" data-bs-toggle="tab" href="#kt_tab_pane_1">
+                <x-lucide-shopping-bag class="tw-h-5 tw-w-5"/>
+                Details
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="tab" href="#kt_tab_pane_2">
+                <x-lucide-history class="tw-h-5 tw-w-5"/>
+                History
+            </a>
+        </li>
+
+    </ul>
+
+    <div class="tab-content" id="myTabContent">
+        <div class="tab-pane fade show active" id="kt_tab_pane_1" role="tabpanel">
+            <!--end::Toolbar-->
+            <x-order-details :saleOrder="$saleOrder"/>
+            {{--    review section--}}
+        </div>
+        <div class="tab-pane fade" id="kt_tab_pane_2" role="tabpanel">
+            <div class="card card-body">
+                <ul class="tw-relative border-start tw-border-gray-200 dark:tw-border-gray-700 tw-list-none">
+                    @foreach($saleOrder->histories as $item)
+
+                        <li class="tw-mb-10 tw-ms-6">
+                        <span
+                            class="tw-absolute tw-flex tw-items-center tw-justify-center tw-w-6 tw-h-6 bg-{{ $item->statusColor }}-subtle text-{{ $item->statusColor }}-emphasis tw-rounded-full -tw-start-3 tw-ring-8 tw-ring-white">
+                                <x-lucide-chevron-up class="tw-w-4 tw-h-4" aria-hidden="true"/>
+                        </span>
+                            <div
+                                class=" tw-rounded-lg tw-shadow-xs dark:tw-bg-gray-700 dark:tw-border-gray-600">
+                                <div class="tw-items-center tw-justify-between tw-mb-3 sm:tw-flex">
+                                    <time
+                                        class="tw-mb-1 tw-text-sm tw-font-normal tw-text-gray-400 sm:tw-order-last sm:tw-mb-0">
+                                        {{ $item->created_at->diffForHumans() }}
+                                    </time>
+                                    <div class=" tw-font-normal tw-text-gray-500 dark:tw-text-gray-300">
+                                        {{ $item->user->name }}
+                                        <span
+                                            class="bg-{{ $item->statusColor }}-subtle text-{{ $item->statusColor }}-emphasis  tw-text-sm  fw-bolder rounded-pill tw-me-2 tw-px-2.5 tw-py-0.5  tw-ms-3">
+                                    {{ ucwords($item->status) }}
+                                </span>
+                                    </div>
+                                </div>
+                                <div
+                                    class="tw-p-3 tw-text-sm tw-italic tw-font-normal tw-text-gray-500  border tw-border-gray-200 tw-rounded-lg tw-bg-gray-50 dark:tw-bg-gray-600 dark:tw-border-gray-500 dark:tw-text-gray-300">
+                                    {{ $item->comment }}
+                                </div>
+                            </div>
+                        </li>
+                    @endforeach
+                </ul>
+
+            </div>
+        </div>
+
+    </div>
+
 
     {{-- Approval Section --}}
     @if(auth()->user()->can(\App\Constants\Permission::APPROVE_ORDERS) && strtolower($saleOrder->status)=='pending')

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\HasStatusColor;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -28,5 +29,14 @@ use Illuminate\Database\Eloquent\Model;
  */
 class FlowHistory extends Model
 {
-    //
+    use HasStatusColor;
+    public function reference(): \Illuminate\Database\Eloquent\Relations\MorphTo
+    {
+        return $this->morphTo();
+    }
+
+    public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
 }

@@ -51,6 +51,7 @@ Route::group(['middleware' => ['auth', PasswordChanged::class, EnsureUserIsActiv
         Route::patch('/{order}/update-status', [App\Http\Controllers\OrderController::class, 'updateStatus'])->name('update-status');
         Route::get('/{order}/print', [App\Http\Controllers\OrderController::class, 'print'])->name('print');
         Route::put('/{order}/cancel', [App\Http\Controllers\OrderController::class, 'cancel'])->name('cancel');
+        Route::patch('/{order}/mark-as-complete', [App\Http\Controllers\OrderController::class, 'markAsComplete'])->name('mark-as-complete');
         Route::post('/cart/update', [OrderController::class, 'updateCart'])->name('cart.update');
     });
 

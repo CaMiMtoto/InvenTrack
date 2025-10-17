@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Constants\Permission;
+use App\Constants\Status;
 use App\Traits\HasEncodedId;
 use App\Traits\HasStatusColor;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -98,7 +100,25 @@ class Order extends Model
 
     public function doneBy(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(User::class,'created_by');
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function histories(): \Illuminate\Database\Eloquent\Relations\MorphMany
+    {
+        return $this->morphMany(FlowHistory::class, 'reference');
+    }
+
+    public function canBeCompleted()
+    {
+        $allowedStatuses = [
+            Status::Delivered,
+            Status::PartiallyDelivered,
+            Status::Returned,
+        ];
+        if (!in_array(strtolower($this->getRawOriginal('order_status')), $allowedStatuses)) {
+            return false;
+        }
+        return auth()->user()->can(Permission::COMPLETE_ORDERS);
     }
 
 

@@ -183,6 +183,63 @@
                 });
             });
 
+            $myTable.on('click','.js-complete',function (e) {
+                e.preventDefault();
+                let url = $(this).attr('href');
+
+            });
+
+            $myTable.on('click','.js-complete',function (e) {
+                e.preventDefault();
+                let url = $(this).attr('href');
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You are about to mark this order as complete. This action cannot be undone.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, complete it!',
+                    cancelButtonText: 'No, wait'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: url,
+                            type: 'PATCH',
+                            data: {
+                                _token: '{{ csrf_token() }}'
+                            },
+                            dataType: 'json',
+                            success: function (response) {
+                                Swal.fire({
+                                    text: response.message || 'Order marked as complete!',
+                                    icon: 'success',
+                                    buttonsStyling: false,
+                                    confirmButtonText: "Ok, got it!",
+                                    customClass: {
+                                        confirmButton: "btn btn-primary"
+                                    }
+                                });
+                                window.dt.ajax.reload(null, false); // Reload datatable
+                            },
+                            error: function (xhr) {
+                                let errorMessage = "An unexpected error occurred.";
+                                if (xhr.responseJSON && xhr.responseJSON.message) {
+                                    errorMessage = xhr.responseJSON.message;
+                                }
+                                Swal.fire({
+                                    text: errorMessage,
+                                    icon: 'error',
+                                    buttonsStyling: false,
+                                    confirmButtonText: "Ok, got it!",
+                                    customClass: {
+                                        confirmButton: "btn btn-danger"
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+            });
+
         });
     </script>
 @endpush

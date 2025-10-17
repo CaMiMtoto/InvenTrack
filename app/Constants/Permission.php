@@ -42,6 +42,7 @@ class Permission
     const MANAGE_EXPENSE_CATEGORIES = 'manage_expense_categories';
     const MANAGE_EXPENSES = 'manage_expenses';
     const VIEW_EXPENSES_REPORTS = 'view_expenses_reports';
+    const COMPLETE_ORDERS = 'complete_orders';
 
     public static function all(): array
     {
@@ -54,6 +55,7 @@ class Permission
             self::NEW_ORDER,
             self::VIEW_ORDERS,
             self::APPROVE_ORDERS,
+            self::COMPLETE_ORDERS,
             self::VIEW_PERMISSIONS,
             self::MANAGE_CATEGORIES,
             self::MANAGE_PRODUCTS,

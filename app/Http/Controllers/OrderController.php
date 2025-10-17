@@ -11,7 +11,6 @@ use App\Models\Customer;
 use App\Models\JournalEntry;
 use App\Models\JournalLine;
 use App\Models\Order;
-use App\Models\PaymentMethod;
 use App\Models\Product;
 use App\Models\StockMovement;
 use App\Models\User;
@@ -426,5 +425,31 @@ class OrderController extends Controller
             'subtotal' => number_format($cart->getSubTotal()),
             'total' => number_format($cart->getTotal()),
         ]);
+    }
+
+    /**
+     * @throws Throwable
+     */
+    public function markAsComplete(Order $order)
+    {
+        if (!$order->canBeCompleted()) {
+            return response()->json([
+                'message' => 'Only delivered,partially delivered and returned orders can be completed',
+            ], 422);
+        }
+        DB::transaction(function () use ($order) {
+            $order->update(['order_status' => Status::Completed]);
+
+            $this->flowHistoryService->saveFlow(
+                $order->getMorphClass(),
+                $order->id,
+                "Order marked as complete.",
+                Status::Completed,
+                false,
+                auth()->id()
+            );
+        });
+
+        return response()->json(['message' => 'Order has been marked as complete.']);
     }
 }
