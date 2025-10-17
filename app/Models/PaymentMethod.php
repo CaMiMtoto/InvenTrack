@@ -2,7 +2,12 @@
 
 namespace App\Models;
 
+use App\Traits\HasActiveScope;
+use Eloquent;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Support\Carbon;
 
 /**
  * @property int $id
@@ -10,21 +15,26 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $code
  * @property string|null $description
  * @property int $is_active
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @method static \Illuminate\Database\Eloquent\Builder<static>|PaymentMethod newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|PaymentMethod newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|PaymentMethod query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|PaymentMethod whereCode($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|PaymentMethod whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|PaymentMethod whereDescription($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|PaymentMethod whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|PaymentMethod whereIsActive($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|PaymentMethod whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|PaymentMethod whereUpdatedAt($value)
- * @mixin \Eloquent
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @method static Builder<static>|PaymentMethod newModelQuery()
+ * @method static Builder<static>|PaymentMethod newQuery()
+ * @method static Builder<static>|PaymentMethod query()
+ * @method static Builder<static>|PaymentMethod whereCode($value)
+ * @method static Builder<static>|PaymentMethod whereCreatedAt($value)
+ * @method static Builder<static>|PaymentMethod whereDescription($value)
+ * @method static Builder<static>|PaymentMethod whereId($value)
+ * @method static Builder<static>|PaymentMethod whereIsActive($value)
+ * @method static Builder<static>|PaymentMethod whereName($value)
+ * @method static Builder<static>|PaymentMethod whereUpdatedAt($value)
+ * @mixin Eloquent
  */
 class PaymentMethod extends Model
 {
-    //
+    use HasActiveScope;
+
+    public function payments(): MorphMany
+    {
+        return $this->morphMany(Payment::class, 'paymentable');
+    }
 }

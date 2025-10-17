@@ -139,7 +139,6 @@ class OrderController extends Controller
                     // Update the product's stock quantity
                     $product->stock -= $newQty; // Decrease by newQty (boxes or units)
                     $product->save(); // Save changes to product
-
                 }
             }
 
@@ -157,6 +156,9 @@ class OrderController extends Controller
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack(); // Rollback in case of error
+            if ($request->ajax()){
+                return response()->json(['error' => $e->getMessage()], 422);
+            }
             return redirect()->back()->withErrors(['error' => $e->getMessage()])->withInput($data);
         }
         if ($request->ajax()) {

@@ -117,7 +117,7 @@ class PurchaseController extends Controller
             'quantities' => ['required', 'array'],
             'prices' => ['required', 'array'],
             'exp_dates' => ['sometimes', 'array'],
-            'exp_dates.*' => ['nullable', 'date', 'after:today']
+            'exp_dates.*' => ['nullable', 'date', 'before_or_equal:today']
         ]);
 
         if (count($data['product_ids']) !== count($data['quantities']) ||

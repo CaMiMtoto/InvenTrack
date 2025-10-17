@@ -5,6 +5,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\StockAdjustmentController;
 use App\Http\Controllers\SupplierController;
@@ -55,6 +56,11 @@ Route::group(['middleware' => ['auth', PasswordChanged::class, EnsureUserIsActiv
         Route::post('/cart/update', [OrderController::class, 'updateCart'])->name('cart.update');
     });
 
+    Route::group(['prefix' => 'payments', 'as' => 'payments.'], function () {
+        Route::get('/create', [PaymentController::class, 'create'])->name('create');
+        Route::post('/', [PaymentController::class, 'store'])->name('store');
+        Route::get('/search-order', [PaymentController::class, 'searchOrder'])->name('search-order');
+    });
     Route::group(['prefix' => "deliveries", "as" => "deliveries."], function () {
         Route::get('/pending', [App\Http\Controllers\OrderController::class, 'pendingDeliveries'])->name('pending');
         Route::post('/assign', [App\Http\Controllers\DeliveryController::class, 'bulkAssign'])->name('bulk-assign');

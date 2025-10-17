@@ -30,5 +30,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Payment extends Model
 {
-    //
+    public function paymentable(): \Illuminate\Database\Eloquent\Relations\MorphTo
+    {
+        return $this->morphTo();
+    }
 }

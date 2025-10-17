@@ -122,4 +122,28 @@ class Order extends Model
     }
 
 
+    public function payments(): \Illuminate\Database\Eloquent\Relations\MorphMany
+    {
+        return $this->morphMany(Payment::class, 'paymentable');
+    }
+
+    public function totalPaid()
+    {
+        return Attribute::make(
+            get: fn() => $this->payments->sum('amount')
+        );
+    }
+
+    public function amountDue()
+    {
+        return Attribute::make(
+            get: fn() => $this->total_amount - $this->totalPaid
+        );
+    }
+
+    public function isFullyPaid(): bool
+    {
+        return $this->amountDue <= 0;
+    }
+
 }

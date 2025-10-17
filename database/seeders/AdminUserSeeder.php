@@ -74,7 +74,10 @@ class AdminUserSeeder extends Seeder
             ]
         ];
 
-        \DB::table('users')->insert($attributes);
+        foreach ($attributes as $attribute) {
+            $user = User::create($attribute);
+            $user->save();
+        }
 
     }
 }
