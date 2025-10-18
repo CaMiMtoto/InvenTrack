@@ -3,51 +3,7 @@
 @section('content')
     <div>
         <!--begin::Toolbar-->
-        <div class="mb-5">
-            <div class="app-toolbar-wrapper d-flex flex-stack flex-wrap gap-4 w-100">
-                <!--begin::Page title-->
-                <div class="page-title d-flex flex-column gap-1 me-3 mb-2">
-                    <!--begin::Breadcrumb-->
-                    <ul class="breadcrumb breadcrumb-separatorless fw-semibold mb-6">
-                        <!--begin::Item-->
-                        <li class="breadcrumb-item text-gray-700 fw-bold lh-1">
-                            <a href="{{ route('admin.dashboard') }}" class="text-gray-500">
-                                <x-lucide-house class="fs-3 text-gray-400 me-n1 tw-h-5 tw-w-5"/>
-                            </a>
-                        </li>
-                        <!--end::Item-->
-                        <!--begin::Item-->
-                        <li class="breadcrumb-item text-gray-700 fw-bold lh-1">
-                            Roles
-                        </li>
-                        <!--end::Item-->
-                        <!--begin::Item-->
-                        <li class="breadcrumb-item">
-                            <x-lucide-chevron-right class="text-gray-400 mx-n1 tw-h-5 tw-w-5"/>
-                        </li>
-                        <!--end::Item-->
-                        <!--begin::Item-->
-                        <li class="breadcrumb-item text-gray-700">
-                            Manage Roles
-                        </li>
-                        <!--end::Item-->
-                    </ul>
-                    <!--end::Breadcrumb-->
-                    <!--begin::Title-->
-                    <h1 class="page-heading d-flex flex-column justify-content-center text-dark fw-bolder fs-1 lh-0">
-                        Roles
-                    </h1>
-                    <!--end::Title-->
-                </div>
-                <!--end::Page title-->
-                <!--begin::Actions-->
-                <button type="button" class="btn btn-sm btn-light-primary px-4 py-3" id="addBtn">
-                    <i class="bi bi-plus fs-3"></i>
-                    Add New
-                </button>
-                <!--end::Actions-->
-            </div>
-        </div>
+       <x-toolbar title="Manage Roles" :breadcrumbs="[['label'=>'Roles']]"/>
         <!--end::Toolbar-->
         <!--begin::Content-->
         <div class="my-3">
@@ -68,7 +24,7 @@
 
 
     <div class="modal fade" tabindex="-1" id="myModal">
-        <div class="modal-dialog modal-dialog-centered ">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <h3 class="modal-title">
@@ -97,7 +53,7 @@
 
                         <div class="row">
                             @foreach($permissions as $permission)
-                                <div class="col-md-6">
+                                <div class="col-md-6 col-lg-4">
                                     <div class="form-check my-2">
                                         <input class="form-check-input" type="checkbox" value="{{ $permission->id }}"
                                                name="permissions[]"

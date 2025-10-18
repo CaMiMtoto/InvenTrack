@@ -4,69 +4,119 @@ namespace App\Constants;
 
 class Permission
 {
-    const MANAGE_USERS = 'MANAGE_USERS';
-    const MANAGE_ROLES = 'MANAGE_ROLES';
-    const MANAGE_PERMISSIONS = 'MANAGE_PERMISSIONS';
-    const VIEW_PURCHASES = 'VIEW_PURCHASES';
-    const ADD_PURCHASE = 'ADD_PURCHASE';
-    const NEW_ORDER = 'NEW_ORDER';
-    const VIEW_ORDERS = 'VIEW_ORDERS';
-    const APPROVE_ORDERS = 'APPROVE_ORDERS';
-    const ASSIGN_DELIVERY = 'ASSIGN_DELIVERY';
-    const DELIVER_PRODUCTS = 'DELIVER_PRODUCTS';
-    public const MANAGE_DELIVERIES = 'MANAGE_DELIVERIES';
+    // User & Role Management
+    public const MANAGE_USERS = 'manage_users';
+    public const MANAGE_ROLES = 'manage_roles';
+    public const MANAGE_PERMISSIONS = 'manage_permissions';
+    public const VIEW_PERMISSIONS = 'view_permissions';
 
-    const VIEW_DELIVERIES = 'VIEW_DELIVERIES';
-    public const  VIEW_PERMISSIONS = 'view_permissions';
-    public const MANAGE_CATEGORIES = 'manage_categories';
+    // Purchases
+    public const VIEW_PURCHASES = 'view_purchases';
+    public const ADD_PURCHASE = 'add_purchase';
+    public const VIEW_PURCHASE_REPORTS = 'view_purchase_reports';
+
+    // Orders
+    public const NEW_ORDER = 'new_order';
+    public const VIEW_ORDERS = 'view_orders';
+    public const APPROVE_ORDERS = 'approve_orders';
+    public const ASSIGN_DELIVERY = 'assign_delivery';
+    public const COMPLETE_ORDERS = 'complete_orders';
+    public const CANCEL_SALES_ORDERS = 'cancel_sales_orders';
+
+    // Deliveries
+    public const MANAGE_DELIVERIES = 'manage_deliveries';
+    public const VIEW_DELIVERIES = 'view_deliveries';
+    public const DELIVER_PRODUCTS = 'deliver_products';
+
+    // Products & Categories
     public const MANAGE_PRODUCTS = 'manage_products';
-    const VIEW_PRODUCT_CATALOG = 'VIEW_PRODUCT_CATALOG';
-    public const MANAGE_SUPPLIERS = 'manage_suppliers';
+    public const MANAGE_CATEGORIES = 'manage_categories';
+    public const VIEW_PRODUCT_CATALOG = 'view_product_catalog';
 
-    const REQUEST_STOCK_ADJUSTMENT = 'REQUEST_STOCK_ADJUSTMENT';
+    // Suppliers & Customers
+    public const MANAGE_SUPPLIERS = 'manage_suppliers';
+    public const MANAGE_CUSTOMERS = 'manage_customers';
+
+    // Stock
+    public const REQUEST_STOCK_ADJUSTMENT = 'request_stock_adjustment';
     public const APPROVE_STOCK_ADJUSTMENT = 'approve_stock_adjustment';
     public const VIEW_STOCK_ADJUSTMENT = 'view_stock_adjustment';
     public const VIEW_STOCK_MOVEMENT = 'view_stock_movement';
-    const MANAGE_CUSTOMERS = 'manage_customers';
-    const MANAGE_PAYMENT_METHODS = 'manage_payment_methods';
+    public const VIEW_STOCK_REPORTS = 'view_stock_reports';
 
-    const VIEW_REPORTS = 'view_reports';
-    const VIEW_SALES_REPORTS = 'view_sales_reports';
-    const VIEW_STOCK_REPORTS = 'view_stock_reports';
-    const VIEW_PURCHASE_REPORTS = 'view_purchase_reports';
-    const ADD_SALE_PAYMENT = 'add_sale_payment';
-    const VIEW_SALES_PAYMENTS = 'view_sales_payments';
-    const VIEW_SALES_PAYMENT_REPORTS = 'view_sales_payment_reports';
-    const VIEW_ITEMS_REPORTS = 'view_items_reports';
-    const CANCEL_SALES_ORDERS = 'cancel_sales_orders';
-    const MANAGE_EXPENSE_CATEGORIES = 'manage_expense_categories';
-    const MANAGE_EXPENSES = 'manage_expenses';
-    const VIEW_EXPENSES_REPORTS = 'view_expenses_reports';
-    const COMPLETE_ORDERS = 'complete_orders';
+    // Payments & Expenses
+    public const MANAGE_PAYMENT_METHODS = 'manage_payment_methods';
+    public const ADD_SALE_PAYMENT = 'add_sale_payment';
+    public const VIEW_SALES_PAYMENTS = 'view_sales_payments';
+    public const VIEW_SALES_PAYMENT_REPORTS = 'view_sales_payment_reports';
+    public const MANAGE_EXPENSE_CATEGORIES = 'manage_expense_categories';
+    public const MANAGE_EXPENSES = 'manage_expenses';
+    public const VIEW_EXPENSES_REPORTS = 'view_expenses_reports';
 
+    // Reports
+    public const VIEW_REPORTS = 'view_reports';
+    public const VIEW_SALES_REPORTS = 'view_sales_reports';
+    public const VIEW_ITEMS_REPORTS = 'view_items_reports';
+
+    /**
+     * Return all permissions
+     */
     public static function all(): array
     {
         return [
+            // User & Role Management
             self::MANAGE_USERS,
             self::MANAGE_ROLES,
             self::MANAGE_PERMISSIONS,
+            self::VIEW_PERMISSIONS,
+
+            // Purchases
             self::VIEW_PURCHASES,
             self::ADD_PURCHASE,
+            self::VIEW_PURCHASE_REPORTS,
+
+            // Orders
             self::NEW_ORDER,
             self::VIEW_ORDERS,
             self::APPROVE_ORDERS,
+            self::ASSIGN_DELIVERY,
             self::COMPLETE_ORDERS,
-            self::VIEW_PERMISSIONS,
-            self::MANAGE_CATEGORIES,
-            self::MANAGE_PRODUCTS,
-            self::DELIVER_PRODUCTS,
+            self::CANCEL_SALES_ORDERS,
+
+            // Deliveries
+            self::MANAGE_DELIVERIES,
             self::VIEW_DELIVERIES,
+            self::DELIVER_PRODUCTS,
+
+            // Products & Categories
+            self::MANAGE_PRODUCTS,
+            self::MANAGE_CATEGORIES,
+            self::VIEW_PRODUCT_CATALOG,
+
+            // Suppliers & Customers
             self::MANAGE_SUPPLIERS,
-            self::REQUEST_STOCK_ADJUSTMENT,
-            self::VIEW_STOCK_ADJUSTMENT,
-            self::APPROVE_STOCK_ADJUSTMENT,
             self::MANAGE_CUSTOMERS,
-            self::VIEW_PRODUCT_CATALOG
+
+            // Stock
+            self::REQUEST_STOCK_ADJUSTMENT,
+            self::APPROVE_STOCK_ADJUSTMENT,
+            self::VIEW_STOCK_ADJUSTMENT,
+            self::VIEW_STOCK_MOVEMENT,
+            self::VIEW_STOCK_REPORTS,
+
+            // Payments & Expenses
+            self::MANAGE_PAYMENT_METHODS,
+            self::ADD_SALE_PAYMENT,
+            self::VIEW_SALES_PAYMENTS,
+            self::VIEW_SALES_PAYMENT_REPORTS,
+            self::MANAGE_EXPENSE_CATEGORIES,
+            self::MANAGE_EXPENSES,
+            self::VIEW_EXPENSES_REPORTS,
+
+            // Reports
+            self::VIEW_REPORTS,
+            self::VIEW_SALES_REPORTS,
+            self::VIEW_ITEMS_REPORTS,
         ];
     }
 
@@ -74,52 +124,68 @@ class Permission
     {
         return [
             self::VIEW_PURCHASES,
-            self::ADD_PURCHASE
+            self::ADD_PURCHASE,
         ];
     }
 
-    public static function ManageSalesOrders(): array
+    public static function manageSalesOrders(): array
     {
         return [
             self::NEW_ORDER,
             self::APPROVE_ORDERS,
-            self::ASSIGN_DELIVERY
+            self::ASSIGN_DELIVERY,
+            self::COMPLETE_ORDERS,
+            self::CANCEL_SALES_ORDERS,
         ];
     }
 
-    public static function ManageOrderDeliveries(): array
+    public static function manageOrderDeliveries(): array
     {
         return [
             self::VIEW_DELIVERIES,
             self::MANAGE_DELIVERIES,
+            self::DELIVER_PRODUCTS,
         ];
     }
 
-    public static function ManageProducts(): array
+    public static function manageProducts(): array
     {
         return [
             self::MANAGE_PRODUCTS,
-            self::MANAGE_CATEGORIES
+            self::MANAGE_CATEGORIES,
+            self::VIEW_PRODUCT_CATALOG,
         ];
     }
 
-    public static function ManageStock(): array
+    public static function manageStock(): array
     {
         return [
             self::REQUEST_STOCK_ADJUSTMENT,
             self::APPROVE_STOCK_ADJUSTMENT,
             self::VIEW_STOCK_ADJUSTMENT,
-            self::VIEW_STOCK_MOVEMENT
+            self::VIEW_STOCK_MOVEMENT,
         ];
     }
 
-    public static function ManageSettings(): array
+    public static function manageSettings(): array
     {
         return [
             self::MANAGE_SUPPLIERS,
             self::MANAGE_CUSTOMERS,
             self::MANAGE_PAYMENT_METHODS,
-            self::MANAGE_EXPENSE_CATEGORIES
+            self::MANAGE_EXPENSE_CATEGORIES,
+        ];
+    }
+
+    public static function manageReports(): array
+    {
+        return [
+            self::VIEW_REPORTS,
+            self::VIEW_SALES_REPORTS,
+            self::VIEW_PURCHASE_REPORTS,
+            self::VIEW_STOCK_REPORTS,
+            self::VIEW_ITEMS_REPORTS,
+            self::VIEW_EXPENSES_REPORTS,
         ];
     }
 }

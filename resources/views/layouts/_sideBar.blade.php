@@ -87,7 +87,7 @@
                 </div>
             @endcanany
 
-            @canany([Permission::ManageOrderDeliveries()])
+            @canany(Permission::ManageOrderDeliveries())
                 <div data-kt-menu-trigger="click"
                      class="menu-item menu-accordion {{ Str::of(request()->url())->contains('/admin/deliveries')?'show':'' }}">
                     <!--begin:Menu link-->
@@ -131,7 +131,7 @@
                 </div>
             @endcanany
 
-            @canany([Permission::managePurchaseOrders()])
+            @canany(Permission::managePurchaseOrders())
                 <div data-kt-menu-trigger="click"
                      class="menu-item menu-accordion {{ Str::of(request()->url())->contains('/admin/purchase-orders')?'show':'' }}">
                     <!--begin:Menu link-->
@@ -165,7 +165,7 @@
                     <!--end:Menu item-->
                 </div>
             @endcanany
-            @canany([Permission::ManageProducts()])
+            @canany(Permission::ManageProducts())
                 <div data-kt-menu-trigger="click"
                      class="menu-item menu-accordion {{ Str::of(request()->fullUrl())->contains('/admin/products')?'show':'' }}">
                     <!--begin:Menu link-->
@@ -200,7 +200,7 @@
                     <!--end:Menu item-->
                 </div>
             @endcanany
-            @canany([Permission::ManageStock()])
+            @canany(Permission::ManageStock())
                 <div data-kt-menu-trigger="click"
                      class="menu-item menu-accordion {{ Str::of(request()->url())->contains('/admin/stock')?'show':'' }}">
                     <!--begin:Menu link-->
@@ -258,7 +258,7 @@
                     <!--end:Menu link-->
                 </div>
             @endcan
-            @canany([Permission::ManageSettings()])
+            @canany(Permission::ManageSettings())
                 <div data-kt-menu-trigger="click"
                      class="menu-item menu-accordion {{ Str::of(request()->url())->contains('/admin/settings')?'show':'' }}">
                     <!--begin:Menu link-->
