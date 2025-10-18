@@ -16,6 +16,7 @@ trait HasStatusColor
             strtolower(Status::Submitted),
             strtolower(Status::Transit),
             strtolower(Status::PartiallyDelivered),
+            strtolower(Status::PartiallyPaid),
             strtolower(Status::PendingDelivery),
             strtolower(Status::Approved) => 'info',
 
@@ -23,6 +24,7 @@ trait HasStatusColor
             strtolower(Status::Active),
             strtolower(Status::Successful),
             strtolower(Status::Reconciled),
+            strtolower(Status::Paid),
             strtolower(Status::Delivered) => 'success',
 
             strtolower(Status::Rejected),

@@ -46,7 +46,7 @@ class Permission
 
     // Payments & Expenses
     public const MANAGE_PAYMENT_METHODS = 'manage_payment_methods';
-    public const ADD_SALE_PAYMENT = 'add_sale_payment';
+
     public const VIEW_SALES_PAYMENTS = 'view_sales_payments';
     public const VIEW_SALES_PAYMENT_REPORTS = 'view_sales_payment_reports';
     public const MANAGE_EXPENSE_CATEGORIES = 'manage_expense_categories';
@@ -57,6 +57,8 @@ class Permission
     public const VIEW_REPORTS = 'view_reports';
     public const VIEW_SALES_REPORTS = 'view_sales_reports';
     public const VIEW_ITEMS_REPORTS = 'view_items_reports';
+    const ADD_ORDER_PAYMENT = 'add_order_payment';
+
 
     /**
      * Return all permissions
@@ -105,8 +107,9 @@ class Permission
             self::VIEW_STOCK_REPORTS,
 
             // Payments & Expenses
+            // payments
+            self::ADD_ORDER_PAYMENT,
             self::MANAGE_PAYMENT_METHODS,
-            self::ADD_SALE_PAYMENT,
             self::VIEW_SALES_PAYMENTS,
             self::VIEW_SALES_PAYMENT_REPORTS,
             self::MANAGE_EXPENSE_CATEGORIES,
@@ -117,6 +120,8 @@ class Permission
             self::VIEW_REPORTS,
             self::VIEW_SALES_REPORTS,
             self::VIEW_ITEMS_REPORTS,
+
+
         ];
     }
 
@@ -186,6 +191,14 @@ class Permission
             self::VIEW_STOCK_REPORTS,
             self::VIEW_ITEMS_REPORTS,
             self::VIEW_EXPENSES_REPORTS,
+        ];
+    }
+
+    public static function ManageOrderPayments(): array
+    {
+        return [
+            self::ADD_ORDER_PAYMENT,
+            self::VIEW_SALES_PAYMENTS,
         ];
     }
 }

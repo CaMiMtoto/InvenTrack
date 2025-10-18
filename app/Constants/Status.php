@@ -22,6 +22,8 @@ class Status
     const Reconciled = 'reconciled';
     const Returned = 'returned';
     const PendingDelivery = 'pending delivery';
+    const PartiallyPaid = 'partially paid';
+    const Paid = 'paid';
 
     public static function getStatuses(): array
     {

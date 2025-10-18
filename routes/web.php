@@ -57,8 +57,9 @@ Route::group(['middleware' => ['auth', PasswordChanged::class, EnsureUserIsActiv
     });
 
     Route::group(['prefix' => 'payments', 'as' => 'payments.'], function () {
+        Route::get('/', [PaymentController::class, 'index'])->name('index');
         Route::get('/create', [PaymentController::class, 'create'])->name('create');
-        Route::post('/', [PaymentController::class, 'store'])->name('store');
+        Route::post('/order/{order}/store', [PaymentController::class, 'store'])->name('store');
         Route::get('/search-order', [PaymentController::class, 'searchOrder'])->name('search-order');
     });
     Route::group(['prefix' => "deliveries", "as" => "deliveries."], function () {

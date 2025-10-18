@@ -34,4 +34,19 @@ class Payment extends Model
     {
         return $this->morphTo();
     }
+
+    public function order(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Order::class,'paymentable_id');
+    }
+
+    public function paymentMethod(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(PaymentMethod::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

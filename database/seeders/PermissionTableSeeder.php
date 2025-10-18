@@ -14,7 +14,7 @@ class PermissionTableSeeder extends Seeder
     public function run(): void
     {
         $permissions = \App\Constants\Permission::all();
-        Permission::query()->forceDelete();
+//        Permission::query()->forceDelete();
         foreach ($permissions as $permission) {
             $updatedPermission = Permission::query()->updateOrCreate(['name' => $permission]);
             $description = str_replace("_", " ", $permission);

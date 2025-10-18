@@ -6,6 +6,7 @@ use App\Constants\Permission;
 use App\Constants\Status;
 use App\Traits\HasEncodedId;
 use App\Traits\HasStatusColor;
+use Dompdf\Css\Content\Attr;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -127,23 +128,25 @@ class Order extends Model
         return $this->morphMany(Payment::class, 'paymentable');
     }
 
-    public function totalPaid()
+    public function totalPaid(): Attribute
     {
         return Attribute::make(
             get: fn() => $this->payments->sum('amount')
         );
     }
 
-    public function amountDue()
+    public function amountDue(): Attribute
     {
         return Attribute::make(
-            get: fn() => $this->total_amount - $this->totalPaid
+            get: fn() => $this->total_amount - $this->total_paid
         );
     }
 
-    public function isFullyPaid(): bool
+    public function isFullyPaid(): Attribute
     {
-        return $this->amountDue <= 0;
+        return Attribute::make(
+            get: fn() => $this->amount_due <= 0
+        );
     }
 
 }

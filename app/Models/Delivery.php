@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Constants\Permission;
 use App\Constants\Status;
 use App\Traits\HasEncodedId;
 use App\Traits\HasStatusColor;
@@ -37,8 +38,9 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Delivery extends Model
 {
-    use HasStatusColor,HasEncodedId;
-    protected $appends=['status_color'];
+    use HasStatusColor, HasEncodedId;
+
+    protected $appends = ['status_color'];
     protected $guarded = [];
 
     public function order(): \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -57,10 +59,10 @@ class Delivery extends Model
     }
 
 
-    public function status():Attribute
+    public function status(): Attribute
     {
-        return  Attribute::make(
-            get:fn() => ucwords(
+        return Attribute::make(
+            get: fn() => ucwords(
                 \Str::of($this->attributes['status'])
             )
         );
@@ -68,12 +70,16 @@ class Delivery extends Model
 
     public function returns(): \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Relations\HasMany|Delivery
     {
-        return $this->hasMany(ReturnModel::class,'delivery_id');
+        return $this->hasMany(ReturnModel::class, 'delivery_id');
     }
 
     public function statusCanBeUpdated(): bool
     {
-        if (strtolower($this->status)!=strtolower(Status::PartiallyDelivered) && strtolower($this->status)!=strtolower(Status::Delivered))
+        if (strtolower($this->status) != strtolower(Status::PartiallyDelivered)
+            && strtolower($this->status) != strtolower(Status::Delivered)
+            && auth()->user()->can(Permission::DELIVER_PRODUCTS)
+            && $this->delivery_person_id == auth()->id()
+        )
             return true;
         return false;
     }

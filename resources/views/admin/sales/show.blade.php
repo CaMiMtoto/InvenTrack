@@ -37,25 +37,67 @@
             <!--end::Toolbar-->
             <x-order-details :saleOrder="$saleOrder"/>
             {{--    review section--}}
+            {{-- Approval Section --}}
+            @if(auth()->user()->can(\App\Constants\Permission::APPROVE_ORDERS) && strtolower($saleOrder->status)=='pending')
+                <div class="card mt-4">
+                    <div class="card-body">
+                        <div>
+                            <h1>Approval</h1>
+                            <p>
+                                Please review the order details above and choose to approve or reject this order. You may also
+                                leave
+                                a comment for additional context.
+                            </p>
+                        </div>
+                        <form action="{{ route('admin.orders.update-status', encodeId($saleOrder->id)) }}" method="POST"
+                              id="submitDecisionForm">
+                            @csrf
+                            @method('PATCH')
+
+                            {{-- Comment --}}
+                            <div class="mb-3">
+                                <label for="comment" class="form-label">Comment (optional)</label>
+                                <textarea name="comment" id="comment" rows="3" class="form-control"
+                                          placeholder="Leave a note for approval/rejection..."></textarea>
+                                @error('comment')
+                                <div class="text-danger small">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            {{-- Buttons --}}
+                            <div class="d-flex gap-2">
+                                <button type="submit" name="action" value="approved" class="btn btn-success"
+                                        data-decion_text="Are you sure you want to approve this order?">
+                                    Approve
+                                </button>
+                                <button type="submit" name="action" value="rejected" class="btn btn-danger"
+                                        data-decion_text="Are you sure you want to reject this order?">
+                                    Reject
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            @endif
         </div>
         <div class="tab-pane fade" id="kt_tab_pane_2" role="tabpanel">
             <div class="card card-body">
-                <ul class="tw-relative border-start tw-border-gray-200 dark:tw-border-gray-700 tw-list-none">
-                    @foreach($saleOrder->histories as $item)
+                <ul class="tw-relative border-start tw-border-gray-200  tw-list-none">
+                    @foreach($saleOrder->histories()->latest()->get() as $item)
 
                         <li class="tw-mb-10 tw-ms-6">
                         <span
                             class="tw-absolute tw-flex tw-items-center tw-justify-center tw-w-6 tw-h-6 bg-{{ $item->statusColor }}-subtle text-{{ $item->statusColor }}-emphasis tw-rounded-full -tw-start-3 tw-ring-8 tw-ring-white">
-                                <x-lucide-chevron-up class="tw-w-4 tw-h-4" aria-hidden="true"/>
+                                <x-lucide-chevron-down class="tw-w-4 tw-h-4" aria-hidden="true"/>
                         </span>
                             <div
-                                class=" tw-rounded-lg tw-shadow-xs dark:tw-bg-gray-700 dark:tw-border-gray-600">
+                                class=" tw-rounded-lg tw-shadow-xs ">
                                 <div class="tw-items-center tw-justify-between tw-mb-3 sm:tw-flex">
                                     <time
                                         class="tw-mb-1 tw-text-sm tw-font-normal tw-text-gray-400 sm:tw-order-last sm:tw-mb-0">
                                         {{ $item->created_at->diffForHumans() }}
                                     </time>
-                                    <div class=" tw-font-normal tw-text-gray-500 dark:tw-text-gray-300">
+                                    <div class=" tw-font-normal tw-text-gray-500 ">
                                         {{ $item->user->name }}
                                         <span
                                             class="bg-{{ $item->statusColor }}-subtle text-{{ $item->statusColor }}-emphasis  tw-text-sm  fw-bolder rounded-pill tw-me-2 tw-px-2.5 tw-py-0.5  tw-ms-3">
@@ -64,7 +106,7 @@
                                     </div>
                                 </div>
                                 <div
-                                    class="tw-p-3 tw-text-sm tw-italic tw-font-normal tw-text-gray-500  border tw-border-gray-200 tw-rounded-lg tw-bg-gray-50 dark:tw-bg-gray-600 dark:tw-border-gray-500 dark:tw-text-gray-300">
+                                    class="tw-p-3 tw-text-sm tw-italic tw-font-normal tw-text-gray-500  border tw-border-gray-200 tw-rounded-lg tw-bg-gray-50 ">
                                     {{ $item->comment }}
                                 </div>
                             </div>
@@ -78,48 +120,7 @@
     </div>
 
 
-    {{-- Approval Section --}}
-    @if(auth()->user()->can(\App\Constants\Permission::APPROVE_ORDERS) && strtolower($saleOrder->status)=='pending')
-        <div class="card mt-4">
-            <div class="card-body">
-                <div>
-                    <h1>Approval</h1>
-                    <p>
-                        Please review the order details above and choose to approve or reject this order. You may also
-                        leave
-                        a comment for additional context.
-                    </p>
-                </div>
-                <form action="{{ route('admin.orders.update-status', encodeId($saleOrder->id)) }}" method="POST"
-                      id="submitDecisionForm">
-                    @csrf
-                    @method('PATCH')
 
-                    {{-- Comment --}}
-                    <div class="mb-3">
-                        <label for="comment" class="form-label">Comment (optional)</label>
-                        <textarea name="comment" id="comment" rows="3" class="form-control"
-                                  placeholder="Leave a note for approval/rejection..."></textarea>
-                        @error('comment')
-                        <div class="text-danger small">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    {{-- Buttons --}}
-                    <div class="d-flex gap-2">
-                        <button type="submit" name="action" value="approved" class="btn btn-success"
-                                data-decion_text="Are you sure you want to approve this order?">
-                            Approve
-                        </button>
-                        <button type="submit" name="action" value="rejected" class="btn btn-danger"
-                                data-decion_text="Are you sure you want to reject this order?">
-                            Reject
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    @endif
 
 @endsection
 
