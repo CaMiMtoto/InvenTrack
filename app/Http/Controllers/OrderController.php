@@ -132,6 +132,9 @@ class OrderController extends Controller
                     // Ensure the stock is enough (checking in boxes or units)
                     if ($product->stock < $newQty) {
                         DB::rollBack(); // Roll back the transaction
+                        if ($request->ajax()) {
+                            return response()->json(['error' => 'Insufficient stock for product: ' . $product->name], 400);
+                        }
                         return redirect()->back()->withErrors(['error' => 'Insufficient stock for product: ' . $product->name])
                             ->withInput($data); // Return error and retain the form inputs
                     }
@@ -156,8 +159,8 @@ class OrderController extends Controller
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack(); // Rollback in case of error
-            if ($request->ajax()){
-                return response()->json(['error' => $e->getMessage()], 422);
+            if ($request->ajax()) {
+                return response()->json(['error' => $e->getMessage()], 400);
             }
             return redirect()->back()->withErrors(['error' => $e->getMessage()])->withInput($data);
         }

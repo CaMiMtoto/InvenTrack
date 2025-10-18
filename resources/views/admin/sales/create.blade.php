@@ -237,6 +237,17 @@
                                     confirmButton: "btn btn-danger"
                                 }
                             });
+                        } else if (xhr.status === 400) {
+                            let errorMessage = xhr.responseJSON.error ?? "An unexpected error occurred. Please try again.";
+                            Swal.fire({
+                                text: errorMessage,
+                                icon: "error",
+                                buttonsStyling: false,
+                                confirmButtonText: "Ok, got it!",
+                                customClass: {
+                                    confirmButton: "btn btn-danger"
+                                }
+                            });
                         } else {
                             // Handle other errors
                             Swal.fire({
