@@ -3,7 +3,13 @@
 @section('content')
     <div>
         <!--begin::Toolbar-->
-       <x-toolbar title="Manage Roles" :breadcrumbs="[['label'=>'Roles']]"/>
+ <div class="d-flex justify-content-between align-items-center">
+     <x-toolbar title="Manage Roles" :breadcrumbs="[['label'=>'Roles']]"/>
+     <button type="button" class="btn btn-sm btn-light-primary px-4 py-3" id="addBtn">
+         <i class="bi bi-plus fs-3"></i>
+         Add New
+     </button>
+ </div>
         <!--end::Toolbar-->
         <!--begin::Content-->
         <div class="my-3">
