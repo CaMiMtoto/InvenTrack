@@ -19,6 +19,7 @@ use Illuminate\Support\Carbon;
  * @property string $unit_price
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ * @property Carbon|null $expiration_date
  * @property-read \App\Models\Product $product
  * @property-read \App\Models\Purchase $purchase
  * @property-read mixed $total
@@ -27,6 +28,7 @@ use Illuminate\Support\Carbon;
  * @method static Builder<static>|PurchaseItem newQuery()
  * @method static Builder<static>|PurchaseItem query()
  * @method static Builder<static>|PurchaseItem whereCreatedAt($value)
+ * @method static Builder<static>|PurchaseItem whereExpirationDate($value)
  * @method static Builder<static>|PurchaseItem whereId($value)
  * @method static Builder<static>|PurchaseItem whereProductId($value)
  * @method static Builder<static>|PurchaseItem wherePurchaseId($value)

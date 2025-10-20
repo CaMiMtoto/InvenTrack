@@ -58,6 +58,8 @@ class Permission
     public const VIEW_SALES_REPORTS = 'view_sales_reports';
     public const VIEW_ITEMS_REPORTS = 'view_items_reports';
     const ADD_ORDER_PAYMENT = 'add_order_payment';
+    const VIEW_RETURNED_ITEMS = 'view returned items';
+    const APPROVE_RETURNED_ITEMS = 'approve returned items';
 
 
     /**
@@ -120,7 +122,9 @@ class Permission
             self::VIEW_REPORTS,
             self::VIEW_SALES_REPORTS,
             self::VIEW_ITEMS_REPORTS,
-
+            // returns
+            self::VIEW_RETURNED_ITEMS,
+            self::APPROVE_RETURNED_ITEMS,
 
         ];
     }
@@ -152,6 +156,15 @@ class Permission
             self::DELIVER_PRODUCTS,
         ];
     }
+
+    public static function ManageOrderReturns(): array
+    {
+        return [
+            self::VIEW_RETURNED_ITEMS,
+            self::APPROVE_RETURNED_ITEMS,
+        ];
+    }
+
 
     public static function manageProducts(): array
     {

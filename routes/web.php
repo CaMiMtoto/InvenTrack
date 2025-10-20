@@ -7,6 +7,7 @@ use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ReturnController;
 use App\Http\Controllers\StockAdjustmentController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Middleware\EnsureUserIsActive;
@@ -37,10 +38,7 @@ Route::group(['middleware' => ['auth', PasswordChanged::class, EnsureUserIsActiv
         Route::post('/', [App\Http\Controllers\PurchaseController::class, 'store'])->name('store');
         Route::get('/{purchase}', [App\Http\Controllers\PurchaseController::class, 'show'])->name('show');
         Route::delete('/{purchase}', [App\Http\Controllers\PurchaseController::class, 'destroy'])->name('destroy');
-        Route::get('/{purchase}/edit', [App\Http\Controllers\PurchaseController::class, 'edit'])->name('edit');
-        Route::put('/{purchase}', [App\Http\Controllers\PurchaseController::class, 'update'])->name('update');
         Route::get('/{purchaseOrder}/print', [App\Http\Controllers\PurchaseController::class, 'print'])->name('print');
-
     });
 
     Route::group(['prefix' => "orders", "as" => "orders."], function () {
@@ -73,6 +71,11 @@ Route::group(['middleware' => ['auth', PasswordChanged::class, EnsureUserIsActiv
         Route::get('/assigned-to-me', [App\Http\Controllers\DeliveryController::class, 'myDeliveries'])->name('assigned-to-me');
     });
 
+    Route::group(['prefix' => 'returns', 'as' => 'returns.'], function () {
+        Route::get('/', [ReturnController::class, 'index'])->name('index');
+        Route::get('/{return}', [ReturnController::class, 'show'])->name('show');
+        Route::post('/{return}/review', [ReturnController::class, 'review'])->name('review');
+    });
     Route::group(['prefix' => 'stock-adjustments', 'as' => 'stock-adjustments.'], function () {
         Route::get('/', [StockAdjustmentController::class, 'index'])->name('index');
         Route::get('/create', [StockAdjustmentController::class, 'create'])->name('create');

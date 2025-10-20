@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Constants\Status;
 use App\Models\Customer;
 use App\Models\Order;
 use App\Models\User;
@@ -16,9 +17,8 @@ class OrderFactory extends Factory
     {
         return [
             'created_by' => User::query()->inRandomOrder()->first()->id,
-            'total_amount' => fake()->numberBetween(10000, 999999999),
-            'order_status' => fake()->randomElement(['pending', 'approved', 'assigned', 'delivered', 'reconciled', 'completed']),
-            'payment_status' => fake()->randomElement(['unpaid', 'partial', 'paid']),
+            'total_amount' => fake()->numberBetween(10000, 9999999),
+            'order_status' => fake()->randomElement([Status::Approved]),
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
             'order_date' => fake()->dateTimeBetween('-2 month', 'now'),

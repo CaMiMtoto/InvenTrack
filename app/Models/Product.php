@@ -43,6 +43,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Product whereStock($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Product whereUnitMeasure($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Product whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Product withInactive()
  * @mixin \Eloquent
  */
 class Product extends Model

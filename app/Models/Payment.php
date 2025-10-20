@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property int $id
- * @property int $order_id
  * @property int $payment_method_id
  * @property string|null $reference_number
  * @property string $amount
@@ -14,18 +13,31 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null $paid_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string $paymentable_type
+ * @property int $paymentable_id
+ * @property string|null $attachment
+ * @property int|null $user_id
+ * @property string|null $notes
+ * @property-read \App\Models\Order|null $order
+ * @property-read \App\Models\PaymentMethod $paymentMethod
+ * @property-read Model|\Eloquent $paymentable
+ * @property-read \App\Models\User|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Payment newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Payment newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Payment query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Payment whereAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Payment whereAttachment($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Payment whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Payment whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Payment whereOrderId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Payment whereNotes($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Payment wherePaidAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Payment wherePaymentMethodId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Payment wherePaymentableId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Payment wherePaymentableType($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Payment whereReferenceNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Payment whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Payment whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Payment whereUserId($value)
  * @mixin \Eloquent
  */
 class Payment extends Model

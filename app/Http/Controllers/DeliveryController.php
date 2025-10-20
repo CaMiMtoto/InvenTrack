@@ -216,7 +216,7 @@ class DeliveryController extends Controller
             $return = $delivery->returns()->create([
                 'order_id' => $delivery->order_id,
                 'done_by' => auth()->id(),
-                'status' => Status::Submitted,
+                'status' => Status::Pending,
                 'reason' => $data['comment'], // General comment for the return
             ]);
 
@@ -258,7 +258,7 @@ class DeliveryController extends Controller
             FlowHistory::create([
                 'reference_type' => $delivery->getMorphClass(),
                 'reference_id' => $delivery->id,
-                'action' => 'Returned',
+                'status' => $newStatus,
                 'comment' => 'Return processed with ' . $totalReturns . ' item(s).',
                 'user_id' => auth()->id(),
             ]);

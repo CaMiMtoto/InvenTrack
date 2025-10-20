@@ -130,6 +130,41 @@
                     <!--end:Menu item-->
                 </div>
             @endcanany
+            @canany(Permission::ManageOrderReturns())
+                <div data-kt-menu-trigger="click"
+                     class="menu-item menu-accordion {{ Str::of(request()->url())->contains('/admin/returns')?'show':'' }}">
+                    <!--begin:Menu link-->
+                    <span class="menu-link">
+                        <span class="menu-icon">
+                           <x-lucide-history class="tw-w-6 tw-h-6"/>
+                        </span>
+                        <span class="menu-title">
+                           Returns
+                        </span>
+                    <span class="menu-arrow"></span>
+                </span>
+                    <!--end:Menu link-->
+                    <!--begin:Menu sub-->
+                    <div class="menu-sub menu-sub-accordion">
+                        @can(Permission::APPROVE_RETURNED_ITEMS)
+                            <a class="menu-link {{ request()->url()==route('admin.returns.index')?'active':'' }}"
+                               href="{{ route('admin.returns.index',['status'=>'pending']) }}">
+                                <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                                <span class="menu-title">Pending Deliveries</span>
+                            </a>
+                        @endcan
+
+                        <a class="menu-link {{ request()->fullUrl()==route('admin.returns.index')?'active':'' }}"
+                           href="{{ route('admin.returns.index') }}">
+                            <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                            <span class="menu-title">All Returns</span>
+                        </a>
+                        <!--end:Menu link-->
+
+                    </div>
+                    <!--end:Menu item-->
+                </div>
+            @endcanany
             @canany(Permission::ManageOrderPayments())
                 <div data-kt-menu-trigger="click"
                      class="menu-item menu-accordion {{ Str::of(request()->url())->contains('/admin/payments')?'show':'' }}">
@@ -160,8 +195,6 @@
                                 <span class="menu-title">Order Payments</span>
                             </a>
                         @endcan
-
-
 
 
                     </div>

@@ -17,7 +17,7 @@ class OrderItemFactory extends Factory
         return [
             'order_id' => Order::query()->inRandomOrder()->first()->id,
             'product_id' => Product::query()->inRandomOrder()->first()->id,
-            'quantity' => $this->faker->randomNumber(),
+            'quantity' => fake()->numberBetween(1, 10),
             'unit_price' =>fake()->numberBetween(10000, 999999),
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),

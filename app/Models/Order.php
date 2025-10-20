@@ -18,7 +18,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int $created_by
  * @property string $total_amount
  * @property string $order_status
- * @property string $payment_status
  * @property \Illuminate\Support\Carbon $order_date
  * @property string|null $order_number
  * @property string|null $invoice_number
@@ -26,15 +25,22 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string|null $approved_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read mixed $amount_due
  * @property-read \App\Models\Customer $customer
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Delivery> $deliveries
  * @property-read int|null $deliveries_count
  * @property-read \App\Models\User $doneBy
  * @property-read string $status
  * @property-read string $status_color
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\FlowHistory> $histories
+ * @property-read int|null $histories_count
+ * @property-read mixed $is_fully_paid
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\OrderItem> $items
  * @property-read int|null $items_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Payment> $payments
+ * @property-read int|null $payments_count
  * @property-read mixed $total
+ * @property-read mixed $total_paid
  * @method static \Database\Factories\OrderFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Order newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Order newQuery()
@@ -49,7 +55,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Order whereOrderDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Order whereOrderNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Order whereOrderStatus($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Order wherePaymentStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Order whereTotalAmount($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Order whereUpdatedAt($value)
  * @mixin \Eloquent

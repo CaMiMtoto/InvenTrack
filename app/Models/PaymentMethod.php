@@ -17,6 +17,8 @@ use Illuminate\Support\Carbon;
  * @property int $is_active
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Payment> $payments
+ * @property-read int|null $payments_count
  * @method static Builder<static>|PaymentMethod newModelQuery()
  * @method static Builder<static>|PaymentMethod newQuery()
  * @method static Builder<static>|PaymentMethod query()
@@ -27,6 +29,7 @@ use Illuminate\Support\Carbon;
  * @method static Builder<static>|PaymentMethod whereIsActive($value)
  * @method static Builder<static>|PaymentMethod whereName($value)
  * @method static Builder<static>|PaymentMethod whereUpdatedAt($value)
+ * @method static Builder<static>|PaymentMethod withInactive()
  * @mixin Eloquent
  */
 class PaymentMethod extends Model

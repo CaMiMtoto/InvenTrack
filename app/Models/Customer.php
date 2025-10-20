@@ -21,18 +21,44 @@ use Illuminate\Support\Carbon;
  * @property string|null $address
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @method static CustomerFactory factory($count = null, $state = [])
+ * @property string|null $landmark
+ * @property string|null $nickname
+ * @property string|null $address_photo
+ * @property string|null $id_number
+ * @property string|null $latitude
+ * @property string|null $longitude
+ * @property int|null $district_id
+ * @property int|null $sector_id
+ * @property int|null $cell_id
+ * @property int|null $village_id
+ * @property-read \App\Models\Cell|null $cell
+ * @property-read \App\Models\District|null $district
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Order> $orders
+ * @property-read int|null $orders_count
+ * @property-read \App\Models\Sector|null $sector
+ * @property-read \App\Models\Village|null $village
+ * @method static \Database\Factories\CustomerFactory factory($count = null, $state = [])
  * @method static Builder<static>|Customer newModelQuery()
  * @method static Builder<static>|Customer newQuery()
  * @method static Builder<static>|Customer query()
  * @method static Builder<static>|Customer whereAddress($value)
+ * @method static Builder<static>|Customer whereAddressPhoto($value)
+ * @method static Builder<static>|Customer whereCellId($value)
  * @method static Builder<static>|Customer whereCreatedAt($value)
+ * @method static Builder<static>|Customer whereDistrictId($value)
  * @method static Builder<static>|Customer whereEmail($value)
  * @method static Builder<static>|Customer whereId($value)
+ * @method static Builder<static>|Customer whereIdNumber($value)
+ * @method static Builder<static>|Customer whereLandmark($value)
+ * @method static Builder<static>|Customer whereLatitude($value)
+ * @method static Builder<static>|Customer whereLongitude($value)
  * @method static Builder<static>|Customer whereName($value)
+ * @method static Builder<static>|Customer whereNickname($value)
  * @method static Builder<static>|Customer wherePhone($value)
+ * @method static Builder<static>|Customer whereSectorId($value)
  * @method static Builder<static>|Customer whereTin($value)
  * @method static Builder<static>|Customer whereUpdatedAt($value)
+ * @method static Builder<static>|Customer whereVillageId($value)
  * @mixin Eloquent
  */
 class Customer extends Model

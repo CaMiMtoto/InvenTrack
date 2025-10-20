@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Traits\HasEncodedId;
+use App\Traits\HasStatusColor;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -12,21 +14,20 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null $reason
  * @property string $status
  * @property string|null $notes
- * @property int|null $approved_by
- * @property string|null $approved_at
+ * @property int|null $reviewed_by
+ * @property string|null $reviewed_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\User|null $approver
  * @property-read \App\Models\Delivery $delivery
- * @property-read \App\Models\User|null $deliveryPerson
+ * @property-read \App\Models\User $doneBy
+ * @property-read string $status_color
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ReturnItem> $items
  * @property-read int|null $items_count
  * @property-read \App\Models\Order|null $order
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ReturnModel newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ReturnModel newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ReturnModel query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ReturnModel whereApprovedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ReturnModel whereApprovedBy($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ReturnModel whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ReturnModel whereDeliveryId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ReturnModel whereDoneBy($value)
@@ -34,14 +35,22 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ReturnModel whereNotes($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ReturnModel whereOrderId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ReturnModel whereReason($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ReturnModel whereReviewedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ReturnModel whereReviewedBy($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ReturnModel whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ReturnModel whereUpdatedAt($value)
  * @mixin \Eloquent
  */
 class ReturnModel extends Model
 {
+    use HasStatusColor,HasEncodedId;
+
     protected $table = 'returns';
-    protected $fillable = ['delivery_id', 'order_id', 'done_by', 'reason', 'status'];
+    protected $appends=['status_color'];
+
+    protected $casts=[
+        'reviewed_at'=>'datetime'
+    ];
 
     public function items(): \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Relations\HasMany
     {
@@ -60,11 +69,18 @@ class ReturnModel extends Model
 
     public function approver(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(User::class, 'approved_by');
+        return $this->belongsTo(User::class, 'reviewed_by');
     }
 
-    public function deliveryPerson(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function doneBy(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(User::class, 'delivery_person_id');
+        return $this->belongsTo(User::class, 'done_by');
+
     }
+
+    public function getStatusAttribute(): string
+    {
+        return ucfirst($this->attributes['status']);
+    }
+
 }
