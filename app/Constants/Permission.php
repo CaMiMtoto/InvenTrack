@@ -60,6 +60,7 @@ class Permission
     const ADD_ORDER_PAYMENT = 'add_order_payment';
     const VIEW_RETURNED_ITEMS = 'view returned items';
     const APPROVE_RETURNED_ITEMS = 'approve returned items';
+    const CREATE_REPORT = 'create report';
 
 
     /**
@@ -122,6 +123,7 @@ class Permission
             self::VIEW_REPORTS,
             self::VIEW_SALES_REPORTS,
             self::VIEW_ITEMS_REPORTS,
+            self::CREATE_REPORT,
             // returns
             self::VIEW_RETURNED_ITEMS,
             self::APPROVE_RETURNED_ITEMS,

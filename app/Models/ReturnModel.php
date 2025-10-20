@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $status
  * @property string|null $notes
  * @property int|null $reviewed_by
- * @property string|null $reviewed_at
+ * @property \Illuminate\Support\Carbon|null $reviewed_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\User|null $approver

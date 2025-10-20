@@ -444,6 +444,12 @@
                 <!--end:Menu link-->
                 <!--begin:Menu sub-->
                 <div class="menu-sub menu-sub-accordion">
+                    <a class="menu-link {{ \Illuminate\Support\Str::of(request()->url())==route('admin.reports.list')?'active':'' }}"
+                       href="{{ route('admin.reports.list') }}">
+                        <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                        <span class="menu-title">List</span>
+                    </a>
+
                     <!--begin:Menu item-->
                     @can(Permission::VIEW_SALES_REPORTS)
                         <a class="menu-link {{ \Illuminate\Support\Str::of(request()->url())==route('admin.reports.sales')?'active':'' }}"

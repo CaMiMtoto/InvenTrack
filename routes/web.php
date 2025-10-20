@@ -7,6 +7,7 @@ use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ReturnController;
 use App\Http\Controllers\StockAdjustmentController;
 use App\Http\Controllers\SupplierController;
@@ -161,6 +162,11 @@ Route::group(['middleware' => ['auth', PasswordChanged::class, EnsureUserIsActiv
 
     Route::group(['prefix' => 'reports', 'as' => 'reports.'], function () {
 
+        Route::get('/',[ReportController::class,'list'])->name('list');
+        Route::post('/store',[ReportController::class,'store'])->name('store');
+        Route::get('/{report}/show',[ReportController::class,'show'])->name('show');
+        Route::get('/{report}/generate',[ReportController::class,'generate'])->name('generate');
+        Route::post('/{report}/export', [ReportController::class, 'export'])->name('export');
         Route::get('/sales', [App\Http\Controllers\ReportsController::class, 'salesReport'])->name('sales');
         Route::get('/print-sales', [App\Http\Controllers\ReportsController::class, 'printSales'])->name('print-sales');
         Route::get('/export-sales', [App\Http\Controllers\ReportsController::class, 'exportSales'])->name('export-sales');
