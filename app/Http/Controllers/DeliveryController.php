@@ -170,7 +170,7 @@ class DeliveryController extends Controller
 
     public function show(Delivery $delivery)
     {
-        $delivery->load(['order.customer', 'items.orderItem.product']);
+        $delivery->load(['order.customer.district','order.customer.sector','order.customer.cell','order.customer.village', 'items.orderItem.product']);
         return view('admin.deliveries._show', compact('delivery'));
     }
 

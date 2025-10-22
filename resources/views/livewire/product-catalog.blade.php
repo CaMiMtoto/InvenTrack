@@ -27,18 +27,18 @@
             <div class="d-flex align-items-center gap-2">
                 <div class="d-flex align-items-center ms-1 ms-lg-3">
                     <!--begin::Menu wrapper-->
-                    <div
+                    <a href="{{ route('admin.orders.create') }}"
                         class="btn btn-icon btn-danger position-relative btn-sm rounded-pill">
                         <!--begin::Svg Icon | path: icons/duotone/Communication/Group-chat.svg-->
                         <span class="svg-icon svg-icon-1">
                             <x-lucide-shopping-bag class="tw-h-10 tw-w-10"/>
                         </span>
                         <!--end::Svg Icon-->
-                        <a href="{{ route('admin.orders.create') }}"
+                        <span
                            class="fw-bolder position-absolute translate-middle top-0 start-75 tw-h-5 tw-w-5 bg-danger-subtle d-flex align-items-center justify-content-center rounded-pill text-danger p-4">
                             {{ \Cart::session(auth()->id())->getContent()->count() }}
-                        </a>
-                    </div>
+                        </span>
+                    </a>
                     <!--end::Menu wrapper-->
                 </div>
                 <div>
@@ -85,18 +85,27 @@
                             {{ $item->name }}
                         </h5>
                         <div class="d-flex justify-content-between align-items-center">
-                            <strong>  {{ number_format($item->price) }} RWF</strong>
+                           <div>
+                               <div><strong> {{ number_format($item->price) }} RWF</strong></div>
+                               <div>
+                                   Av Qty: {{ $item->stock }}
+                               </div>
+                           </div>
                             @can(\App\Constants\Permission::NEW_ORDER)
                                 @if ($this->isInCart($item->id))
                                     <button wire:click="remove({{ $item->id }})" type="button"
                                             class="btn btn-light-danger btn-sm rounded-pill btn-icon">
                                         <x-lucide-trash class="tw-h-5 tw-w-5"/>
                                     </button>
-                                @else
+                                @elseif($item->stock > 0)
                                     <button class="btn btn-light-primary btn-sm rounded-pill btn-icon" type="button"
                                             wire:click="add({{$item->id}})">
                                         <x-lucide-plus class="tw-h-5 tw-w-5"/>
                                     </button>
+                                @else
+                                    <span class="badge badge-danger">
+                                        Out of Stock
+                                    </span>
                                 @endif
                             @endcan
                         </div>

@@ -13,7 +13,8 @@
                     <div class="row g-5 mb-11">
                         <!--end::Col-->
                         <div class="col-sm-6">
-                            <div class=" fs-3 text-gray-800 mb-8">Order #
+                            <div class=" fs-3 text-gray-800 mb-8">
+                                <div>Order #</div>
                                 <strong>{{ $delivery->order->order_number }}</strong>
                             </div>
                             <!--end::Label-->
@@ -65,6 +66,30 @@
                                     <span class="pe-2">{{ $delivery->order->customer->phone }}</span>
                                 </div>
                                 <!--end::Info-->
+                                <!--end::Label-->
+                                <div class="fw-semibold fs-7 text-gray-600 mb-1">Landmark:</div>
+                                <!--end::Label-->
+                                <!--end::Info-->
+                                <div class="fw-bold fs-6 text-gray-800 d-flex align-items-center flex-wrap">
+                                    <span class="pe-2">{{ $delivery->order->customer->landmark }}</span>
+                                </div>
+                                <!--end::Info-->
+                                @if($delivery->order->customer->latitude && $delivery->order->customer->longitude)
+                                    <!--end::Label-->
+                                    <div class="fw-semibold fs-7 text-gray-600 mb-1">
+                                        Direction
+                                    </div>
+                                    <!--end::Label-->
+                                    <!--end::Info-->
+                                    <a
+                                        href="https://www.google.com/maps/dir/?api=1&destination={{ $delivery->order->customer->latitude }},{{ $delivery->order->customer->longitude }}"
+                                        target="_blank">
+                                        <x-lucide-map-pin class="tw-h-5 tw-w-5"/>
+                                        Get Directions
+                                    </a>
+                                    <!--end::Info-->
+                                @endif
+
                             </div>
                         </div>
                         <!--end::Col-->
