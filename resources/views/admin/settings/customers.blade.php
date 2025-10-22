@@ -151,6 +151,19 @@
                                     <input type="file" class="form-control" id="address_photo" name="address_photo"/>
                                 </div>
                             </div>
+                            <div class="col-lg-6">
+                                <div class="mb-3">
+                                    <label for="longitude">Longitude</label>
+                                    <input type="number" step="0.001" class="form-control" id="longitude" name="longitude"/>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="mb-3">
+                                    <label for="latitude">Latitude</label>
+                                    <input type="number" step="0.001"  class="form-control" id="latitude" name="latitude"/>
+                                </div>
+                            </div>
+
                         </div>
 
                     </div>

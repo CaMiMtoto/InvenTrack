@@ -53,6 +53,7 @@ Route::group(['middleware' => ['auth', PasswordChanged::class, EnsureUserIsActiv
         Route::put('/{order}/cancel', [App\Http\Controllers\OrderController::class, 'cancel'])->name('cancel');
         Route::patch('/{order}/mark-as-complete', [App\Http\Controllers\OrderController::class, 'markAsComplete'])->name('mark-as-complete');
         Route::post('/cart/update', [OrderController::class, 'updateCart'])->name('cart.update');
+        Route::post('/cart/remove', [OrderController::class, 'removeFromCart'])->name('cart.remove');
     });
 
     Route::group(['prefix' => 'payments', 'as' => 'payments.'], function () {

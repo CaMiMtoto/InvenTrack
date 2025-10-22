@@ -37,16 +37,21 @@
                                         {{ $item->name }}
                                     </h6>
                                     <div>
-                                            <span
-                                                class="badge bg-secondary-subtle "> RF  {{ number_format($item->price) }}</span>
+                                            <span class="badge bg-secondary-subtle "> RF  {{ number_format($item->price) }}</span>
+                                        <span>Available Qty:</span> {{ $item->associatedModel->stock }}
                                     </div>
                                 </div>
                                 <div>
                                     <input type="hidden" name="prices[]" value="{{$item->price}}">
                                     <input type="hidden" name="product_ids[]" value="{{$item->id}}">
-                                    <input class="form-control w-50px form-control-sm js-qty" type="number"
-                                           name="quantities[]"
-                                           value="{{ $item->quantity }}"/>
+                                    <div class="d-flex gap-2">
+                                        <input class="form-control w-50px form-control-sm js-qty" type="number"
+                                               name="quantities[]"
+                                               value="{{ $item->quantity }}" min="1"/>
+                                        <a href="" class="btn btn-icon btn-sm btn-light-danger js-remove">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </div>
                                 </div>
                             </li>
                         @endforeach
@@ -313,6 +318,42 @@
             $(document).on('input', '.js-qty', debounce(function () {
                 updateCartTotals(this);
             }, 500)); // 500ms delay
+
+            $(document).on('click', '.js-remove', function (e) {
+                e.preventDefault();
+                let $this = $(this);
+                let $listItem = $this.closest('li');
+                let productId = $listItem.find('input[name="product_ids[]"]').val();
+
+                // Add a loading spinner to the button
+                $this.html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>');
+
+                $.ajax({
+                    url: '{{ route("admin.orders.cart.remove") }}',
+                    type: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        product_id: productId
+                    },
+                    dataType: 'json',
+                    success: function (response) {
+                        if (response.success) {
+                            // Update totals and item count
+                            $('#subtotal').text(response.subtotal);
+                            $('#total').text(response.total);
+                            $('.badge.bg-primary-subtle').text(response.count);
+
+                            // Remove the item from the list with an animation
+                            $listItem.slideUp(function() { $(this).remove(); });
+                        }
+                    },
+                    error: function (xhr) {
+                        console.error('Error removing item from cart:', xhr.responseText);
+                        // Restore button icon on error
+                        $this.html('<i class="bi bi-trash"></i>');
+                    }
+                });
+            });
 
         });
     </script>

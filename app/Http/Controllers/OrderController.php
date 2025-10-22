@@ -457,4 +457,23 @@ class OrderController extends Controller
 
         return response()->json(['message' => 'Order has been marked as complete.']);
     }
+
+    // In app/Http/Controllers/OrderController.php
+
+    public function removeFromCart(Request $request)
+    {
+        $data = $request->validate([
+            'product_id' => 'required|integer',
+        ]);
+
+        $cart = \Cart::session(auth()->id());
+        $cart->remove($data['product_id']);
+
+        return response()->json([
+            'success' => true,
+            'subtotal' => number_format($cart->getSubTotal()),
+            'total' => number_format($cart->getTotal()),
+            'count' => $cart->getContent()->count(),
+        ]);
+    }
 }

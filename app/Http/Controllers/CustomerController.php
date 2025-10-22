@@ -23,18 +23,7 @@ class CustomerController extends Controller
             $data = Customer::query();
             return datatables()->of($data)
                 ->addIndexColumn()
-                ->addColumn('action', function ($row) {
-                    // dropdown button
-                    return '<div class="btn-group">
-                            <button type="button" class="btn btn-sm btn-icon dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="bi bi-three-dots-vertical"></i>
-                            </button>
-                            <div class="dropdown-menu">
-                            <a class="dropdown-item js-edit" href="' . route('admin.settings.customers.show', $row->id) . '" >Edit</a>
-                            <a class="dropdown-item js-delete" href="' . route('admin.settings.customers.destroy', $row->id) . '">Delete</a>
-                            </div>
-                            </div>';
-                })
+                ->addColumn('action', fn (Customer $row)=>view('admin.settings.customers._actions', compact('row')))
                 ->rawColumns(['action'])
                 ->make(true);
         }
@@ -64,6 +53,8 @@ class CustomerController extends Controller
             'cell_id' => ['required', 'exists:cells,id'],
             'village_id' => ['nullable', 'exists:villages,id'],
             'address_photo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:1024'],
+            'longitude' => ['nullable', 'regex:/^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?)$/'],
+            'latitude' => ['nullable', 'regex:/^[-+]?(90(\.0+)?|([1-8]?\d(\.\d+)?))$/'],
         ]);
 
         // Handle file upload
