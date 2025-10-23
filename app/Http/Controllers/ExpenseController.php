@@ -38,7 +38,7 @@ class ExpenseController extends Controller
     {
         $data = $request->validate([
             'expense_category_id' => ['required', 'exists:expense_categories,id'],
-            'qty' => ['required', 'numeric'],
+//            'qty' => ['required', 'numeric'],
             'amount' => ['required', 'numeric'],
             'description' => ['required', 'max:255'],
             'date' => ['required', 'date']
@@ -52,7 +52,9 @@ class ExpenseController extends Controller
             'date.required' => 'The date field is required.',
             'date.date' => 'The date is not a valid date.',
         ]);
-        $data['user_id'] = auth()->id();
+//        $data['user_id'] = auth()->id();
+        $data['category_id']=$data['expense_category_id'];
+        unset($data['expense_category_id']);
         $id = $request->input('id');
         if ($id > 0) {
             $expense = Expense::find($id);

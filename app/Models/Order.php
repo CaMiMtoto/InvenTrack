@@ -66,7 +66,7 @@ class Order extends Model
 
     protected $appends = ['status_color', 'status'];
     protected $casts = [
-        'order_date' => 'datetime:d-m-Y',
+        'order_date' => 'date:d-m-Y',
     ];
 
     public function customer(): \Illuminate\Database\Eloquent\Relations\BelongsTo

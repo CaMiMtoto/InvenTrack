@@ -302,14 +302,14 @@
                             </a>
                         @endcanany
                         <!--end:Menu link-->
-                        @canany([Permission::VIEW_STOCK_MOVEMENT])
+                  {{--      @canany([Permission::VIEW_STOCK_MOVEMENT])
                             <a class="menu-link {{ request()->url()==route('admin.stock-adjustments.index')?'active':'' }}"
                                href="{{ route('admin.stock-adjustments.index') }}">
                                 <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
                                 <span class="menu-title">Movements</span>
                             </a>
                             <!--end:Menu link-->
-                        @endcanany
+                        @endcanany--}}
                     </div>
                     <!--end:Menu item-->
                 </div>

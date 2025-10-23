@@ -3,6 +3,7 @@
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
@@ -26,13 +27,12 @@ Route::get('/', function () {
 
 Auth::routes();
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-
 Route::get('/districts/{district}/sectors', [AddressController::class, 'getSectors'])->name('districts.sectors');
 Route::get('/sectors/{sector}/cells', [AddressController::class, 'getCells'])->name('sectors.cells');
 Route::get('/cells/{cell}/villages', [AddressController::class, 'getVillages'])->name('cells.villages');
 
 Route::group(['middleware' => ['auth', PasswordChanged::class, EnsureUserIsActive::class], 'prefix' => '/admin', 'as' => 'admin.'], function () {
-
+    Route::get('/dashboard',[DashboardController::class,'index'])->name('dashboard');
     Route::group(['prefix' => "purchases", "as" => "purchases."], function () {
         Route::get('/', [App\Http\Controllers\PurchaseController::class, 'index'])->name('index');
         Route::get('/create', [App\Http\Controllers\PurchaseController::class, 'create'])->name('create');
@@ -41,7 +41,6 @@ Route::group(['middleware' => ['auth', PasswordChanged::class, EnsureUserIsActiv
         Route::delete('/{purchase}', [App\Http\Controllers\PurchaseController::class, 'destroy'])->name('destroy');
         Route::get('/{purchaseOrder}/print', [App\Http\Controllers\PurchaseController::class, 'print'])->name('print');
     });
-
     Route::group(['prefix' => "orders", "as" => "orders."], function () {
         Route::get('/', [App\Http\Controllers\OrderController::class, 'index'])->name('index');
         Route::get('/create', [App\Http\Controllers\OrderController::class, 'create'])->name('create');
@@ -55,7 +54,6 @@ Route::group(['middleware' => ['auth', PasswordChanged::class, EnsureUserIsActiv
         Route::post('/cart/update', [OrderController::class, 'updateCart'])->name('cart.update');
         Route::post('/cart/remove', [OrderController::class, 'removeFromCart'])->name('cart.remove');
     });
-
     Route::group(['prefix' => 'payments', 'as' => 'payments.'], function () {
         Route::get('/', [PaymentController::class, 'index'])->name('index');
         Route::get('/create', [PaymentController::class, 'create'])->name('create');
@@ -72,7 +70,6 @@ Route::group(['middleware' => ['auth', PasswordChanged::class, EnsureUserIsActiv
         Route::patch('/{delivery}/update-status', [App\Http\Controllers\DeliveryController::class, 'updateStatus'])->name('update-status');
         Route::get('/assigned-to-me', [App\Http\Controllers\DeliveryController::class, 'myDeliveries'])->name('assigned-to-me');
     });
-
     Route::group(['prefix' => 'returns', 'as' => 'returns.'], function () {
         Route::get('/', [ReturnController::class, 'index'])->name('index');
         Route::get('/{return}', [ReturnController::class, 'show'])->name('show');
@@ -90,7 +87,6 @@ Route::group(['middleware' => ['auth', PasswordChanged::class, EnsureUserIsActiv
     Route::post('/expenses/store', [ExpenseController::class, 'store'])->name('expenses.store');
     Route::get('/expenses/{expense}/show', [ExpenseController::class, 'show'])->name('expenses.show');
     Route::delete('/expenses/{expense}/destroy', [ExpenseController::class, 'destroy'])->name('expenses.destroy');
-
     //product management routes
     Route::group(["prefix" => "products", "as" => "products."], function () {
         Route::get('/', [ProductController::class, 'index'])->name('index');
@@ -109,8 +105,6 @@ Route::group(['middleware' => ['auth', PasswordChanged::class, EnsureUserIsActiv
         Route::delete('/categories/{category}/destroy', [CategoryController::class, 'destroy'])->name('categories.destroy');
 
     });
-
-
     Route::group(["prefix" => "settings", "as" => "settings."], function () {
         //supplier routes
         Route::get('/suppliers', [SupplierController::class, 'index'])->name('suppliers.index');
@@ -139,8 +133,6 @@ Route::group(['middleware' => ['auth', PasswordChanged::class, EnsureUserIsActiv
         });
 
     });
-
-
     Route::group(["prefix" => "system", "as" => "system."], function () {
         Route::get('/roles', [App\Http\Controllers\RolesController::class, 'index'])->name('roles.index');
         Route::post('/roles', [App\Http\Controllers\RolesController::class, 'store'])->name('roles.store');
@@ -156,11 +148,6 @@ Route::group(['middleware' => ['auth', PasswordChanged::class, EnsureUserIsActiv
         Route::get('/permissions', [App\Http\Controllers\PermissionsController::class, 'index'])->name('permissions.index');
 
     });
-
-
-    Route::get('/dashboard', [App\Http\Controllers\HomeController::class, 'dashboard'])->name('dashboard');
-
-
     Route::group(['prefix' => 'reports', 'as' => 'reports.'], function () {
 
         Route::get('/',[ReportController::class,'list'])->name('list');
@@ -185,6 +172,4 @@ Route::group(['middleware' => ['auth', PasswordChanged::class, EnsureUserIsActiv
         Route::get('/expenses', [App\Http\Controllers\ReportsController::class, 'expensesReport'])->name('expenses');
 
     });
-
-
 });

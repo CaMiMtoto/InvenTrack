@@ -52,7 +52,6 @@ class PurchaseController extends Controller
                                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                     <a class="dropdown-item" href="' . route('admin.purchases.show', encodeId($purchaseOrder->id)) . '" >Details</a>
                                     <a class="dropdown-item" href="' . route('admin.purchases.print', encodeId($purchaseOrder->id)) . '" >Print</a>
-                                    <a class="dropdown-item js-edit" href="' . route('admin.purchases.edit', encodeId($purchaseOrder->id)) . '" >Edit</a>
                                     <a class="dropdown-item js-delete" href="' . route('admin.purchases.destroy', encodeId($purchaseOrder->id)) . '">Delete</a>
                                 </div>
                             </div>';
@@ -117,7 +116,7 @@ class PurchaseController extends Controller
             'quantities' => ['required', 'array'],
             'prices' => ['required', 'array'],
             'exp_dates' => ['sometimes', 'array'],
-            'exp_dates.*' => ['nullable', 'date', 'before_or_equal:today']
+            'exp_dates.*' => ['nullable', 'date', 'after_or_equal:today']
         ]);
 
         if (count($data['product_ids']) !== count($data['quantities']) ||
