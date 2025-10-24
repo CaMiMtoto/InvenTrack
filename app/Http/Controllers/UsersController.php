@@ -60,17 +60,17 @@ class UsersController extends Controller
 
         $id = $request->input('id');
         DB::beginTransaction();
-        $random = Str::random(5);
         $values = [
             'name' => $request->input('name'),
             'email' => $request->input('email'),
             'phone_number' => $request->input('phone'),
-            'password' => Hash::make($random),
         ];
         if ($id > 0) {
             $user = User::find($id);
             $user->update($values);
         } else {
+            $random = Str::random(5);
+            $values['password'] = Hash::make($random);
             $user = User::create($values);
             $user->notify(new UserCreated($user, $random));
         }
