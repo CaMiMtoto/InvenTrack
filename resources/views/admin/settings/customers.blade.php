@@ -25,10 +25,11 @@
                 <table class="table ps-2 align-middle border rounded table-row-dashed fs-6 g-5" id="myTable">
                     <thead>
                     <tr class="text-start text-gray-800 fw-bold fs-7 text-uppercase">
+                        <th>#</th>
+                        <th>Created At</th>
                         <th>Name</th>
                         <th>Email</th>
                         <th>Phone</th>
-                        <th>Address</th>
                         <th>Options</th>
                     </tr>
                     </thead>
@@ -153,18 +154,26 @@
                             </div>
                             <div class="col-lg-6">
                                 <div class="mb-3">
-                                    <label for="longitude">Longitude</label>
-                                    <input type="number" step="0.001" class="form-control" id="longitude" name="longitude"/>
+                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                        <label class="form-label fs-6 fw-bold">Location</label>
+                                        <button type="button" class="btn btn-sm btn-light-primary" id="getLocationBtn">
+                                            <i class="bi bi-geo-alt-fill fs-7"></i> Get Current Location
+                                        </button>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col">
+                                            <input type="number" step="any" class="form-control" id="latitude"
+                                                   name="latitude" placeholder="Latitude"/>
+                                        </div>
+                                        <div class="col">
+                                            <input type="number" step="any" class="form-control" id="longitude"
+                                                   name="longitude" placeholder="Longitude"/>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-lg-6">
-                                <div class="mb-3">
-                                    <label for="latitude">Latitude</label>
-                                    <input type="number" step="0.001"  class="form-control" id="latitude" name="latitude"/>
-                                </div>
-                            </div>
-
                         </div>
+
 
                     </div>
 
@@ -314,10 +323,11 @@
                     processing: '<div class="spinner spinner-primary spinner-lg mr-15"></div> Processing...'
                 },
                 columns: [
+                    {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
+                    {data: 'created_at', name: 'created_at'},
                     {data: 'name', name: 'name'},
                     {data: 'email', name: 'email'},
                     {data: 'phone', name: 'phone'},
-                    {data: 'address', name: 'address'},
                     {
                         data: 'action',
                         name: 'action',
@@ -327,6 +337,7 @@
                         width: '15%'
                     },
                 ],
+                'order': [1, 'desc']
             });
 
             let $myModal = $('#myModal');
@@ -384,6 +395,13 @@
                                 field.addClass('is-invalid');
                                 field.parent().append('<span class="invalid-feedback">' + value[0] + '</span>');
                             });
+                        } else if (xhr.status === 400) {
+                            const message = xhr.responseJSON.message?? 'An unexpected error occurred.';
+                           Swal.fire({
+                               icon: 'error',
+                               title: 'Error!',
+                               text: message,
+                           });
                         } else {
                             Swal.fire({
                                 icon: 'error',
@@ -424,10 +442,75 @@
                         getCells(data.sector_id, data.cell_id);
                         getVillages(data.cell_id, data.village_id);
 
+                        $('#latitude').val(data.latitude);
+                        $('#longitude').val(data.longitude);
                         $myModal.modal('show');
                     }
                 });
             });
+
+            const handleLocationPermission = function () {
+                if ('permissions' in navigator) {
+                    navigator.permissions.query({name: 'geolocation'}).then(function (permissionStatus) {
+                        const $locationBtn = $('#getLocationBtn');
+                        const $icon = $locationBtn.find('i');
+
+                        if (permissionStatus.state === 'denied') {
+                            $locationBtn.prop('disabled', true);
+                            $icon.removeClass('bi-geo-alt-fill').addClass('bi-geo-alt');
+                            $locationBtn.attr('data-bs-toggle', 'tooltip');
+                            $locationBtn.attr('title', 'Location access is blocked in your browser settings.');
+                            $locationBtn.tooltip();
+                        } else {
+                            $locationBtn.prop('disabled', false);
+                            $icon.removeClass('bi-geo-alt').addClass('bi-geo-alt-fill');
+                            if ($locationBtn.data('bs.tooltip')) {
+                                $locationBtn.tooltip('dispose');
+                            }
+                        }
+                        permissionStatus.onchange = handleLocationPermission;
+                    });
+                }
+            };
+
+            $('#getLocationBtn').on('click', function () {
+                if (navigator.geolocation) {
+                    let btn = $(this);
+                    let originalText = btn.html();
+                    btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Getting location...');
+
+                    navigator.geolocation.getCurrentPosition(
+                        function (position) {
+                            $('#latitude').val(position.coords.latitude.toFixed(7));
+                            $('#longitude').val(position.coords.longitude.toFixed(7));
+                            btn.prop('disabled', false).html(originalText);
+                        },
+                        function (error) {
+                            let message = 'An unknown error occurred.';
+                            switch (error.code) {
+                                case error.PERMISSION_DENIED:
+                                    message = "You denied the request for Geolocation.";
+                                    break;
+                                case error.POSITION_UNAVAILABLE:
+                                    message = "Location information is unavailable.";
+                                    break;
+                                case error.TIMEOUT:
+                                    message = "The request to get user location timed out.";
+                                    break;
+                            }
+                            Swal.fire('Error!', message, 'error');
+                            btn.prop('disabled', false).html(originalText);
+                        }
+                    );
+                } else {
+                    Swal.fire('Not Supported', 'Geolocation is not supported by this browser.', 'warning');
+                }
+            });
+
+            $myModal.on('show.bs.modal', function () {
+                handleLocationPermission();
+            });
+
         });
     </script>
 @endpush

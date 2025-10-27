@@ -23,7 +23,8 @@ class CustomerController extends Controller
             $data = Customer::query();
             return datatables()->of($data)
                 ->addIndexColumn()
-                ->addColumn('action', fn (Customer $row)=>view('admin.settings.customers._actions', compact('row')))
+                ->editColumn('created_at', fn($row) => date('d-m-Y,h:i', strtotime($row->created_at)))
+                ->addColumn('action', fn(Customer $row) => view('admin.settings.customers._actions', compact('row')))
                 ->rawColumns(['action'])
                 ->make(true);
         }
@@ -56,6 +57,14 @@ class CustomerController extends Controller
             'longitude' => ['nullable', 'regex:/^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?)$/'],
             'latitude' => ['nullable', 'regex:/^[-+]?(90(\.0+)?|([1-8]?\d(\.\d+)?))$/'],
         ]);
+
+        // check if a customer already exists by name and phone number
+        $existingCustomer = Customer::where('name', $data['name'])
+            ->where('phone', $data['phone'])
+            ->first();
+        if ($existingCustomer && $existingCustomer->id != $data['id']) {
+            return response()->json(['message' => 'A customer with the same name and phone number already exists.'], 400);
+        }
 
         // Handle file upload
         if ($request->hasFile('address_photo')) {
