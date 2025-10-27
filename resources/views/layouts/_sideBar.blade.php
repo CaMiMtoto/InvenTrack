@@ -103,7 +103,7 @@
                     <!--end:Menu link-->
                     <!--begin:Menu sub-->
                     <div class="menu-sub menu-sub-accordion">
-                        @can(Permission::NEW_ORDER)
+                        @can(Permission::ASSIGN_DELIVERY)
                             <a class="menu-link {{ request()->url()==route('admin.deliveries.pending')?'active':'' }}"
                                href="{{ route('admin.deliveries.pending') }}">
                                 <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>

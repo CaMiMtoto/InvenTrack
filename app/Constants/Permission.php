@@ -144,7 +144,7 @@ class Permission
         return [
             self::NEW_ORDER,
             self::APPROVE_ORDERS,
-            self::ASSIGN_DELIVERY,
+
             self::COMPLETE_ORDERS,
             self::CANCEL_SALES_ORDERS,
         ];
@@ -153,6 +153,7 @@ class Permission
     public static function manageOrderDeliveries(): array
     {
         return [
+            self::ASSIGN_DELIVERY,
             self::VIEW_DELIVERIES,
             self::MANAGE_DELIVERIES,
             self::DELIVER_PRODUCTS,
