@@ -6,6 +6,7 @@ use App\Traits\HasEncodedId;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Contracts\Auditable;
 
 /**
  * @property int $id
@@ -38,9 +39,9 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Purchase whereUserId($value)
  * @mixin \Eloquent
  */
-class Purchase extends Model
+class Purchase extends Model   implements Auditable
 {
-    use HasFactory, HasEncodedId;
+    use HasFactory, HasEncodedId,\OwenIt\Auditing\Auditable;
 
     protected $casts = [
         'purchased_at' => 'datetime'

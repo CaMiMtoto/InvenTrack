@@ -37,7 +37,8 @@
                                         {{ $item->name }}
                                     </h6>
                                     <div>
-                                            <span class="badge bg-secondary-subtle "> RF  {{ number_format($item->price) }}</span>
+                                        <span
+                                            class="badge bg-secondary-subtle "> RF  {{ number_format($item->price) }}</span>
                                         <span>Available Qty:</span> {{ $item->associatedModel->stock }}
                                     </div>
                                 </div>
@@ -46,7 +47,7 @@
                                     <input type="hidden" name="product_ids[]" value="{{$item->id}}">
                                     <div class="d-flex gap-2">
                                         <input class="form-control w-50px form-control-sm js-qty" type="number"
-                                               name="quantities[]"
+                                               name="quantities[]" data-original_qty="{{ $item->quantity }}"
                                                value="{{ $item->quantity }}" min="1"/>
                                         <a href="" class="btn btn-icon btn-sm btn-light-danger js-remove">
                                             <i class="bi bi-trash"></i>
@@ -292,7 +293,7 @@
                     quantity = 1;
                     $this.val(1);
                 }
-
+                const originalQty = $this.data('original_qty');
                 $.ajax({
                     url: '{{ route("admin.orders.cart.update") }}',
                     type: 'POST',
@@ -306,11 +307,25 @@
                         if (response.success) {
                             $('#subtotal').text(response.subtotal);
                             $('#total').text(response.total);
+                            $this.data('original_qty', quantity);
                         }
                     },
                     error: function (xhr) {
                         console.error('Error updating cart quantity:', xhr.responseText);
                         // You could add a user-facing error message here if desired
+                        if (xhr.status === 400) {
+                            const message = xhr.responseJSON.message ?? "An unexpected error occurred, Please try again.";
+                            Swal.fire({
+                                text: message,
+                                icon: "error",
+                                buttonsStyling: false,
+                                confirmButtonText: "Ok, got it!",
+                                customClass: {
+                                    confirmButton: "btn btn-primary",
+                                }
+                            });
+                        }
+                        $this.val(originalQty);
                     }
                 });
             };
@@ -344,7 +359,9 @@
                             $('.badge.bg-primary-subtle').text(response.count);
 
                             // Remove the item from the list with an animation
-                            $listItem.slideUp(function() { $(this).remove(); });
+                            $listItem.slideUp(function () {
+                                $(this).remove();
+                            });
                         }
                     },
                     error: function (xhr) {

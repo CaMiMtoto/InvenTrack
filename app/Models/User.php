@@ -7,6 +7,7 @@ use App\Traits\HasProfilePhoto;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use OwenIt\Auditing\Contracts\Auditable;
 use Spatie\Permission\Traits\HasPermissions;
 use Spatie\Permission\Traits\HasRoles;
 
@@ -54,12 +55,12 @@ use Spatie\Permission\Traits\HasRoles;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User withoutRole($roles, $guard = null)
  * @mixin \Eloquent
  */
-class User extends Authenticatable
+class User extends Authenticatable implements Auditable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
-    use HasRoles,HasProfilePhoto;
-
+    use HasRoles, HasProfilePhoto;
+    use \OwenIt\Auditing\Auditable;
 
     /**
      * The attributes that are mass assignable.

@@ -207,6 +207,8 @@ class OrderController extends Controller
 
             if ($data['action'] === 'approved') {
                 $this->processApprovedOrder($order);
+            } elseif ($data['action'] === 'rejected') {
+                $this->rollbackStock($order);
             }
 
             $this->flowHistoryService->saveFlow(
@@ -237,8 +239,6 @@ class OrderController extends Controller
                     ");
             }
 
-            $product->stock -= $item->quantity;
-            $product->save();
 
             StockMovement::create([
                 'product_id' => $product->id,
@@ -358,7 +358,7 @@ class OrderController extends Controller
         foreach ($Order->items as $item) {
             $product = Product::find($item->product_id);
             if ($product) {
-                $product->stock_quantity += $item->quantity;
+                $product->stock += $item->quantity;
                 $product->save();
             }
         }
@@ -416,6 +416,14 @@ class OrderController extends Controller
             'quantity' => 'required|integer|min:1',
         ]);
 
+        // check if the product qty is available in the stock
+        $product = Product::find($data['product_id']);
+        if ($product->stock < $data['quantity']) {
+            return response()->json([
+                'message' => 'Insufficient stock for product: ' . $product->name,
+            ], 400);
+        }
+
         $cart = \Cart::session(auth()->id());
 
         $cart->update($data['product_id'], [
@@ -460,6 +468,9 @@ class OrderController extends Controller
 
     // In app/Http/Controllers/OrderController.php
 
+    /**
+     * @throws \Exception
+     */
     public function removeFromCart(Request $request)
     {
         $data = $request->validate([

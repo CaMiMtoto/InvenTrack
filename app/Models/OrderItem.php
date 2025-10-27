@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use App\Traits\HasEncodedId;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Contracts\Auditable;
 
 /**
  * @property int $id
@@ -30,19 +32,22 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|OrderItem whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-class OrderItem extends Model
+class OrderItem extends Model implements Auditable
 {
-    use HasFactory;
+    use \OwenIt\Auditing\Auditable;
+    use HasFactory, HasEncodedId;
+
     public function product(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Product::class);
     }
+
     public function order(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Order::class);
     }
 
-    public function total():Attribute
+    public function total(): Attribute
     {
         return Attribute::make(
             get: fn() => $this->quantity * $this->unit_price

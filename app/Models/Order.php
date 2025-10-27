@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use OwenIt\Auditing\Contracts\Auditable;
 
 /**
  * @property int $id
@@ -59,10 +60,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Order whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-class Order extends Model
+class Order extends Model implements Auditable
 {
     use HasStatusColor;
     use HasFactory, HasEncodedId;
+    use \OwenIt\Auditing\Auditable;
 
     protected $appends = ['status_color', 'status'];
     protected $casts = [

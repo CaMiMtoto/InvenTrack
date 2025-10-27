@@ -49,7 +49,8 @@
                             <!--end::Label-->
                             <!--end::Col-->
                             <div class="fw-bold fs-6 text-gray-800 mb-3">
-                                <span class="badge bg-{{$saleOrder->status_color}}-subtle fw-bold text-{{$saleOrder->statusColor}} ">
+                                <span
+                                    class="badge bg-{{$saleOrder->status_color}}-subtle fw-bold text-{{$saleOrder->statusColor}} ">
                                     {{ $saleOrder->status }}
                                 </span>
                             </div>
@@ -59,32 +60,32 @@
 
                         <!--end::Col-->
                         <div class="col-sm-6">
-                           <div class="row">
-                               <!--end::Label-->
-                               <div class="fw-semibold fs-7 text-gray-600 mb-1">Customer Name:</div>
-                               <!--end::Label-->
-                               <!--end::Info-->
-                               <div class="fw-bold fs-6 text-gray-800 d-flex align-items-center flex-wrap mb-3">
-                                   <span class="pe-2">{{ $saleOrder->customer->name }}</span>
-                               </div>
-                               <!--end::Info-->
-                               <!--end::Label-->
-                               <div class="fw-semibold fs-7 text-gray-600 mb-1">Address:</div>
-                               <!--end::Label-->
-                               <!--end::Info-->
-                               <div class="fw-bold fs-6 text-gray-800 d-flex align-items-center flex-wrap mb-3">
-                                   <span class="pe-2">{{ $saleOrder->customer->address }}</span>
-                               </div>
-                               <!--end::Info-->
-                               <!--end::Label-->
-                               <div class="fw-semibold fs-7 text-gray-600 mb-1">Phone:</div>
-                               <!--end::Label-->
-                               <!--end::Info-->
-                               <div class="fw-bold fs-6 text-gray-800 d-flex align-items-center flex-wrap">
-                                   <span class="pe-2">{{ $saleOrder->customer->phone }}</span>
-                               </div>
-                               <!--end::Info-->
-                           </div>
+                            <div class="row">
+                                <!--end::Label-->
+                                <div class="fw-semibold fs-7 text-gray-600 mb-1">Customer Name:</div>
+                                <!--end::Label-->
+                                <!--end::Info-->
+                                <div class="fw-bold fs-6 text-gray-800 d-flex align-items-center flex-wrap mb-3">
+                                    <span class="pe-2">{{ $saleOrder->customer->name }}</span>
+                                </div>
+                                <!--end::Info-->
+                                <!--end::Label-->
+                                <div class="fw-semibold fs-7 text-gray-600 mb-1">Address:</div>
+                                <!--end::Label-->
+                                <!--end::Info-->
+                                <div class="fw-bold fs-6 text-gray-800 d-flex align-items-center flex-wrap mb-3">
+                                    <span class="pe-2">{{ $saleOrder->customer->address }}</span>
+                                </div>
+                                <!--end::Info-->
+                                <!--end::Label-->
+                                <div class="fw-semibold fs-7 text-gray-600 mb-1">Phone:</div>
+                                <!--end::Label-->
+                                <!--end::Info-->
+                                <div class="fw-bold fs-6 text-gray-800 d-flex align-items-center flex-wrap">
+                                    <span class="pe-2">{{ $saleOrder->customer->phone }}</span>
+                                </div>
+                                <!--end::Info-->
+                            </div>
                         </div>
                         <!--end::Col-->
                     </div>
@@ -108,26 +109,31 @@
                                     <th class="min-w-175px pb-2">Product</th>
                                     <th class="min-w-70px  pb-2">Price</th>
                                     <th class="min-w-80px  pb-2">Qty</th>
+                                    <th class="min-w-80px  pb-2">Available Qty</th>
                                     <th class="min-w-100px  pb-2">Total</th>
+                                    @can('Remove Ordered Item')
+                                        <th></th>
+                                    @endcan
                                 </tr>
                                 </thead>
 
                                 <tbody>
                                 @foreach($saleOrder->items as $item)
-                                    <tr class="">
-                                        <td class="pt-6">
-                                            {{ $item->product->name }}
-                                        </td>
+                                    <tr class="{{ $item->product->stock<$item->quantity?'bg-light-warning':'' }}">
+                                        <td class="pt-6 px-4">{{ $item->product->name }}</td>
+                                        <td class="pt-6">{{number_format($item->unit_price, 0)}}</td>
+                                        <td class="pt-6">{{ number_format($item->quantity,0) }} {{ $item->product->unit_measure }}</td>
+                                        <td class="pt-6">{{ number_format($item->product->stock,0) }} {{ $item->product->unit_measure }}</td>
+                                        <td class="pt-6 text-dark fw-bolder">{{ number_format($item->total, 0) }}</td>
+                                        @can('Remove Ordered Item')
+                                            <td>
+                                                <a href=""
+                                                   class="btn btn-sm btn-icon btn-active-light-danger rounded-pill">
+                                                    <x-lucide-trash-2 class="tw-h-4 tw-w-4"/>
+                                                </a>
+                                            </td>
+                                        @endcan
 
-                                        <td class="pt-6">
-                                            {{number_format($item->unit_price, 0)}}
-                                        </td>
-                                        <td class="pt-6">
-                                            {{ number_format($item->quantity,0) }} {{ $item->product->unit_measure }}
-                                        </td>
-                                        <td class="pt-6 text-dark fw-bolder">
-                                            {{ number_format($item->total, 0) }}
-                                        </td>
                                     </tr>
                                 @endforeach
                                 <tr>
