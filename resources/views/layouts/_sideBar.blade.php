@@ -22,6 +22,18 @@
                     <span class="menu-title">Dashboard</span>
                 </a>
             </div>
+            @canany([Permission::MANAGE_SHAREHOLDERS,Permission::VIEW_SHAREHOLDERS])
+                <div class="menu-item ">
+                    <a href="{{ route('admin.shareholders.index') }}"
+                       class="menu-link {{ request()->fullUrl() ==route('admin.shareholders.index')?'active':'' }}">
+                        <div class="menu-icon">
+                            <x-lucide-shell class="tw-w-6 tw-h-6"/>
+                        </div>
+                        <span class="menu-title">Shareholders</span>
+                    </a>
+                </div>
+            @endcanany
+
             @can(Permission::VIEW_PRODUCT_CATALOG)
                 <div class="menu-item ">
                     <a href="{{ route('admin.products.catalog') }}"

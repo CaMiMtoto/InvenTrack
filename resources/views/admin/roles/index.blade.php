@@ -3,18 +3,19 @@
 @section('content')
     <div>
         <!--begin::Toolbar-->
- <div class="d-flex justify-content-between align-items-center">
-     <x-toolbar title="Manage Roles" :breadcrumbs="[['label'=>'Roles']]"/>
-     <button type="button" class="btn btn-sm btn-light-primary px-4 py-3" id="addBtn">
-         <i class="bi bi-plus fs-3"></i>
-         Add New
-     </button>
- </div>
+        <div class="d-flex justify-content-between align-items-center">
+            <x-toolbar title="Manage Roles" :breadcrumbs="[['label'=>'Roles']]"/>
+            <button type="button" class="btn btn-sm btn-light-primary px-4 py-3" id="addBtn">
+                <i class="bi bi-plus fs-3"></i>
+                Add New
+            </button>
+        </div>
         <!--end::Toolbar-->
         <!--begin::Content-->
         <div class="my-3">
             <div class="table-responsive">
-                <table class="table ps-2 align-middle  table-row-bordered table-row-gray-200 align-middle  fs-6 gy-4" id="myTable">
+                <table class="table ps-2 align-middle  table-row-bordered table-row-gray-200 align-middle  fs-6 gy-4"
+                       id="myTable">
                     <thead>
                     <tr class="text-start text-gray-800 fw-bold fs-7 text-uppercase">
                         <th>Name</th>

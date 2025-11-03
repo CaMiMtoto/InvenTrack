@@ -19,7 +19,8 @@ class DatabaseSeeder extends Seeder
             AdminUserSeeder::class,
             AccountsTableSeeder::class,
             ReturnReasonTableSeeder::class,
-            PaymentMethodSeeder::class
+            PaymentMethodSeeder::class,
+            LegalTypeSeeder::class
         ]);
     }
 }

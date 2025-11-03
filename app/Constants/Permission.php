@@ -61,6 +61,8 @@ class Permission
     const VIEW_RETURNED_ITEMS = 'view returned items';
     const APPROVE_RETURNED_ITEMS = 'approve returned items';
     const CREATE_REPORT = 'create report';
+    const VIEW_SHAREHOLDERS = 'view shareholders';
+    const MANAGE_SHAREHOLDERS = 'manage shareholders';
 
 
     /**
@@ -127,6 +129,9 @@ class Permission
             // returns
             self::VIEW_RETURNED_ITEMS,
             self::APPROVE_RETURNED_ITEMS,
+
+            self::VIEW_SHAREHOLDERS,
+            self::MANAGE_SHAREHOLDERS
 
         ];
     }
