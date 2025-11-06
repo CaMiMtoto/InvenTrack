@@ -41,6 +41,7 @@ Route::group(['middleware' => ['auth', PasswordChanged::class, EnsureUserIsActiv
         Route::put('/{shareholder}', [ShareholderController::class, 'update'])->name('update');
         Route::get('/{shareholder}/edit', [ShareholderController::class, 'edit'])->name('edit');
         Route::delete('/{shareholder}', [ShareholderController::class, 'destroy'])->name('destroy');
+        Route::get('/{shareholder}/shares', [ShareholderController::class, 'shares'])->name('shares');
     });
 
     Route::group(['prefix' => "purchases", "as" => "purchases."], function () {

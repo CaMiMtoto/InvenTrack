@@ -13,7 +13,7 @@ return new class extends Migration {
         Schema::create('shares', function (Blueprint $table) {
             $table->id();
             $table->foreignId('shareholder_id')->constrained()->onDelete('cascade');
-            $table->decimal('amount', 12, 2); // value of the share
+            $table->decimal('value', 12, 2); // value of the share
             $table->integer('quantity')->default(1); // number of shares in this entry
             $table->string('status')->nullable();
             $table->timestamps();

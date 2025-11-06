@@ -179,8 +179,8 @@
                 // clear form fields
                 $submitForm[0].reset();
 
-                const id = $(this).data('id');
-                $.get("{{ url('admin/shareholders') }}/" + id + "/edit", function (data) {
+                const url = $(this).data('url');
+                $.get(url, function (data) {
                     $modalTitle.text('Edit Shareholder');
                     $submitForm.find('.is-invalid').removeClass('is-invalid');
                     $submitForm.find('.invalid-feedback').remove();
@@ -239,7 +239,7 @@
 
             // Handle Delete button click
             $myTable.on('click', '.delete-btn', function () {
-                const id = $(this).data('id');
+                const url = $(this).data('url');
                 const name = $(this).data('name');
 
                 Swal.fire({
@@ -253,7 +253,7 @@
                 }).then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({
-                            url: `{{ url('admin/shareholders') }}/${id}`,
+                            url: url,
                             method: 'DELETE',
                             data: {_token: '{{ csrf_token() }}'},
                             success: function (response) {

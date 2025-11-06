@@ -4,16 +4,16 @@ use Sqids\Sqids;
 
 function encodeId($id): string
 {
-    return base64_encode($id);
-    /* $sqids = new Sqids('', 10);
-     return $sqids->encode([$id]);*/
+//    return base64_encode($id);
+     $sqids = new Sqids('', 10);
+     return $sqids->encode([$id]);
 }
 
 function decodeId(string $id): int
 {
-    return base64_decode($id);
-//    $sqids = new Sqids('', 10);
-//    return $sqids->decode($id)[0];
+//    return base64_decode($id);
+    $sqids = new Sqids('', 10);
+    return $sqids->decode($id)[0];
 }
 
 function formatToken(string $token): array|string

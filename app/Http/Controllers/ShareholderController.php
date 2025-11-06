@@ -6,6 +6,7 @@ use App\Constants\Permission;
 use App\Models\LegalType;
 use App\Models\Shareholder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Yajra\DataTables\DataTables;
 
@@ -21,7 +22,7 @@ class ShareholderController extends Controller
     {
         if ($request->ajax()) {
             $query = Shareholder::with('legalType')
-                ->withSum('shares','amount');
+                ->withSum('shares','value');
 
             return DataTables::of($query)
                 ->addColumn('action', fn($shareholder) => view('admin.shareholders._actions', compact('shareholder'))->render())
@@ -120,5 +121,11 @@ class ShareholderController extends Controller
         ];
 
         return $request->validate($rules);
+    }
+
+    public function shares(Shareholder $shareholder)
+    {
+        $shareholder->load('shares');
+        return view('admin.shareholders.shares', compact('shareholder'));
     }
 }
