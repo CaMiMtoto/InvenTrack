@@ -16,6 +16,8 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property string $unit_price
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \OwenIt\Auditing\Models\Audit> $audits
+ * @property-read int|null $audits_count
  * @property-read \App\Models\Order $order
  * @property-read \App\Models\Product $product
  * @property-read mixed $total

@@ -64,6 +64,11 @@ class Permission
     const VIEW_SHAREHOLDERS = 'view shareholders';
     const MANAGE_SHAREHOLDERS = 'manage shareholders';
 
+    const  VIEW_STORE_KEEPER_DASHBOARD = 'view_store_keeper_dashboard';
+    const  VIEW_SALES_DASHBOARD = 'view_sales_dashboard';
+    const  VIEW_DELIVERY_DASHBOARD = 'view_delivery_dashboard';
+    const  VIEW_CUSTOMER_CARE_DASHBOARD = 'view_customer_care_dashboard';
+    const  VIEW_FINANCIAL_DASHBOARD = 'view_financial_dashboard';
 
     /**
      * Return all permissions
@@ -131,7 +136,13 @@ class Permission
             self::APPROVE_RETURNED_ITEMS,
 
             self::VIEW_SHAREHOLDERS,
-            self::MANAGE_SHAREHOLDERS
+            self::MANAGE_SHAREHOLDERS,
+            // dashboards
+            self::VIEW_STORE_KEEPER_DASHBOARD,
+            self::VIEW_SALES_DASHBOARD,
+            self::VIEW_DELIVERY_DASHBOARD,
+            self::VIEW_CUSTOMER_CARE_DASHBOARD,
+            self::VIEW_FINANCIAL_DASHBOARD,
 
         ];
     }

@@ -8,6 +8,7 @@ use App\Models\Shareholder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
+use Validator;
 use Yajra\DataTables\DataTables;
 
 class ShareholderController extends Controller
@@ -128,4 +129,25 @@ class ShareholderController extends Controller
         $shareholder->load('shares');
         return view('admin.shareholders.shares', compact('shareholder'));
     }
+
+    public function storeShare(Request $request, Shareholder $shareholder)
+    {
+        $validator = Validator::make($request->all(), [
+            'quantity' => 'required|integer|min:1',
+            'value' => 'required|numeric|min:0',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        $shareholder->shares()->create([
+            'quantity' => $request->input('quantity'),
+            'value' => $request->input('value'),
+            'status' => 'active', // Setting a default status
+        ]);
+
+        return response()->json(['message' => 'Share added successfully.']);
+    }
+
 }
