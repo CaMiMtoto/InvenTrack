@@ -140,13 +140,13 @@
                     },
                     {data: 'phone_number', name: 'phone_number'},
                     {
-                        data: 'shares_sum_amount', name: 'shares_sum_amount',
+                        data: 'shares_sum_value', name: 'shares_sum_value',
                         render: function (data, type, row) {
                             return Number(data).toLocaleString('en-US', {
                                 style: 'currency',
                                 currency: 'RWF'
                             });
-                        }
+                        }, orderable: false, searchable: false
                     },
                     {data: 'email', name: 'email'},
                     {data: 'action', name: 'action', orderable: false, searchable: false, className: 'text-center'}
