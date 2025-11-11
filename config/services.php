@@ -34,12 +34,15 @@ return [
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
-    'company'=>[
-        'name'=>env('COMPANY_NAME'),
-        'address_1'=>env('COMPANY_ADDRESS_1'),
-        'address_2'=>env('COMPANY_ADDRESS_2'),
-        'phone'=>env('COMPANY_PHONE'),
-        'email'=>env('COMPANY_EMAIL'),
+    'company' => [
+        'name' => env('COMPANY_NAME'),
+        'address_1' => env('COMPANY_ADDRESS_1'),
+        'address_2' => env('COMPANY_ADDRESS_2'),
+        'phone' => env('COMPANY_PHONE'),
+        'email' => env('COMPANY_EMAIL'),
+    ],
+    'shares' => [
+        'value' => env('SHARE_VALUE')
     ]
 
 ];

@@ -22,7 +22,7 @@
                     <span class="menu-title">Dashboard</span>
                 </a>
             </div>
-            @canany([Permission::MANAGE_SHAREHOLDERS,Permission::VIEW_SHAREHOLDERS])
+            @canany([Permission::MANAGE_SHAREHOLDERS,Permission::VIEW_SHAREHOLDERS,Permission::APPROVE_SHARES])
                 <div class="menu-item ">
                     <a href="{{ route('admin.shareholders.index') }}"
                        class="menu-link {{ request()->fullUrl() ==route('admin.shareholders.index')?'active':'' }}">
@@ -31,6 +31,40 @@
                         </div>
                         <span class="menu-title">Shareholders</span>
                     </a>
+                </div>
+
+                <div data-kt-menu-trigger="click"
+                     class="menu-item menu-accordion {{ Str::of(request()->url())->contains('/admin/shares')?'show':'' }}">
+                    <!--begin:Menu link-->
+                    <span class="menu-link">
+                        <span class="menu-icon">
+                           <x-lucide-share-2 class="tw-w-6 tw-h-6"/>
+                        </span>
+                        <span class="menu-title">
+                           Shares
+                        </span>
+                    <span class="menu-arrow"></span>
+                </span>
+                    <!--end:Menu link-->
+                    <!--begin:Menu sub-->
+                    <div class="menu-sub menu-sub-accordion">
+                        @can(Permission::APPROVE_SHARES)
+                            <a class="menu-link {{ request()->fullUrl()==route('admin.shares.index',['status'=>'pending'])?'active':'' }}"
+                               href="{{ route('admin.shares.index',['status'=>'pending']) }}">
+                                <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                                <span class="menu-title">Pending Requests</span>
+                            </a>
+                        @endcan
+
+                        <a class="menu-link {{ request()->fullUrl()==route('admin.shares.index')?'active':'' }}"
+                           href="{{ route('admin.shares.index')}}">
+                            <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                            <span class="menu-title">All Requests</span>
+                        </a>
+                        <!--end:Menu link-->
+
+                    </div>
+                    <!--end:Menu item-->
                 </div>
             @endcanany
 
@@ -314,14 +348,14 @@
                             </a>
                         @endcanany
                         <!--end:Menu link-->
-                  {{--      @canany([Permission::VIEW_STOCK_MOVEMENT])
-                            <a class="menu-link {{ request()->url()==route('admin.stock-adjustments.index')?'active':'' }}"
-                               href="{{ route('admin.stock-adjustments.index') }}">
-                                <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
-                                <span class="menu-title">Movements</span>
-                            </a>
-                            <!--end:Menu link-->
-                        @endcanany--}}
+                        {{--      @canany([Permission::VIEW_STOCK_MOVEMENT])
+                                  <a class="menu-link {{ request()->url()==route('admin.stock-adjustments.index')?'active':'' }}"
+                                     href="{{ route('admin.stock-adjustments.index') }}">
+                                      <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                                      <span class="menu-title">Movements</span>
+                                  </a>
+                                  <!--end:Menu link-->
+                              @endcanany--}}
                     </div>
                     <!--end:Menu item-->
                 </div>

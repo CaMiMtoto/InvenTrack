@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Constants\Permission;
+use App\Constants\Status;
+use App\Models\Bank;
 use App\Models\LegalType;
+use App\Models\PaymentMethod;
 use App\Models\Shareholder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -23,7 +26,7 @@ class ShareholderController extends Controller
     {
         if ($request->ajax()) {
             $query = Shareholder::with('legalType')
-                ->withSum('shares','value');
+                ->withSum('shares', 'value');
 
             return DataTables::of($query)
                 ->addColumn('action', fn($shareholder) => view('admin.shareholders._actions', compact('shareholder'))->render())
@@ -44,7 +47,7 @@ class ShareholderController extends Controller
     public function store(Request $request)
     {
         $validated = $this->validateShareholder($request);
-        $validated['user_id']=auth()->id();
+        $validated['user_id'] = auth()->id();
         Shareholder::create($validated);
 
         return response()->json(['success' => 'Shareholder created successfully.']);
@@ -127,26 +130,49 @@ class ShareholderController extends Controller
     public function shares(Shareholder $shareholder)
     {
         $shareholder->load('shares');
-        return view('admin.shareholders.shares', compact('shareholder'));
+        $banks = Bank::query()->get();
+        $paymentMethods = PaymentMethod::query()->get();
+        return view('admin.shareholders.shares', compact('shareholder', 'banks', 'paymentMethods'));
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function storeShare(Request $request, Shareholder $shareholder)
     {
-        $validator = Validator::make($request->all(), [
+        $data = $request->validate([
             'quantity' => 'required|integer|min:1',
-            'value' => 'required|numeric|min:0',
+            'payment_method_id' => ['required', 'exists:payment_methods,id'],
+            'bank_id' => ['required_if:payment_method_id,3'],
+            'reference_number' => ['required_if:payment_method_id,3', 'string', 'max:255'],
+            'attachment' => ['required', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:2048'],
+        ], [
+            'bank_id.required_if' => "The bank id field is required",
+            'reference_number.required_if' => "The reference number field is required",
         ]);
 
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
-
-        $shareholder->shares()->create([
+        DB::beginTransaction();
+        $share = $shareholder->shares()->create([
             'quantity' => $request->input('quantity'),
-            'value' => $request->input('value'),
-            'status' => 'active', // Setting a default status
+            'value' => config('services.shares.value'),
+            'status' => Status::Pending,
+            'user_id' => auth()->id()
         ]);
 
+        $filename = null;
+        if ($request->hasFile('attachment')) {
+            $filename = $request->file('attachment')->store('payments/shares');
+        }
+        $share->payments()->create([
+            'payment_method_id' => $data['payment_method_id'],
+            'amount' => $share->value * $data['quantity'],
+            'paid_at' => now(),
+            'reference_number' => $data['reference_number'],
+            'attachment' => $filename,
+            'bank_id' => $data['bank_id'] ?? null,
+            'status' => Status::Pending
+        ]);
+        DB::commit();
         return response()->json(['message' => 'Share added successfully.']);
     }
 

@@ -69,6 +69,7 @@ class Permission
     const  VIEW_DELIVERY_DASHBOARD = 'view_delivery_dashboard';
     const  VIEW_CUSTOMER_CARE_DASHBOARD = 'view_customer_care_dashboard';
     const  VIEW_FINANCIAL_DASHBOARD = 'view_financial_dashboard';
+    const  APPROVE_SHARES = 'approve_shares';
 
     /**
      * Return all permissions
@@ -143,7 +144,7 @@ class Permission
             self::VIEW_DELIVERY_DASHBOARD,
             self::VIEW_CUSTOMER_CARE_DASHBOARD,
             self::VIEW_FINANCIAL_DASHBOARD,
-
+            self::APPROVE_SHARES
         ];
     }
 

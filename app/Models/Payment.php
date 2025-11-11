@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Traits\HasStatusColor;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -18,6 +20,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null $attachment
  * @property int|null $user_id
  * @property string|null $notes
+ * @property int|null $bank_id
  * @property-read \App\Models\Order|null $order
  * @property-read \App\Models\PaymentMethod $paymentMethod
  * @property-read Model|\Eloquent $paymentable
@@ -27,6 +30,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Payment query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Payment whereAmount($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Payment whereAttachment($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Payment whereBankId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Payment whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Payment whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Payment whereNotes($value)
@@ -42,6 +46,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Payment extends Model
 {
+    use  HasStatusColor;
+
     public function paymentable(): \Illuminate\Database\Eloquent\Relations\MorphTo
     {
         return $this->morphTo();
@@ -49,7 +55,7 @@ class Payment extends Model
 
     public function order(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(Order::class,'paymentable_id');
+        return $this->belongsTo(Order::class, 'paymentable_id');
     }
 
     public function paymentMethod(): \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -57,8 +63,20 @@ class Payment extends Model
         return $this->belongsTo(PaymentMethod::class);
     }
 
-    public function user()
+    public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function bank(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Bank::class);
+    }
+
+    public function attachmentUrl():Attribute
+    {
+        return Attribute::make(
+            get: fn() => \Storage::url($this->attachment)
+        );
     }
 }
