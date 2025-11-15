@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Currency;
 use App\Models\Expense;
 use App\Models\ExpenseCategory;
 use Illuminate\Http\Request;
@@ -18,7 +19,7 @@ class ExpenseController extends Controller
     {
         if (request()->ajax()) {
             $source = Expense::query()
-                ->with('category');
+                ->with(['category','currency']);
             return datatables()->of($source)
                 ->addColumn('action', function ($data) {
                     $button = '<a href="' . route('admin.expenses.show', $data->id) . '" class="btn btn-primary btn-sm btn-icon rounded-pill js-edit"><i class="bi bi-pencil"></i></a>';
@@ -31,6 +32,7 @@ class ExpenseController extends Controller
         }
         return view('admin.expenses', [
             'categories' => ExpenseCategory::all(),
+            'currencies' => Currency::all()
         ]);
     }
 
@@ -38,12 +40,14 @@ class ExpenseController extends Controller
     {
         $data = $request->validate([
             'expense_category_id' => ['required', 'exists:expense_categories,id'],
-//            'qty' => ['required', 'numeric'],
+            'qty' => ['required', 'numeric'],
             'amount' => ['required', 'numeric'],
             'description' => ['required', 'max:255'],
-            'date' => ['required', 'date']
-        ],[
-            'expense_category_id.required'=> 'The category field is required.',
+            'date' => ['required', 'date'],
+            'unit_measure'=>['required'],
+            'currency_id'=>['required','exists:currencies,id']
+        ], [
+            'expense_category_id.required' => 'The category field is required.',
             'expense_category_id.exists' => 'The selected category is invalid.',
             'amount.required' => 'The amount field is required.',
             'amount.numeric' => 'The amount must be a number.',
@@ -51,9 +55,14 @@ class ExpenseController extends Controller
             'description.max' => 'The description may not be greater than 255 characters.',
             'date.required' => 'The date field is required.',
             'date.date' => 'The date is not a valid date.',
+            'qty.required' => 'The quantity field is required.',
+            'qty.numeric' => 'The quantity must be a number.',
+            'unit_measure.required' => 'The unit measure field is required.',
+            'currency_id.required' => 'The currency field is required.',
+            'currency_id.exists' => 'The selected currency is invalid.',
         ]);
 //        $data['user_id'] = auth()->id();
-        $data['category_id']=$data['expense_category_id'];
+        $data['category_id'] = $data['expense_category_id'];
         unset($data['expense_category_id']);
         $id = $request->input('id');
         if ($id > 0) {

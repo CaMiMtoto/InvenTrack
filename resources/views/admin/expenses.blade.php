@@ -56,11 +56,11 @@
                     <thead>
                     <tr class="text-start text-gray-800 fw-bold fs-7 text-uppercase">
                         <th>Date</th>
+                        <th>Description</th>
                         <th>Category</th>
                         <th>Qty</th>
                         <th>Amount</th>
                         <th>Total</th>
-                        <th>Description</th>
                         <th>Options</th>
                     </tr>
                     </thead>
@@ -93,10 +93,9 @@
                     <div class="modal-body">
                         <input type="hidden" id="id" name="id" value="0"/>
                         <div class="mb-3">
-                            <label for="date" class="form-label">
-                                Expense Date
-                            </label>
-                            <input type="date" class="form-control" id="date" name="date" placeholder=""/>
+                            <label for="date" class="form-label">Expense Date</label>
+                            <input type="date" class="form-control" id="date" name="date"
+                                   value="{{ now()->toDateString() }}"/>
                         </div>
                         <div class="mb-3">
                             <label for="expense_category_id" class="form-label">
@@ -120,6 +119,29 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
+                                    <label for="unit_measure" class="form-label">
+                                        Unit Measure
+                                    </label>
+                                    <input type="text" class="form-control" id="unit_measure" name="unit_measure"
+                                           placeholder=""/>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="currency_id" class="form-label">Currency</label>
+                                    <select name="currency_id" id="currency_id" class="form-select">
+                                        <option value="">Select Currency</option>
+                                        @foreach($currencies as $currency)
+                                            <option value="{{ $currency->id }}">{{ $currency->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
                                     <label for="amount" class="form-label">
                                         Amount
                                     </label>
@@ -133,7 +155,8 @@
                             <label for="description" class="form-label">
                                 Description
                             </label>
-                            <input type="text" class="form-control" id="description" name="description" placeholder=""/>
+                            <textarea type="text" class="form-control" id="description" name="description"
+                                      placeholder=""></textarea>
                         </div>
 
 
@@ -164,16 +187,35 @@
                     processing: '<div class="spinner spinner-primary spinner-lg mr-15"></div> Processing...'
                 },
                 columns: [
-                    {data: 'date', name: 'date',
+                    {
+                        data: 'date', name: 'date',
                         render: function (data, type, row) {
                             return moment(data).format('DD-MM-YYYY');
                         }
                     },
-                    {data: 'category.name', name: 'category.name'},
-                    {data: 'qty', name: 'qty', class: 'text-end', render: $.fn.dataTable.render.number(',', '.', 0)},
-                    {data: 'amount', name: 'amount', class: 'text-end', render: $.fn.dataTable.render.number(',', '.', 0)},
-                    {data: 'total', name: 'total', class: 'text-end', render: $.fn.dataTable.render.number(',', '.', 0),sortable: false, searchable: false},
                     {data: 'description', name: 'description'},
+                    {data: 'category.name', name: 'category.name'},
+                    {
+                        data: 'qty', name: 'qty', class: 'text-end',
+                        render: function (data, type, row, meta) {
+                            return data + ' ' + row.unit_measure
+                        }
+                    },
+                    {
+                        data: 'amount',
+                        name: 'amount',
+                        render: function (data, type, row) {
+                            return row.currency?.symbol??'' + Number(data).toLocaleString()
+                        }
+                    },
+                    {
+                        data: 'total',
+                        name: 'total',
+                        class: 'text-end',
+                        render: $.fn.dataTable.render.number(',', '.', 0),
+                        sortable: false,
+                        searchable: false
+                    },
                     {
                         data: 'action',
                         name: 'action',
@@ -254,7 +296,7 @@
                     success: function (data) {
                         $('#id').val(data.id);
                         $('#date').val(data.date);
-                        $('#expense_category_id').val(data.expense_category_id);
+                        $('#expense_category_id').val(data.category_id);
                         $('#qty').val(data.qty);
                         $('#amount').val(data.amount);
                         $('#description').val(data.description);
