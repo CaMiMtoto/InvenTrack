@@ -1,5 +1,5 @@
 @extends('layouts.master')
-@section('title', $report->name)
+@section('title', $reportName)
 
 @section('styles')
     {{-- Styles for printing --}}
@@ -29,7 +29,7 @@
 
 @section('content')
     <div class="d-flex justify-content-between">
-        <x-toolbar :title="$report->name . ' Report'" :breadcrumbs="[
+        <x-toolbar :title="$reportName" :breadcrumbs="[
         ['label' => 'Reports', 'url' => route('admin.reports.list')],
         ['label' => $report->name, 'url' => route('admin.reports.show', encodeId($report->id))],
         ['label' => 'Result'] ]"
@@ -74,11 +74,12 @@
                 </div>
             @else
                 <div class="table-responsive">
-                    <table class="table table-striped table-bordered" id="kt_report_table">
+                    <table class="table table-striped table-hover table-row-dashed table-row-gray-300"
+                           id="kt_report_table">
                         <thead>
                         <tr class="fw-bold fs-6 text-gray-800">
                             @foreach($selectedColumns as $column)
-                                <th>{{ ucwords(str_replace('_', ' ', $column)) }}</th>
+                                <th class="tw-min-w-32 text-uppercase fw-bold">{{ ucwords(str_replace('_', ' ', $column)) }}</th>
                             @endforeach
                         </tr>
                         </thead>
@@ -86,7 +87,7 @@
                         @foreach($data as $row)
                             <tr>
                                 @foreach($selectedColumns as $column)
-                                    <td>{{ $row->{$column} }}</td>
+                                    <td>{{ is_numeric($row->{$column})?number_format($row->{$column}):$row->{$column} }}</td>
                                 @endforeach
                             </tr>
                         @endforeach

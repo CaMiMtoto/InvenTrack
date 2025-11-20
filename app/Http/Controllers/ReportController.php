@@ -128,7 +128,7 @@ class ReportController extends Controller
         $data = $query->get();
         // Pass the original request input to the view for the export form
         $input = $request->all();
-        return view('admin.reports.result', compact('report', 'data', 'selectedColumns', 'input'));
+        return view('admin.reports.result', compact('report', 'data', 'selectedColumns', 'input','reportName'));
 //        return view('admin.reports.result', compact('report', 'data', 'selectedColumns'));
     }
 

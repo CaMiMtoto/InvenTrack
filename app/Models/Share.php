@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Traits\HasEncodedId;
 use App\Traits\HasStatusColor;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -38,7 +39,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class Share extends Model
 {
-    use HasStatusColor, HasEncodedId;
+    use HasStatusColor, HasEncodedId,HasFactory;
 
     protected $appends = ['status_color', 'total'];
     protected $casts = [
