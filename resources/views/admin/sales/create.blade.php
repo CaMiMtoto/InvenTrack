@@ -227,7 +227,7 @@
                         }).then(function (result) {
                             if (result.isConfirmed) {
                                 // Redirect to the orders index page
-                                window.location.href = "{{ route('admin.orders.index') }}";
+                                window.location.href = "{{ route('admin.orders.index',['mine'=>true]) }}";
                             }
                         });
                     },

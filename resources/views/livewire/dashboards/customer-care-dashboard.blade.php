@@ -58,7 +58,7 @@
     </div>
     <!--end::Row-->
 
-    <div class="row g-5 g-xl-8">
+{{--    <div class="row g-5 g-xl-8">
         <div class="col-xl-6">
             <!--begin::Chart Widget 1-->
             <div class="card card-xl-stretch mb-5 mb-xl-8">
@@ -85,7 +85,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div>--}}
     <!--end::Row-->
     <!--begin::Card-->
     <div class="card border">

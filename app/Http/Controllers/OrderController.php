@@ -168,11 +168,12 @@ class OrderController extends Controller
         if ($request->ajax()) {
             return response()->json([
                 'success' => 'Sales order saved successfully.',
-                'url' => route('admin.orders.index')
+                'url' => route('admin.orders.index', ['mine' => true])
             ]);
         }
 
-        return redirect()->route('admin.orders.index')->with('success', 'Sales order saved successfully.');
+        return redirect()->route('admin.orders.index', ['mine' => true])
+            ->with('success', 'Sales order saved successfully.');
     }
 
     // 2. Approve order (storekeeper)
