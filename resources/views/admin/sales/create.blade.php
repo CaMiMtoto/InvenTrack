@@ -57,6 +57,12 @@
                             </li>
                         @endforeach
                     </ul>
+                    <div class="d-flex justify-content-end">
+                        <a href="{{ route('admin.products.catalog') }}" class="btn btn-success btn-sm">
+                            <x-lucide-plus class="tw-w-5 tw-h-5"/>
+                            Add New Product
+                        </a>
+                    </div>
                     <ol class="list-group list-group-flush mt-10">
                         <li class="list-group-item d-flex justify-content-between align-items-start bg-transparent">
                             <div class="ms-2 me-auto">
