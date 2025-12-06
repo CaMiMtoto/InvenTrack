@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Constants\Permission;
 use App\Constants\Status;
 use App\Models\ReturnModel;
+use App\Models\StockMovement;
 use App\Services\FlowHistoryService;
 use DB;
 use Illuminate\Http\Request;
@@ -78,6 +79,13 @@ class ReturnController extends Controller
                         $item->product->increment('stock', $item->quantity);
                     }*/
                     $item->product->increment('stock', $item->quantity);
+              /*      StockMovement::create([
+                        'product_id' => $item->product_id,
+                        'quantity' => $item->quantity,
+                        'type' => 'in',
+                        'reference_type' => $item->getMorphClass(),
+                        'reference_id' => $item->id,
+                    ]);*/
                 }
             }
 

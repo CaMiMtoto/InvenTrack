@@ -205,7 +205,7 @@
                         data: 'amount',
                         name: 'amount',
                         render: function (data, type, row) {
-                            return row.currency?.symbol??'' + Number(data).toLocaleString()
+                            return  Number(data).toLocaleString()
                         }
                     },
                     {

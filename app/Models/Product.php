@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Traits\HasActiveScope;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Contracts\Auditable;
 
 /**
  * @property int $id
@@ -46,9 +47,9 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Product withInactive()
  * @mixin \Eloquent
  */
-class Product extends Model
+class Product extends Model implements Auditable
 {
-    use HasFactory, HasActiveScope;
+    use HasFactory, HasActiveScope,\OwenIt\Auditing\Auditable;
 
     const IMAGE_PATH = 'images/products';
 
