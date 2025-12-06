@@ -6,7 +6,7 @@
     <x-toolbar title="Payments"
                :breadcrumbs="[['label' => 'Payments']]"
                :actions="[
-        ['url' => route('admin.payments.create'), 'label' => 'Add Payment', 'class' => 'btn-primary']
+       auth()->user()->can(\App\Constants\Permission::ADD_ORDER_PAYMENT)? ['url' => route('admin.payments.create'), 'label' => 'Add Payment', 'class' => 'btn-primary']:[]
     ]"
     />
     <!--end::Toolbar-->
