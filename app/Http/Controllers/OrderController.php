@@ -48,14 +48,15 @@ class OrderController extends Controller
             $startDate = \request('start_date');
             $endDate = \request('end_date');
             $status = \request('status');
-
+            $mine = \request('mine');
             $data = Order::query()
                 ->with('customer')
                 ->withCount('items')
                 ->withSum('items', DB::raw("quantity * unit_price"))
                 ->when($startDate, fn($query, $startDate) => $query->whereDate('order_date', '>=', $startDate))
                 ->when($endDate, fn($query, $endDate) => $query->whereDate('order_date', '<=', $endDate))
-                ->when($status, fn($query, $status) => $query->where('order_status', $status));
+                ->when($status, fn($query, $status) => $query->where('order_status', $status))
+                ->when($mine, fn($query, $mine) => $query->where('created_by', '=', auth()->id()));
 
             return DataTables::of($data)
                 ->addColumn('action', fn(Order $saleOrder) => view('admin.sales.partials.actions', compact('saleOrder')))

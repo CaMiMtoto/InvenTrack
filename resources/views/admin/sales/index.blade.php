@@ -43,7 +43,7 @@
             <!--end::Page title-->
             <!--begin::Actions-->
             @can(\App\Constants\Permission::NEW_ORDER)
-                <a href="{{ route('admin.orders.create') }}" class="btn btn-sm btn-light-primary "
+                <a href="{{ route('admin.products.catalog') }}" class="btn btn-sm btn-light-primary "
                    id="addBtn">
                     <i class="bi bi-plus"></i>
                     New Order

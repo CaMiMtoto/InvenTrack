@@ -17,6 +17,7 @@
         "@vitejs/plugin-vue": "^4.5.0",
         "autoprefixer": "^10.4.21",
         "axios": "^1.8.2",
+        "baseline-browser-mapping": "^2.9.3",
         "bootstrap": "^5.2.3",
         "chart.js": "^4.4.1",
         "choices.js": "^11.0.2",

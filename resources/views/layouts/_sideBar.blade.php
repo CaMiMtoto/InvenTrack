@@ -83,7 +83,7 @@
             @endcan
 
 
-            @canany([Permission::ManageSalesOrders()])
+            @canany(Permission::ManageSalesOrders())
                 <div data-kt-menu-trigger="click"
                      class="menu-item menu-accordion {{ Str::of(request()->url())->contains('/admin/orders')?'show':'' }}">
                     <!--begin:Menu link-->
@@ -120,13 +120,23 @@
                                 <span class="menu-title">Delivered Orders</span>
                             </a>
                         @endcan
+                        @can(Permission::VIEW_ORDERS)
+                            <a class="menu-link {{ request()->fullUrl()==route('admin.orders.index')?'active':'' }}"
+                               href="{{ route('admin.orders.index') }}">
+                                <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                                <span class="menu-title">All Orders</span>
+                            </a>
+                            <!--end:Menu link-->
+                        @endcan
+                        @can(Permission::VIEW_MY_ORDERS)
+                            <a class="menu-link {{ request()->fullUrl()==route('admin.orders.index',['mine'=>true])?'active':'' }}"
+                               href="{{ route('admin.orders.index',['mine'=>true]) }}">
+                                <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                                <span class="menu-title">My Orders</span>
+                            </a>
+                            <!--end:Menu link-->
+                        @endcan
 
-                        <a class="menu-link {{ request()->fullUrl()==route('admin.orders.index')?'active':'' }}"
-                           href="{{ route('admin.orders.index',['start_date'=>now()->addDays(-7)->format('Y-m-d'), 'end_date'=>date('Y-m-d')]) }}">
-                            <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
-                            <span class="menu-title">All Orders</span>
-                        </a>
-                        <!--end:Menu link-->
 
                     </div>
                     <!--end:Menu item-->
@@ -297,21 +307,22 @@
                     <!--end:Menu link-->
                     <!--begin:Menu sub-->
                     <div class="menu-sub menu-sub-accordion">
-
-                        <a class="menu-link {{ request()->url()==route('admin.products.categories.index')?'active':'' }}"
-                           href="{{ route('admin.products.categories.index') }}">
-                            <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
-                            <span class="menu-title">Categories</span>
-                        </a>
-                        <!--end:Menu link-->
-
-                        <a class="menu-link {{ request()->url()==route('admin.products.index')?'active':'' }}"
-                           href="{{ route('admin.products.index') }}">
-                            <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
-                            <span class="menu-title">Products</span>
-                        </a>
-                        <!--end:Menu link-->
-
+                        @can(Permission::MANAGE_CATEGORIES)
+                            <a class="menu-link {{ request()->url()==route('admin.products.categories.index')?'active':'' }}"
+                               href="{{ route('admin.products.categories.index') }}">
+                                <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                                <span class="menu-title">Categories</span>
+                            </a>
+                        @endcan
+                        @can(Permission::MANAGE_PRODUCTS)
+                            <!--end:Menu link-->
+                            <a class="menu-link {{ request()->url()==route('admin.products.index')?'active':'' }}"
+                               href="{{ route('admin.products.index') }}">
+                                <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                                <span class="menu-title">Products</span>
+                            </a>
+                            <!--end:Menu link-->
+                        @endcan
                     </div>
                     <!--end:Menu item-->
                 </div>

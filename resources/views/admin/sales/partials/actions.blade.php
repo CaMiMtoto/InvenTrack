@@ -5,8 +5,8 @@
     </button>
     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
         <a class="dropdown-item" href="{{ route('admin.orders.show', encodeId($saleOrder->id)) }}">Details</a>
-        <a class="dropdown-item" href="{{route('admin.orders.print',encodeId( $saleOrder->id))}}"
-           target="_blank">Print</a>
+    {{--    <a class="dropdown-item" href="{{route('admin.orders.print',encodeId( $saleOrder->id))}}"
+           target="_blank">Print</a>--}}
 
         @if( $saleOrder->canBeCompleted())
             <a class="dropdown-item js-complete"

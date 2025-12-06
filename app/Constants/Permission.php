@@ -22,6 +22,7 @@ class Permission
     public const ASSIGN_DELIVERY = 'assign_delivery';
     public const COMPLETE_ORDERS = 'complete_orders';
     public const CANCEL_SALES_ORDERS = 'cancel_sales_orders';
+    public const VIEW_MY_ORDERS = 'view_my_orders';
 
     // Deliveries
     public const MANAGE_DELIVERIES = 'manage_deliveries';
@@ -95,6 +96,7 @@ class Permission
             self::ASSIGN_DELIVERY,
             self::COMPLETE_ORDERS,
             self::CANCEL_SALES_ORDERS,
+            self::VIEW_MY_ORDERS,
 
             // Deliveries
             self::MANAGE_DELIVERIES,
@@ -161,7 +163,7 @@ class Permission
         return [
             self::NEW_ORDER,
             self::APPROVE_ORDERS,
-
+            self::VIEW_MY_ORDERS,
             self::COMPLETE_ORDERS,
             self::CANCEL_SALES_ORDERS,
         ];
@@ -190,8 +192,7 @@ class Permission
     {
         return [
             self::MANAGE_PRODUCTS,
-            self::MANAGE_CATEGORIES,
-            self::VIEW_PRODUCT_CATALOG,
+            self::MANAGE_CATEGORIES
         ];
     }
 
