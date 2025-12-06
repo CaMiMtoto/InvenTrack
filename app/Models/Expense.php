@@ -16,18 +16,26 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string $date
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property int|null $qty
+ * @property string|null $unit_measure
+ * @property int|null $currency_id
  * @property-read \App\Models\ExpenseCategory $category
+ * @property-read \App\Models\Currency|null $currency
+ * @property-read mixed $total
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Expense newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Expense newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Expense query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Expense whereAmount($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Expense whereCategoryId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Expense whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Expense whereCurrencyId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Expense whereDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Expense whereDescription($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Expense whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Expense wherePaymentMethodId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Expense wherePaymentReference($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Expense whereQty($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Expense whereUnitMeasure($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Expense whereUpdatedAt($value)
  * @mixin \Eloquent
  */

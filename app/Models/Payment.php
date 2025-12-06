@@ -21,6 +21,11 @@ use Illuminate\Database\Eloquent\Model;
  * @property int|null $user_id
  * @property string|null $notes
  * @property int|null $bank_id
+ * @property string|null $total_amount
+ * @property string|null $balance
+ * @property-read mixed $attachment_url
+ * @property-read \App\Models\Bank|null $bank
+ * @property-read string $status_color
  * @property-read \App\Models\Order|null $order
  * @property-read \App\Models\PaymentMethod $paymentMethod
  * @property-read Model|\Eloquent $paymentable
@@ -30,6 +35,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Payment query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Payment whereAmount($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Payment whereAttachment($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Payment whereBalance($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Payment whereBankId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Payment whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Payment whereId($value)
@@ -40,6 +46,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Payment wherePaymentableType($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Payment whereReferenceNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Payment whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Payment whereTotalAmount($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Payment whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Payment whereUserId($value)
  * @mixin \Eloquent

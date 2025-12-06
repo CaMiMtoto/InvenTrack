@@ -17,10 +17,13 @@
             <table class="table ps-2 align-middle table-hover  rounded table-row-dashed fs-6 gy-3" id="myTable">
                 <thead>
                 <tr class="text-start text-gray-800 fw-bold fs-7 text-uppercase">
+                    <th>Date</th>
                     <th>Payment Date</th>
                     <th>Order #</th>
                     <th>Customer</th>
-                    <th>Amount</th>
+                    <th>Amount To Pay</th>
+                    <th>Amount Paid</th>
+                    <th>Balance</th>
                     <th>Method</th>
                     <th>Reference</th>
                     <th>Recorded By</th>
@@ -43,8 +46,14 @@
                 ajax: '{!! request()->fullUrl() !!}',
                 columns: [
                     {
+                        data: 'created_at',
+                        name: 'created_at',
+                        render: (data, type, row, meta) => moment(data).format('YYYY-MM-DD HH:mm:ss')
+                    },
+                    {
                         data: 'paid_at',
                         name: 'paid_at',
+                        render: (data, type, row, meta) => moment(data).format('YYYY-MM-DD')
                     },
                     {
                         data: 'order.order_number',
@@ -58,9 +67,20 @@
                         searchable: false,
                     },
                     {
-                        data: 'amount',
-                        name: 'amount',
-                        searchable: false,
+                        data: 'total_amount', name: 'total_amount', searchable: false,
+                        render: function (data, type, row, meta) {
+                            return Number(data).toLocaleString();
+                        }
+                    },
+                    {
+                        data: 'amount', name: 'amount', searchable: false, render: function (data, type, row, meta) {
+                            return Number(data).toLocaleString();
+                        }
+                    },
+                    {
+                        data: 'balance', name: 'balance', searchable: false, render: function (data, type, row, meta) {
+                            return Number(data).toLocaleString();
+                        }
                     },
                     {
                         data: 'payment_method.name',

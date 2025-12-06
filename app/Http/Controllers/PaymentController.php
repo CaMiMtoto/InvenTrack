@@ -70,8 +70,12 @@ class PaymentController extends Controller
             if ($request->hasFile('attachment')) {
                 $attachmentPath = $request->file('attachment')->store('payments');
             }
+            // snapshot before payment
+            $amountDueBefore = $order->amount_due;
+            $amountPaid = $data['amount'];
+            $balanceAfter = $amountDueBefore - $amountPaid;
 
-            $order->payments()->create([
+            $payment = $order->payments()->create([
                 'payment_method_id' => $data['payment_method_id'],
                 'amount' => $data['amount'],
                 'paid_at' => $data['payment_date'],
@@ -79,6 +83,8 @@ class PaymentController extends Controller
                 'notes' => $data['notes'],
                 'attachment' => $attachmentPath,
                 'user_id' => auth()->id(),
+                'total_amount' => $order->total_amount,
+                'balance' => $balanceAfter,
             ]);
 
             // check if the order amount has been fully paid
@@ -123,7 +129,7 @@ class PaymentController extends Controller
                     ['paymentable_id', '=', decodeId($orderId)],
                     ['paymentable_type', '=', Order::class]
                 ]))
-                ->with(['order.customer', 'paymentMethod','user']);
+                ->with(['order.customer', 'paymentMethod', 'user']);
 
             return datatables($source)
                 ->make(true);
