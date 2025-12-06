@@ -206,7 +206,7 @@
                             <a class="menu-link {{ request()->url()==route('admin.returns.index')?'active':'' }}"
                                href="{{ route('admin.returns.index',['status'=>'pending']) }}">
                                 <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
-                                <span class="menu-title">Pending Deliveries</span>
+                                <span class="menu-title">Pending Returns</span>
                             </a>
                         @endcan
 

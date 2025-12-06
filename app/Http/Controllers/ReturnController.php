@@ -74,9 +74,10 @@ class ReturnController extends Controller
             // If approved, return the items to stock.
             if ($newStatus === Status::Approved) {
                 foreach ($return->items as $item) {
-                    if ($item->returnReason->restockable) {
+                  /*  if ($item->returnReason->restockable) {
                         $item->product->increment('stock', $item->quantity);
-                    }
+                    }*/
+                    $item->product->increment('stock', $item->quantity);
                 }
             }
 
