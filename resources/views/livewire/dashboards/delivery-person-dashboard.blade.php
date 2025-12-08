@@ -5,10 +5,10 @@
             <div class="card card-flush mb-5 mb-xl-10 bg-primary-subtle text-primary-emphasis">
                 <div class="card-body">
                     <div class="card-title d-flex flex-column">
-                        <span class="fs-2hx fw-bold text-primary-emphasis me-2 lh-1 ls-n2">{{ $assignedToday }}</span>
-                        <span class="text-primary-emphasis pt-1 fw-semibold fs-6">Assigned Today</span>
+                        <span class="fs-2hx fw-bold text-primary-emphasis me-2 lh-1 ls-n2">{{ $totalAssigned }}</span>
+                        <span class="text-primary-emphasis pt-1 fw-semibold fs-4">Assigned Deliveries</span>
                     </div>
-                    <x-lucide-clipboard-list class="tw-h-16 tw-w-16 text-primary-emphasis"/>
+                    <x-lucide-map class="tw-h-8 tw-w-8 text-primary-emphasis"/>
                 </div>
             </div>
         </div>
@@ -16,10 +16,10 @@
             <div class="card card-flush mb-5 mb-xl-10 bg-success-subtle text-success-emphasis">
                 <div class="card-body">
                     <div class="card-title d-flex flex-column">
-                        <span class="fs-2hx fw-bold text-success-emphasis me-2 lh-1 ls-n2">{{ $deliveredToday }}</span>
-                        <span class="text-success-emphasis pt-1 fw-semibold fs-6">Delivered Today</span>
+                        <span class="fs-2hx fw-bold text-success-emphasis me-2 lh-1 ls-n2">{{ number_format($delivered) }}</span>
+                        <span class="text-success-emphasis pt-1 fw-semibold fs-6">Delivered</span>
                     </div>
-                    <x-lucide-package-check class="tw-h-16 tw-w-16 text-success-emphasis"/>
+                    <x-lucide-package-check class="tw-h-8 tw-w-8 text-success-emphasis"/>
                 </div>
             </div>
 
@@ -28,10 +28,12 @@
             <div class="card card-flush mb-5 mb-xl-10 bg-warning-subtle text-warning-emphasis">
                 <div class="card-body">
                     <div class="card-title d-flex flex-column">
-                        <span class="fs-2hx fw-bold text-warning-emphasis me-2 lh-1 ls-n2">{{ $pendingToday }}</span>
-                        <span class="text-warning-emphasis pt-1 fw-semibold fs-6">Pending</span>
+                        <span class="fs-2hx fw-bold text-warning-emphasis me-2 lh-1 ls-n2">{{ number_format($partiallyDelivered) }}</span>
+                        <span class="text-warning-emphasis pt-1 fw-semibold fs-6">
+                            Partially Delivered
+                        </span>
                     </div>
-                    <x-lucide-package class="tw-h-16 tw-w-16 text-warning-emphasis"/>
+                    <x-lucide-package class="tw-h-8 tw-w-8 text-warning-emphasis"/>
                 </div>
             </div>
         </div>
@@ -44,7 +46,7 @@
         <div class="card-header border-0 pt-6">
             <!--begin::Card title-->
             <div class="card-title">
-                <h2>Today's Deliveries</h2>
+                <h2>Recent Deliveries</h2>
             </div>
             <!--end::Card title-->
         </div>
@@ -56,7 +58,9 @@
                 <table class="table align-middle table-row-dashed fs-6 gy-2">
                     <thead>
                     <tr class="text-start text-muted fw-bold fs-7 text-uppercase gs-0">
+                        <th class="min-w-125px">Date</th>
                         <th class="min-w-125px">Order #</th>
+                        <th class="min-w-125px">Items</th>
                         <th class="min-w-125px">Customer</th>
                         <th class="min-w-125px">Address</th>
                         <th class="min-w-125px">Status</th>
@@ -66,7 +70,9 @@
                     <tbody class="text-gray-600 fw-semibold">
                     @forelse($todaysDeliveries as $order)
                         <tr>
+                            <td>{{ $order->order->created_at->format('d M Y,H:i ') }}</td>
                             <td>{{ $order->order->order_number }}</td>
+                            <td>{{ number_format($order->items_count) }}</td>
                             <td>{{ $order->order->customer->name ?? 'N/A' }}</td>
                             <td>{{ $order->order->customer->address }}</td>
                             <td>

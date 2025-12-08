@@ -104,4 +104,9 @@ class User extends Authenticatable implements Auditable
     {
         return $this->hasMany(Delivery::class, 'delivery_person_id');
     }
+
+    public function orders(): \Illuminate\Database\Eloquent\Builder|User|\Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Order::class, 'created_by');
+    }
 }

@@ -22,7 +22,9 @@ class CustomerCareDashboard extends Component
     public int $myApprovedShares = 0;
     public array $myPaidOrdersChartData = [];
     public array $myApprovedSharesChartData = [];
-
+    public $startDate;
+    public $endDate;
+    public $performance;
     public function mount(): void
     {
         $today = Carbon::today();
@@ -53,8 +55,9 @@ class CustomerCareDashboard extends Component
             ->where('user_id', '=', $userId)
             ->where('status', '=', Status::Approved)
             ->count();
-
-        $this->prepareChartData();
+//
+//        $this->prepareChartData();
+        $this->loadPerformance();
     }
 
     private function prepareChartData(): void
@@ -87,9 +90,31 @@ class CustomerCareDashboard extends Component
 
         $this->myApprovedSharesChartData = $dates->merge($approvedSharesData)->all();
     }
+    public function loadPerformance(): void
+    {
+        $userId = auth()->id();
 
+        $query = DB::table('users')
+            ->select(
+                DB::raw('ROUND(SUM(order_items.quantity * order_items.unit_price * COALESCE(product_classes.rate, 0) / 100), 0) as performance_score'),
+                DB::raw('COUNT(DISTINCT orders.id) as total_orders'),
+                DB::raw('SUM(order_items.quantity) as total_items')
+            )
+            ->join('orders', 'orders.created_by', '=', 'users.id')
+            ->join('order_items', 'order_items.order_id', '=', 'orders.id')
+            ->join('products', 'products.id', '=', 'order_items.product_id')
+            ->leftJoin('product_classes', 'product_classes.id', '=', 'products.product_class_id')
+            ->where('users.id', $userId);
+
+        if ($this->startDate && $this->endDate) {
+            $query->whereBetween('orders.order_date', [$this->startDate, $this->endDate]);
+        }
+
+        $this->performance = $query->first();
+    }
     public function render(): \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
     {
+
         return view('livewire.dashboards.customer-care-dashboard');
     }
 }

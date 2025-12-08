@@ -72,7 +72,8 @@ class DeliveryController extends Controller
                         'delivery_id' => $delivery->id,
                         'order_item_id' => $orderItem->id,
                         'quantity' => $orderItem->quantity,
-                        'delivered_quantity' => 0
+                        'delivered_quantity' => 0,
+                        'assigned_by' => auth()->id(),
                     ]);
                 }
                 $order->update([
@@ -170,7 +171,7 @@ class DeliveryController extends Controller
 
     public function show(Delivery $delivery)
     {
-        $delivery->load(['order.customer.district','order.customer.sector','order.customer.cell','order.customer.village', 'items.orderItem.product']);
+        $delivery->load(['order.customer.district', 'order.customer.sector', 'order.customer.cell', 'order.customer.village', 'items.orderItem.product']);
         return view('admin.deliveries._show', compact('delivery'));
     }
 

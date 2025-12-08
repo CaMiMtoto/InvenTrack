@@ -1,91 +1,140 @@
 <div class="mt-5">
     <!--begin::Row-->
     <div class="row mb-5">
-        <div class="col-md-4">
-            <div class="card card-flush mb-5 mb-xl-10 bg-info-subtle">
-                <div class="card-header pt-5">
-                    <div class="card-title d-flex flex-column">
-                        <div class="fs-2hx fw-bold text-info-emphasis me-2 lh-1 ls-n2">{{ $newCustomersToday }}</div>
-                        <span class="text-info-emphasis pt-1 fw-semibold fs-6">New Customers Today</span>
+        <div class="col-sm-6 col-lg-4 mb-3 col-xl-2">
+            <div class="card h-100 bg-info-subtle">
+                <div class="card-body">
+                    <div class="fs-2hx d-flex align-items-center fw-bold text-info-emphasis mb-5 lh-1 ls-n2">
+                        <x-lucide-user class="tw-w-8 tw-h-8 me-2"/>
+                        <span>{{ number_format($totalCustomers) }}</span>
                     </div>
+                    <h2>
+                        <a class="text-info-emphasis" href="{{ route('admin.settings.customers.index') }}">
+                            Total Customers
+                        </a>
+                    </h2>
                 </div>
-                <div class="card-body pt-2 pb-4 d-flex flex-wrap align-items-center">
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-4 mb-3 col-xl-2">
+            <div class="card h-100 bg-warning-subtle">
+                <div class="card-body">
+                    <div class="fs-2hx d-flex align-items-center fw-bold text-warning-emphasis mb-5 lh-1 ls-n2">
+                        <x-lucide-clock-alert class="tw-w-8 tw-h-8 me-2"/>
+                        {{ number_format($pendingOrders) }}
+                    </div>
                     <div class="d-flex flex-column content-justify-center flex-row-fluid">
                         <div class="d-flex fw-semibold align-items-center">
-                            <h4 class="text-info-emphasis flex-grow-1 me-4">Total Customers</h4>
-                            <h4 class="fw-bolder text-info-emphasis text-xxl-end">{{ number_format($totalCustomers) }}</h4>
+                            <h2>
+                                <a href="{{ route('admin.orders.index',['mine'=>true]) }}"
+                                   class="text-warning-emphasis">
+                                    Pending Orders
+                                </a>
+                            </h2>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="card card-flush mb-5 mb-xl-10 bg-primary-subtle">
-                <div class="card-header pt-5">
-                    <div class="card-title d-flex flex-column">
-                        <span class="fs-2hx fw-bold text-primary-emphasis me-2 lh-1 ls-n2">{{ $ordersToday }}</span>
-                        <span class="text-primary-emphasis pt-1 fw-semibold fs-6">Orders Today</span>
+        <div class="col-sm-6 col-lg-4 mb-3 col-xl-2">
+            <div class="card h-100 bg-success-subtle">
+                <div class="card-body">
+                    <div class="fs-2hx d-flex align-items-center fw-bold text-success-emphasis mb-5 lh-1 ls-n2">
+                        <x-lucide-check-circle class="tw-w-8 tw-h-8 me-2"/>
+                        {{ number_format($myPaidOrders) }}
                     </div>
-                </div>
-                <div class="card-body pt-2 pb-4 d-flex flex-wrap align-items-center">
                     <div class="d-flex flex-column content-justify-center flex-row-fluid">
                         <div class="d-flex fw-semibold align-items-center">
-                            <h4 class="text-primary-emphasis flex-grow-1 me-4">Pending Orders</h4>
-                            <h4 class="fw-bolder text-primary-emphasis text-xxl-end">{{ number_format($pendingOrders) }}</h4>
+                            <h2>
+                                <a href="{{ route('admin.orders.index',['mine'=>true,'status'=>'paid']) }}"
+                                   class="text-success-emphasis">
+                                    Paid Orders
+                                </a>
+                            </h2>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="card card-flush mb-5 mb-xl-10 bg-success-subtle">
-                <div class="card-header pt-5">
-                    <div class="card-title d-flex flex-column">
-                        <span class="fs-2hx fw-bold text-success-emphasis me-2 lh-1 ls-n2">{{ $myPaidOrders }}</span>
-                        <span class="text-success-emphasis pt-1 fw-semibold fs-6">My Paid Orders</span>
+        <div class="col-sm-6 col-lg-4 mb-3 col-xl-2">
+            <div class="card h-100 bg-success-subtle">
+                <div class="card-body">
+                    <div class="fs-2hx d-flex align-items-center fw-bold text-success-emphasis mb-5 lh-1 ls-n2">
+                        <x-lucide-share-2 class="tw-w-8 tw-h-8 me-2"/>
+                        {{ number_format($myApprovedShares) }}
                     </div>
-                </div>
-                <div class="card-body pt-2 pb-4 d-flex flex-wrap align-items-center">
                     <div class="d-flex flex-column content-justify-center flex-row-fluid">
                         <div class="d-flex fw-semibold align-items-center">
-                            <h4 class="text-success-emphasis flex-grow-1 me-4">My Approved Shares</h4>
-                            <h4 class="fw-bolder text-success-emphasis text-xxl-end">{{ number_format($myApprovedShares) }}</h4>
+                            <h2>
+                                <a class="text-success-emphasis"
+                                   href="{{ route('admin.shares.index',['mine'=>true,'status'=>'approved']) }}">
+                                    Approved Shares
+                                </a>
+                            </h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-4 mb-3 col-xl-2">
+            <div class="card h-100 bg-success-subtle">
+                <div class="card-body">
+                    <div class="fs-2hx d-flex align-items-center fw-bold text-success-emphasis mb-5 lh-1 ls-n2">
+                        {{ number_format($performance->performance_score ?? 0) }}
+                    </div>
+                    <div class="d-flex flex-column content-justify-center flex-row-fluid">
+                        <div class="d-flex fw-semibold align-items-center">
+                            <h2 class="text-success-emphasis flex-grow-1 me-4">Goods Performance</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-4 mb-3 col-xl-2">
+            <div class="card h-100 bg-success-subtle">
+                <div class="card-body">
+                    <div class="fs-2hx d-flex align-items-center fw-bold text-success-emphasis mb-5 lh-1 ls-n2">
+                        <x-lucide-trending-up class="tw-w-8 tw-h-8 me-2"/>
+                        {{ number_format($myApprovedShares) }}
+                    </div>
+                    <div class="d-flex flex-column content-justify-center flex-row-fluid">
+                        <div class="d-flex fw-semibold align-items-center">
+                            <h2 class="text-success-emphasis flex-grow-1 me-4">Shares Performance</h2>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <!--end::Row-->
 
-{{--    <div class="row g-5 g-xl-8">
-        <div class="col-xl-6">
-            <!--begin::Chart Widget 1-->
-            <div class="card card-xl-stretch mb-5 mb-xl-8">
-                <div class="card-header">
-                    <h3 class="card-title align-items-start flex-column">
-                        <span class="card-label fw-bold text-dark">My Paid Orders (Last 7 Days)</span>
-                    </h3>
+    {{--    <div class="row g-5 g-xl-8">
+            <div class="col-xl-6">
+                <!--begin::Chart Widget 1-->
+                <div class="card card-xl-stretch mb-5 mb-xl-8">
+                    <div class="card-header">
+                        <h3 class="card-title align-items-start flex-column">
+                            <span class="card-label fw-bold text-dark">My Paid Orders (Last 7 Days)</span>
+                        </h3>
+                    </div>
+                    <div class="card-body" wire:ignore>
+                        <canvas id="myPaidOrdersChart"></canvas>
+                    </div>
                 </div>
-                <div class="card-body" wire:ignore>
-                    <canvas id="myPaidOrdersChart"></canvas>
+                <!--end::Chart Widget 1-->
+            </div>
+            <div class="col-xl-6">
+                <div class="card card-xl-stretch mb-5 mb-xl-8">
+                    <div class="card-header">
+                        <h3 class="card-title align-items-start flex-column">
+                            <span class="card-label fw-bold text-dark">My Approved Shares (Last 7 Days)</span>
+                        </h3>
+                    </div>
+                    <div class="card-body" wire:ignore>
+                        <canvas id="myApprovedSharesChart"></canvas>
+                    </div>
                 </div>
             </div>
-            <!--end::Chart Widget 1-->
-        </div>
-        <div class="col-xl-6">
-            <div class="card card-xl-stretch mb-5 mb-xl-8">
-                <div class="card-header">
-                    <h3 class="card-title align-items-start flex-column">
-                        <span class="card-label fw-bold text-dark">My Approved Shares (Last 7 Days)</span>
-                    </h3>
-                </div>
-                <div class="card-body" wire:ignore>
-                    <canvas id="myApprovedSharesChart"></canvas>
-                </div>
-            </div>
-        </div>
-    </div>--}}
+        </div>--}}
     <!--end::Row-->
     <!--begin::Card-->
     <div class="card border">
@@ -108,7 +157,8 @@
                     @forelse($recentOrders as $order)
                         <tr>
                             <td>
-                                <a href="{{ route('admin.orders.show', encodeId($order->id)) }}" class="text-gray-800 text-hover-primary mb-1">
+                                <a href="{{ route('admin.orders.show', encodeId($order->id)) }}"
+                                   class="text-gray-800 text-hover-primary mb-1">
                                     #{{ $order->order_number ?? $order->id }}
                                 </a>
                             </td>
@@ -121,7 +171,8 @@
                                 </div>
                             </td>
                             <td class="text-end">
-                                <a href="{{ route('admin.orders.show', encodeId($order->id)) }}" class="btn btn-light btn-active-light-primary btn-sm">
+                                <a href="{{ route('admin.orders.show', encodeId($order->id)) }}"
+                                   class="btn btn-light btn-active-light-primary btn-sm">
                                     View
                                 </a>
                             </td>
@@ -151,7 +202,10 @@
                 new Chart(paidOrdersCtx, {
                     type: 'line',
                     data: {
-                        labels: Object.keys(paidOrdersData).map(date => new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })),
+                        labels: Object.keys(paidOrdersData).map(date => new Date(date).toLocaleDateString('en-US', {
+                            month: 'short',
+                            day: 'numeric'
+                        })),
                         datasets: [{
                             label: 'Paid Orders',
                             data: Object.values(paidOrdersData),
@@ -178,7 +232,10 @@
                 const approvedSharesChart = new Chart(approvedSharesCtx, {
                     type: 'line',
                     data: {
-                        labels: Object.keys(approvedSharesData).map(date => new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })),
+                        labels: Object.keys(approvedSharesData).map(date => new Date(date).toLocaleDateString('en-US', {
+                            month: 'short',
+                            day: 'numeric'
+                        })),
                         datasets: [{
                             label: 'Approved Shares',
                             data: Object.values(approvedSharesData),

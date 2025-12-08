@@ -55,6 +55,11 @@
                                 <span class="menu-title">Pending Requests</span>
                             </a>
                         @endcan
+                        <a class="menu-link {{ request()->fullUrl()==route('admin.shares.index',['mine'=>true])?'active':'' }}"
+                           href="{{ route('admin.shares.index',['mine'=>true]) }}">
+                            <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                            <span class="menu-title">My Shares</span>
+                        </a>
 
                         <a class="menu-link {{ request()->fullUrl()==route('admin.shares.index')?'active':'' }}"
                            href="{{ route('admin.shares.index')}}">
@@ -314,6 +319,13 @@
                                 <span class="menu-title">Categories</span>
                             </a>
                         @endcan
+                        @can(Permission::MANAGE_PRODUCT_CLASSES)
+                            <a class="menu-link {{ request()->url()==route('admin.products.product-class.index')?'active':'' }}"
+                               href="{{ route('admin.products.product-class.index') }}">
+                                <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                                <span class="menu-title">Classes</span>
+                            </a>
+                        @endcan
                         @can(Permission::MANAGE_PRODUCTS)
                             <!--end:Menu link-->
                             <a class="menu-link {{ request()->url()==route('admin.products.index')?'active':'' }}"
@@ -501,12 +513,22 @@
                 <!--end:Menu link-->
                 <!--begin:Menu sub-->
                 <div class="menu-sub menu-sub-accordion">
-                    <a class="menu-link {{ \Illuminate\Support\Str::of(request()->url())==route('admin.reports.list')?'active':'' }}"
-                       href="{{ route('admin.reports.list') }}">
-                        <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
-                        <span class="menu-title">List</span>
-                    </a>
-
+                    @canany([Permission::CREATE_REPORT,Permission::VIEW_REPORTS])
+                        <a class="menu-link {{ \Illuminate\Support\Str::of(request()->url())==route('admin.reports.list')?'active':'' }}"
+                           href="{{ route('admin.reports.list') }}">
+                            <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                            <span class="menu-title">Generate Reports</span>
+                        </a>
+                    @endcanany
+                    @can(Permission::VIEW_USER_SALES_PERFORMANCE)
+                        <a class="menu-link {{ request()->url()==route('admin.reports.sales-user-performance')?'active':'' }}"
+                           href="{{ route('admin.reports.sales-user-performance') }}">
+                            <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                            <span class="menu-title">
+                                User Sales Performance
+                            </span>
+                        </a>
+                    @endcan
                     <!--begin:Menu item-->
                     @can(Permission::VIEW_SALES_REPORTS)
                         <a class="menu-link {{ \Illuminate\Support\Str::of(request()->url())==route('admin.reports.sales')?'active':'' }}"
@@ -517,15 +539,7 @@
                                </span>
                         </a>
                     @endcan
-                    @can(Permission::VIEW_SALES_PAYMENT_REPORTS)
-                        {{--   <a class="menu-link {{ \Illuminate\Support\Str::of(request()->url())==route('admin.reports.payments')?'active':'' }}"
-                              href="{{ route('admin.reports.payments') }}">
-                               <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
-                               <span class="menu-title">
-                                      Sales Payments Report
-                                  </span>
-                           </a>--}}
-                    @endcan
+
                     <!--end:Menu link-->
                     @can(Permission::VIEW_PURCHASE_REPORTS)
                         <a class="menu-link {{ request()->url()==route('admin.reports.purchase-orders.history')?'active':'' }}"
@@ -536,13 +550,7 @@
                     @endcan
                     <!--end:Menu link-->
                     <!--end:Menu link-->
-                    @can(Permission::VIEW_ITEMS_REPORTS)
-                        {{--        <a class="menu-link {{ request()->url()==route('admin.reports.items')?'active':'' }}"
-                                   href="{{ route('admin.reports.items') }}">
-                                    <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
-                                    <span class="menu-title">Items Report</span>
-                                </a>--}}
-                    @endcan
+
                     <!--end:Menu link-->
                     <!--end:Menu link-->
                     @can(Permission::VIEW_EXPENSES_REPORTS)

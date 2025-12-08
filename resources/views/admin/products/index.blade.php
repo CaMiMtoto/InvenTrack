@@ -28,6 +28,7 @@
                         <th>Created At</th>
                         <th>Name</th>
                         <th>Category</th>
+                        <th>Class</th>
                         <th>Price</th>
                         <th>Stock</th>
                         <th>Reorder</th>
@@ -62,16 +63,34 @@
 
                     <div class="modal-body">
                         <input type="hidden" id="id" name="id" value="0"/>
-
-                        <div class="mb-3">
-                            <label for="category_id" class="form-label">Category</label>
-                            <select class="form-select" id="category_id" name="category_id">
-                                <option value="">Select Category</option>
-                                @foreach($categories as $category)
-                                    <option value="{{ $category->id }}">{{ $category->name }}</option>
-                                @endforeach
-                            </select>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="category_id" class="form-label">Category</label>
+                                    <select class="form-select" id="category_id" name="category_id">
+                                        <option value="">Select Category</option>
+                                        @foreach($categories as $category)
+                                            <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="product_class_id" class="form-label">Class</label>
+                                    <select class="form-select" id="product_class_id" name="product_class_id">
+                                        <option value="">Select Class</option>
+                                        @foreach($classes as $category)
+                                            <option value="{{ $category->id }}">{{ $category->name }}
+                                                - {{ $category->rate }}%
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
                         </div>
+
+
                         <div class="mb-3">
                             <label for="name" class="form-label">Name</label>
                             <input type="text" class="form-control" id="name" name="name" placeholder=""/>
@@ -114,7 +133,8 @@
 
                                         <!--begin::Info-->
                                         <div class="ms-4">
-                                            <h3 class="fs-5 fw-bold text-gray-900 mb-1">Drop files here or click to upload.</h3>
+                                            <h3 class="fs-5 fw-bold text-gray-900 mb-1">Drop files here or click to
+                                                upload.</h3>
                                             <span class="fs-7 fw-semibold text-gray-500">Upload up to 10 files</span>
                                         </div>
                                         <!--end::Info-->
@@ -151,10 +171,10 @@
                 acceptedFiles: "image/*",
                 addRemoveLinks: true,
                 headers: {'X-CSRF-TOKEN': "{{ csrf_token() }}"},
-                success: function(file, response) {
+                success: function (file, response) {
                     uploadedImages.push(response.image_id);
                 },
-                removedfile: function(file) {
+                removedfile: function (file) {
                     let index = uploadedImages.indexOf(file.upload?.response?.image_id);
                     if (index > -1) uploadedImages.splice(index, 1);
                     file.previewElement.remove();
@@ -178,6 +198,12 @@
                     },
                     {data: 'name', name: 'name'},
                     {data: 'category.name', name: 'category.name'},
+                    {
+                        data: 'product_class.name', name: 'product_class.name',
+                        render: function (data, type, row) {
+                            return data ? row.product_class.name + ' - ' + row.product_class.rate + '%' : 'n/a';
+                        }
+                    },
                     {
                         data: 'price', name: 'price',
                         render: function (data, type, row) {
@@ -235,7 +261,7 @@
                 e.preventDefault();
                 let $this = $(this);
                 let body = $this.serialize();
-                uploadedImages.forEach(function(id) {
+                uploadedImages.forEach(function (id) {
                     body += '&image_ids[]=' + id;
                 });
 

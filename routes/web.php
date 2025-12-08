@@ -7,6 +7,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\ProductClassController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ReturnController;
@@ -122,6 +123,12 @@ Route::group(['middleware' => ['auth', PasswordChanged::class, EnsureUserIsActiv
         Route::post('/categories/store', [CategoryController::class, 'store'])->name('categories.store');
         Route::delete('/categories/{category}/destroy', [CategoryController::class, 'destroy'])->name('categories.destroy');
 
+        // product-class
+        Route::get('/classes', [ProductClassController::class, 'index'])->name('product-class.index');
+        Route::get('/classes/{productClass}/show', [ProductClassController::class, 'show'])->name('product-class.show');
+        Route::post('/classes/store', [ProductClassController::class, 'store'])->name('product-class.store');
+        Route::delete('/classes/{productClass}/destroy', [ProductClassController::class, 'destroy'])->name('product-class.destroy');
+
     });
     Route::group(["prefix" => "settings", "as" => "settings."], function () {
         //supplier routes
@@ -173,6 +180,9 @@ Route::group(['middleware' => ['auth', PasswordChanged::class, EnsureUserIsActiv
         Route::get('/{report}/show', [ReportController::class, 'show'])->name('show');
         Route::get('/{report}/generate', [ReportController::class, 'generate'])->name('generate');
         Route::post('/{report}/export', [ReportController::class, 'export'])->name('export');
+
+        Route::get('/sales-user-performance', [ReportController::class, 'saleUserPerformanceReport'])->name('sales-user-performance');
+
         Route::get('/sales', [App\Http\Controllers\ReportsController::class, 'salesReport'])->name('sales');
         Route::get('/print-sales', [App\Http\Controllers\ReportsController::class, 'printSales'])->name('print-sales');
         Route::get('/export-sales', [App\Http\Controllers\ReportsController::class, 'exportSales'])->name('export-sales');

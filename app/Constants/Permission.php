@@ -32,6 +32,7 @@ class Permission
     // Products & Categories
     public const MANAGE_PRODUCTS = 'manage_products';
     public const MANAGE_CATEGORIES = 'manage_categories';
+    public const MANAGE_PRODUCT_CLASSES = 'manage_product_classes';
     public const VIEW_PRODUCT_CATALOG = 'view_product_catalog';
 
     // Suppliers & Customers
@@ -58,6 +59,7 @@ class Permission
     public const VIEW_REPORTS = 'view_reports';
     public const VIEW_SALES_REPORTS = 'view_sales_reports';
     public const VIEW_ITEMS_REPORTS = 'view_items_reports';
+    public const VIEW_USER_SALES_PERFORMANCE = 'view_user_sales_performance';
     const ADD_ORDER_PAYMENT = 'add_order_payment';
     const VIEW_RETURNED_ITEMS = 'view returned items';
     const APPROVE_RETURNED_ITEMS = 'approve returned items';
@@ -70,6 +72,7 @@ class Permission
     const  VIEW_DELIVERY_DASHBOARD = 'view_delivery_dashboard';
     const  VIEW_CUSTOMER_CARE_DASHBOARD = 'view_customer_care_dashboard';
     const  VIEW_FINANCIAL_DASHBOARD = 'view_financial_dashboard';
+    const  VIEW_ADMIN_DASHBOARD = 'view_admin_dashboard';
     const  APPROVE_SHARES = 'approve_shares';
 
     /**
@@ -146,7 +149,10 @@ class Permission
             self::VIEW_DELIVERY_DASHBOARD,
             self::VIEW_CUSTOMER_CARE_DASHBOARD,
             self::VIEW_FINANCIAL_DASHBOARD,
-            self::APPROVE_SHARES
+            self::APPROVE_SHARES,
+            self::MANAGE_PRODUCT_CLASSES,
+            self::VIEW_USER_SALES_PERFORMANCE,
+            self::VIEW_ADMIN_DASHBOARD
         ];
     }
 

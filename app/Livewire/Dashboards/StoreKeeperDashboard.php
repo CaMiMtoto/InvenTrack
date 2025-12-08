@@ -7,6 +7,7 @@ use App\Models\Expense;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
+use App\Models\ReturnItem;
 use App\Services\DashboardService;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
@@ -17,13 +18,16 @@ class StoreKeeperDashboard extends Component
 
     public function render(): \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
     {
-        // 1. KPI Card Data
-        $todaySales = Order::whereDate('created_at', '>=', now()->subDays(7)->toDateString())
-            ->where('order_status', '!=', 'cancelled')
-            ->sum('total_amount');
-        $pendingOrders = Order::where('order_status', 'pending')->count();
+
         $stockAlerts = Product::whereColumn('stock', '<=', 'min_stock')
             ->count();
+        $stockSold = DB::table('order_items')
+            ->join('orders', 'orders.id', '=', 'order_items.order_id')
+            ->whereIn('orders.order_status', [Status::Paid, Status::Delivered, Status::Completed])  // or 'paid'
+            ->sum('order_items.quantity');
+
+        $allReturns = ReturnItem::query()->sum('quantity');
+
         $pendingDeliveries = Order::where('order_status', 'approved')
             ->count();
         $monthlyExpenses = Expense::whereMonth('date', now()->month)
@@ -103,10 +107,13 @@ class StoreKeeperDashboard extends Component
             $incomeVsExpenses['income'][] = round($income, 2);
             $incomeVsExpenses['expenses'][] = round($expense, 2);
         }
+        $pendingOrders = Order::where('order_status', '=', Status::Pending)
+            ->count();
         return view('livewire.dashboards.store-keeper-dashboard', compact(
-            'todaySales',
-            'pendingOrders',
+            'allReturns',
             'stockAlerts',
+            'stockSold',
+            'pendingOrders',
             'pendingDeliveries',
             'monthlyExpenses',
             'salesChartLabels',

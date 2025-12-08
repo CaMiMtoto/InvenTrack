@@ -6,6 +6,7 @@ use App\Exports\ProductsExport;
 use App\Models\Category;
 use App\Models\Image;
 use App\Models\Product;
+use App\Models\ProductClass;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Exception;
 use Illuminate\Http\Request;
@@ -23,7 +24,7 @@ class ProductController extends Controller
     {
         if (request()->ajax()) {
             $products = Product::query()
-                ->with(['category']);
+                ->with(['category','productClass']);
             return DataTables::of($products)
                 ->addColumn('action', function ($product) {
                     // dropdown
@@ -41,7 +42,8 @@ class ProductController extends Controller
                 ->make(true);
         }
         $categories = Category::all();
-        return view('admin.products.index', compact('categories'));
+        $classes= ProductClass::query()->latest()->get();
+        return view('admin.products.index', compact('categories','classes'));
     }
 
     /**
@@ -59,6 +61,7 @@ class ProductController extends Controller
             'unit_measure' => ['required', 'string', 'max:255'],
             'min_stock' => ['required', 'integer', 'min:0'],
             'image_ids' => 'nullable|array',
+            'product_class_id'=>['required','integer','exists:product_classes,id'],
         ]);
         if (empty($data['sku'])) {
             $data['sku'] = Product::generateSku($data['name'], $data['category_id']);

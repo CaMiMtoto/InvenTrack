@@ -1,4 +1,4 @@
-@php use App\Constants\UserType; @endphp
+@php use App\Constants\Permission;use App\Constants\UserType; @endphp
 @extends('layouts.master')
 
 @section('content')
@@ -50,21 +50,24 @@
         </div>
 
         <div>
+            @if (auth()->user()->can(Permission::VIEW_FINANCIAL_DASHBOARD))
+                @livewire('dashboards.finance-user-dashboard')
+            @endif
+            @if (auth()->user()->can(Permission::VIEW_ADMIN_DASHBOARD))
+                @livewire('dashboards.admin-dashboard')
+            @endif
 
-            @if (auth()->user()->can(\App\Constants\Permission::VIEW_SALES_DASHBOARD))
-                @livewire('dashboards.sales-manager-dashboard')
-            @endif
-            @if (auth()->user()->can(\App\Constants\Permission::VIEW_DELIVERY_DASHBOARD))
-                @livewire('dashboards.delivery-person-dashboard')
-            @endif
-            @if (auth()->user()->can(\App\Constants\Permission::VIEW_STORE_KEEPER_DASHBOARD))
+            @if (auth()->user()->can(Permission::VIEW_STORE_KEEPER_DASHBOARD))
                 @livewire('dashboards.store-keeper-dashboard')
             @endif
-            @if (auth()->user()->can(\App\Constants\Permission::VIEW_CUSTOMER_CARE_DASHBOARD))
-                @livewire('dashboards.customer-care-dashboard')
+            @if (auth()->user()->can(Permission::VIEW_SALES_DASHBOARD))
+                @livewire('dashboards.sales-manager-dashboard')
             @endif
-            @if (auth()->user()->can(\App\Constants\Permission::VIEW_FINANCIAL_DASHBOARD))
-                @livewire('dashboards.finance-user-dashboard')
+            @if (auth()->user()->can(Permission::VIEW_DELIVERY_DASHBOARD))
+                @livewire('dashboards.delivery-person-dashboard')
+            @endif
+            @if (auth()->user()->can(Permission::VIEW_CUSTOMER_CARE_DASHBOARD))
+                @livewire('dashboards.customer-care-dashboard')
             @endif
         </div>
 

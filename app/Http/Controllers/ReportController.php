@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exports\CustomReportExport;
 use App\Models\Report;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -150,5 +151,10 @@ class ReportController extends Controller
         $fileName = \Str::slug($report->name) . '-' . now()->format('Y-m-d') . '.xlsx';
 
         return Excel::download(new CustomReportExport($report->view_name, $selectedColumns, $filters, $sortBy, $sortDir), $fileName);
+    }
+
+    public function saleUserPerformanceReport()
+    {
+        return view('admin.reports.sale-user-performance-report');
     }
 }

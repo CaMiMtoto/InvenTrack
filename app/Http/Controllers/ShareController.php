@@ -19,10 +19,12 @@ class ShareController extends Controller
     public function index()
     {
         $status = \request('status');
+        $mine= \request('mine');
         if (\request()->ajax()) {
             return datatables(
                 Share::query()
                     ->with(['shareholder'])
+                    ->when($mine, fn(Builder $query) => $query->where('user_id','=', auth()->id()))
                     ->when($status, fn(Builder $query) => $query->where(DB::raw('LOWER(status)'), '=', strtolower($status)))
             )->addIndexColumn()
                 ->editColumn('created_at', fn($row) => date('d-m-Y,h:i', strtotime($row->created_at)))

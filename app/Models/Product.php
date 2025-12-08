@@ -21,6 +21,9 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property string|null $sku
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property int|null $product_class_id
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \OwenIt\Auditing\Models\Audit> $audits
+ * @property-read int|null $audits_count
  * @property-read \App\Models\Category $category
  * @property-read int $actual_qty
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Image> $images
@@ -40,6 +43,7 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Product whereMinStock($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Product whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Product wherePrice($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Product whereProductClassId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Product whereSku($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Product whereStock($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Product whereUnitMeasure($value)
@@ -107,5 +111,10 @@ class Product extends Model implements Auditable
     public function getPrice(): float
     {
         return $this->price;
+    }
+
+    public function productClass()
+    {
+        return $this->belongsTo(ProductClass::class);
     }
 }
