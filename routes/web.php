@@ -19,6 +19,14 @@ use App\Http\Middleware\EnsureUserIsActive;
 use App\Http\Middleware\PasswordChanged;
 use Illuminate\Support\Facades\Route;
 
+Route::get('/mail-test', function () {
+
+    Mail::raw('Test email from Laravel', function ($message) {
+        $message->to('jeanpaulbyiringiro9764@gmail.com')
+            ->subject('Laravel Mail Test');
+    });
+
+});
 Route::get('/create-storage-link', function () {
     Artisan::call('storage:link');
     Artisan::call('optimize:clear');
