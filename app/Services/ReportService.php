@@ -38,7 +38,9 @@ class ReportService
 
     public function getSalesQueryBuilder($startDate, $endDate, $productId, $status = null): OrderItem|Builder|\LaravelIdea\Helper\App\Models\_IH_OrderItem_QB
     {
+        // Add a subquery to fetch an average purchase price for the product so we can calculate margins
         return OrderItem::query()
+            ->addSelect(['*', \DB::raw("COALESCE((select AVG(unit_price) from purchase_items where product_id = order_items.product_id),0) as purchase_price")])
             ->with('order.customer') // Eager load related customer data
             ->whereHas('order', function (Builder $query) use ($productId, $status, $startDate, $endDate) {
                 // Filter by date range

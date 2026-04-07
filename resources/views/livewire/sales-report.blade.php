@@ -39,12 +39,13 @@
             <!--end::Page title-->
             <!--begin::Actions-->
             <div>
-                <form action="{{route("admin.reports.print-sales")}}" target="_blank"
+                <form action="{{ route('admin.reports.print-sales') }}" target="_blank" method="get"
                       class="d-flex align-items-center gap-2">
-                    <input type="text" class="datepicker form-control form-control-sm" wire:model.live="startDate"
+                    @csrf
+                    <input type="date" class=" form-control form-control-sm" wire:model.live.debounce="startDate"
                            name="start_date"
                            placeholder="Start Date"/>
-                    <input type="text" class="datepicker  form-control form-control-sm" wire:model.live="endDate"
+                    <input type="date" class="form-control form-control-sm" wire:model.live.debounce="endDate"
                            name="end_date"
                            placeholder="End Date"/>
                     <select class="form-select form-select-sm" name="product_id" wire:model.live="productId">
@@ -53,9 +54,13 @@
                             <option value="{{ $item->id }}">{{ $item->name }}</option>
                         @endforeach
                     </select>
-                    <button type="submit" class="btn btn-sm btn-danger flex-shrink-0">
+                   {{-- <button type="submit" class="btn btn-sm btn-danger flex-shrink-0">
                         View
                         <i class="bi bi-file-pdf"></i>
+                    </button>--}}
+                    <button type="submit" formaction="{{ route('admin.reports.export-sales') }}" formtarget="_blank" class="btn btn-sm btn-success">
+                        Export Excel
+                        <i class="bi bi-file-earmark-excel"></i>
                     </button>
                 </form>
             </div>
@@ -84,6 +89,7 @@
                     <th>Price</th>
                     <th>Quantity</th>
                     <th>Total</th>
+                    <th>Margin</th>
                     <th>Customer</th>
                     <th>Done By</th>
                 </tr>
@@ -97,12 +103,20 @@
                         <td>{{number_format($item->unit_price,2)}}</td>
                         <td>{{number_format($item->quantity,2)}}</td>
                         <td>{{number_format($item->total,2)}}</td>
+                        <td>
+                            @php
+                                $purchasePrice = $item->purchase_price ?? 0;
+                                $unitMargin = $item->unit_price - $purchasePrice;
+                                $marginTotal = $unitMargin * $item->quantity;
+                            @endphp
+                            {{ number_format($marginTotal,2) }}
+                        </td>
                         <td>{{optional($item->order->customer)->name}}</td>
                         <td>{{optional($item->order->doneBy)->name}}</td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="7" class="text-center">
+                        <td colspan="9" class="text-center">
                             <p>
                                 No purchase orders found for the selected date range.
                             </p>
@@ -111,6 +125,30 @@
                 @endforelse
 
                 </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="9">
+                            <div class="d-flex flex-column flex-md-row justify-content-end align-items-center mt-3 px-2 gap-2">
+                                <div class="d-flex align-items-center">
+                                    <span class="fw-bold">Total Sales:</span>
+                                    <span class="text-gray-700 ms-2">{{ number_format($totalSales,2) }}</span>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <span class="fw-bold">Total Expenses:</span>
+                                    <span class="text-gray-700 ms-2">{{ number_format($totalExpenses,2) }}</span>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <span class="fw-bold">Net Profit:</span>
+                                    <span class="text-gray-700 ms-2">{{ number_format($netProfit,2) }}</span>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <span class="fw-bold">Total Margin:</span>
+                                    <span class="text-gray-700 ms-2">{{ number_format($totalMargin,2) }}</span>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </tfoot>
             </table>
         </div>
         <div>
@@ -128,8 +166,19 @@
                     <span class="fw-bold">Net Profit:</span>
                     <span class="text-gray-700 ms-2">{{ number_format($netProfit) }}</span>
                 </div>
+                <div class="d-flex align-items-center">
+                    <span class="fw-bold">Total Margin:</span>
+                    <span class="text-gray-700 ms-2">{{ number_format($totalMargin,2) }}</span>
+                </div>
             </div>
         </div>
     </div>
     <!--end::Content-->
+            <script>
+                window.addEventListener('open-report-in-new-tab', (e) => {
+                    if (e && e.detail && e.detail.url) {
+                        window.open(e.detail.url, '_blank');
+                    }
+                });
+            </script>
 </div>
