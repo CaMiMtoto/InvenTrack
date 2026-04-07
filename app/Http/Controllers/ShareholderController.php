@@ -8,6 +8,11 @@ use App\Models\Bank;
 use App\Models\LegalType;
 use App\Models\PaymentMethod;
 use App\Models\Shareholder;
+use App\Models\Province;
+use App\Models\District;
+use App\Models\Sector;
+use App\Models\Cell;
+use App\Models\Village;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
@@ -38,7 +43,16 @@ class ShareholderController extends Controller
         }
 
         $legalTypes = LegalType::all();
-        return view('admin.shareholders.index', compact('legalTypes'));
+        // pass address lists so the form can populate the new address fields
+        $provinces = Province::all();
+        $districts = District::all();
+        $sectors = Sector::all();
+        $cells = Cell::all();
+        $villages = Village::all();
+
+        return view('admin.shareholders.index', compact(
+            'legalTypes', 'provinces', 'districts', 'sectors', 'cells', 'villages'
+        ));
     }
 
     /**
@@ -48,6 +62,8 @@ class ShareholderController extends Controller
     {
         $validated = $this->validateShareholder($request);
         $validated['user_id'] = auth()->id();
+        // populate legacy name from first and last name if provided
+        $validated['name'] = trim(($validated['first_name'] ?? '') . ' ' . ($validated['last_name'] ?? ''));
         Shareholder::create($validated);
 
         return response()->json(['success' => 'Shareholder created successfully.']);
@@ -68,6 +84,8 @@ class ShareholderController extends Controller
     {
         $validated = $this->validateShareholder($request, $shareholder->id);
 
+        // populate legacy name from first and last name if provided
+        $validated['name'] = trim(($validated['first_name'] ?? '') . ' ' . ($validated['last_name'] ?? ''));
         $shareholder->update($validated);
 
         return response()->json(['success' => 'Shareholder updated successfully.']);
@@ -89,26 +107,34 @@ class ShareholderController extends Controller
 
     private function validateShareholder(Request $request, $shareholderId = null): array
     {
+        // Determine the id to ignore for unique validation.
+        // Accept either the explicit $shareholderId (when passed from controller)
+        // or the route-model-bound 'shareholder' from the request (when available).
+        $ignoreId = $shareholderId ?? optional($request->route('shareholder'))->id;
+
         $rules = [
-            'name' => 'required|string|max:255',
+            // Use separate first and last name fields instead of a single name
+            'first_name' => ['required', 'string', 'max:255'],
+            'last_name' => ['required', 'string', 'max:255'],
             'legal_type_id' => 'required|exists:legal_types,id',
             'id_number' => [
                 'required',
                 'string',
                 'max:255',
-                Rule::unique('shareholders', 'id_number')->ignore($shareholderId),
+                // ignore the current shareholder row when updating
+                Rule::unique('shareholders', 'id_number')->ignore($ignoreId),
             ],
             'phone_number' => [
                 'required',
                 'string',
                 'max:20',
-                Rule::unique('shareholders', 'phone_number')->ignore($shareholderId),
+                Rule::unique('shareholders', 'phone_number')->ignore($ignoreId),
             ],
             'email' => [
                 'nullable',
                 'email',
                 'max:255',
-                Rule::unique('shareholders', 'email')->ignore($shareholderId),
+                Rule::unique('shareholders', 'email')->ignore($ignoreId),
             ],
             'tin' => ['nullable', 'numeric'], // 'number' → 'numeric'
             'nationality' => ['nullable', 'string', 'max:255'],
@@ -122,6 +148,12 @@ class ShareholderController extends Controller
                     }
                 }
             ],
+            // New address foreign keys (nullable)
+            'province_id' => ['required', 'exists:provinces,id'],
+            'district_id' => ['required', 'exists:districts,id'],
+            'sector_id' => ['required', 'exists:sectors,id'],
+            'cell_id' => ['required', 'exists:cells,id'],
+            'village_id' => ['nullable', 'exists:villages,id'],
         ];
 
         return $request->validate($rules);

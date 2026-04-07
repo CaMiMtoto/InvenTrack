@@ -61,29 +61,39 @@
                     @csrf
 
                     <div class="modal-body">
+                        <input type="hidden" id="id" name="id" value="0"/>
                         <div class="row">
                             <div class="col-lg-6">
-                                <input type="hidden" id="id" name="id" value="0"/>
                                 <div class="mb-3">
-                                    <label for="name" class="form-label">Name</label>
-                                    <input type="text" class="form-control" id="name" name="name" placeholder=""/>
+                                    <label for="first_name" class="form-label">First name</label>
+                                    <input type="text" class="form-control" id="first_name" name="first_name" placeholder=""/>
                                 </div>
                             </div>
+                            <div class="col-lg-6">
+                                <div class="mb-3">
+                                    <label for="last_name" class="form-label">Last name</label>
+                                    <input type="text" class="form-control" id="last_name" name="last_name" placeholder=""/>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
                             <div class="col-lg-6">
                                 <div class="mb-3">
                                     <label for="email" class="form-label">Email</label>
                                     <input type="text" class="form-control" id="email" name="email" placeholder=""/>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
                             <div class="col-lg-6">
                                 <div class="mb-3">
                                     <label for="phone" class="form-label">Phone</label>
                                     <input type="text" class="form-control" id="phone" name="phone" placeholder=""/>
                                 </div>
                             </div>
-                            <div class="col-lg-6">
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12">
                                 <div class="mb-3">
                                     <label for="address" class="form-label">Address</label>
                                     <input class="form-control" id="address" name="address"/>
@@ -95,8 +105,7 @@
                             <div class="col-lg-6">
                                 <div class="mb-3">
                                     <label for="landmark" class="form-label">Landmark</label>
-                                    <input type="text" class="form-control" id="landmark" name="landmark"
-                                           placeholder=""/>
+                                    <input type="text" class="form-control" id="landmark" name="landmark" placeholder=""/>
                                 </div>
                             </div>
                             <div class="col-lg-6">
@@ -106,6 +115,7 @@
                                 </div>
                             </div>
                         </div>
+
                         <div class="row">
                             <div class="col-lg-6">
                                 <div class="mb-3">
@@ -127,6 +137,7 @@
                                 </div>
                             </div>
                         </div>
+
                         <div class="row">
                             <div class="col-lg-6">
                                 <div class="mb-3">
@@ -145,6 +156,7 @@
                                 </div>
                             </div>
                         </div>
+
                         <div class="row">
                             <div class="col-lg-6">
                                 <div class="mb-3">
@@ -162,12 +174,10 @@
                                     </div>
                                     <div class="row">
                                         <div class="col">
-                                            <input type="number" step="any" class="form-control" id="latitude"
-                                                   name="latitude" placeholder="Latitude"/>
+                                            <input type="number" step="any" class="form-control" id="latitude" name="latitude" placeholder="Latitude"/>
                                         </div>
                                         <div class="col">
-                                            <input type="number" step="any" class="form-control" id="longitude"
-                                                   name="longitude" placeholder="Longitude"/>
+                                            <input type="number" step="any" class="form-control" id="longitude" name="longitude" placeholder="Longitude"/>
                                         </div>
                                     </div>
                                 </div>
@@ -420,13 +430,14 @@
             $(document).on('click', '.js-edit', function (e) {
                 e.preventDefault();
                 let url = $(this).attr('href');
-                $.ajax({
+                        $.ajax({
                     url: url,
                     type: 'GET',
                     dataType: 'json',
                     success: function (data) {
                         $('#id').val(data.id);
-                        $('#name').val(data.name);
+                        $('#first_name').val(data.first_name);
+                        $('#last_name').val(data.last_name);
                         $('#email').val(data.email);
                         $('#phone').val(data.phone);
                         $('#address').val(data.address);

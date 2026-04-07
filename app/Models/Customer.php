@@ -6,6 +6,7 @@ use App\Traits\HasEncodedId;
 use Database\Factories\CustomerFactory;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -63,7 +64,15 @@ use Illuminate\Support\Carbon;
  */
 class Customer extends Model
 {
-    use HasFactory,HasEncodedId;
+    use HasFactory, HasEncodedId;
+
+
+    protected $casts = [
+        'date_of_birth' => 'date',
+        'deposit_amount' => 'decimal:2',
+    ];
+
+    protected $appends = ['name'];
 
     public function orders(): Customer|Builder|HasMany
     {
@@ -88,6 +97,13 @@ class Customer extends Model
     public function village(): BelongsTo
     {
         return $this->belongsTo(Village::class);
+    }
+
+    public function name(): Attribute
+    {
+        return Attribute::make(
+            get: fn($value) => $this->first_name . $this->last_name,
+        );
     }
 
 

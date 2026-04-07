@@ -12,7 +12,7 @@
                 </a>
             </li>
             <li>
-                <button type="button" class="dropdown-item edit-btn" data-url="{{ route('admin.shareholders.edit',encodeId($shareholder->id)) }}" >
+                <button type="button" class="dropdown-item edit-btn" data-url="{{ route('admin.shareholders.edit',encodeId($shareholder->id)) }}" data-update_url="{{ route('admin.shareholders.update',encodeId($shareholder->id)) }}" >
                     <x-lucide-pen-square class="tw-h-4 tw-w-4 tw-mr-2"/>
                     Edit
                 </button>

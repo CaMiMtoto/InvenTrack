@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\HasEncodedId;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -45,11 +46,25 @@ use Illuminate\Database\Eloquent\Model;
 class Shareholder extends Model
 {
     use HasFactory,HasEncodedId;
+    protected $appends = ['name'];
+
     public function legalType(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(LegalType::class);
     }
-
+    public function name(): Attribute
+    {
+        return Attribute::make(
+            get: function ($value) {
+                // Prefer the separate first_name/last_name columns when available,
+                // fall back to the stored name column for older rows.
+                $first = $this->first_name ?? '';
+                $last = $this->last_name ?? '';
+                $combined = trim(trim($first) . ' ' . trim($last));
+                return $combined !== '' ? $combined : ($value ?? null);
+            }
+        );
+    }
     public function shares()
     {
         return $this->hasMany(Share::class);

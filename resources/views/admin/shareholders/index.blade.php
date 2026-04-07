@@ -54,11 +54,17 @@
                 <form id="submitForm" method="post">
                     @csrf
                     <input type="hidden" id="id" name="id" value="0"/>
+                    {{-- when editing we store the exact update URL (data-update_url) here so submission uses it --}}
+                    <input type="hidden" id="update_url" name="update_url" value=""/>
                     <div class="modal-body">
                         <div class="row">
                             <div class="col-lg-6 mb-3">
-                                <label for="name" class="form-label ">Name</label>
-                                <input type="text" class="form-control" id="name" name="name"/>
+                                <label for="first_name" class="form-label ">First name</label>
+                                <input type="text" class="form-control" id="first_name" name="first_name"/>
+                            </div>
+                            <div class="col-lg-6 mb-3">
+                                <label for="last_name" class="form-label ">Last name</label>
+                                <input type="text" class="form-control" id="last_name" name="last_name"/>
                             </div>
                             <div class="col-lg-6 mb-3">
                                 <label for="legal_type_id" class="form-label ">Legal Type</label>
@@ -96,6 +102,56 @@
                                 </label>
                                 <input type="text" class="form-control" id="residential_address"
                                        name="residential_address"/>
+                            </div>
+                            <div class="col-lg-6 mb-3">
+                                <label for="province_id" class="form-label">Province</label>
+                                <select class="form-select" id="province_id" name="province_id" data-control="select2"
+                                        data-dropdown-parent="#myModal">
+                                    <option></option>
+                                    @foreach($provinces as $province)
+                                        <option value="{{ $province->id }}">{{ $province->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-lg-6 mb-3">
+                                <label for="district_id" class="form-label">District</label>
+                                <select class="form-select" id="district_id" name="district_id" data-control="select2"
+                                        data-dropdown-parent="#myModal">
+                                    <option></option>
+                                    @foreach($districts as $district)
+                                        <option value="{{ $district->id }}">{{ $district->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-lg-6 mb-3">
+                                <label for="sector_id" class="form-label">Sector</label>
+                                <select class="form-select" id="sector_id" name="sector_id" data-control="select2"
+                                        data-dropdown-parent="#myModal">
+                                    <option></option>
+                                    @foreach($sectors as $sector)
+                                        <option value="{{ $sector->id }}">{{ $sector->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-lg-6 mb-3">
+                                <label for="cell_id" class="form-label">Cell</label>
+                                <select class="form-select" id="cell_id" name="cell_id" data-control="select2"
+                                        data-dropdown-parent="#myModal">
+                                    <option></option>
+                                    @foreach($cells as $cell)
+                                        <option value="{{ $cell->id }}">{{ $cell->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-lg-6 mb-3">
+                                <label for="village_id" class="form-label">Village</label>
+                                <select class="form-select" id="village_id" name="village_id" data-control="select2"
+                                        data-dropdown-parent="#myModal">
+                                    <option></option>
+                                    @foreach($villages as $village)
+                                        <option value="{{ $village->id }}">{{ $village->name }}</option>
+                                    @endforeach
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -163,14 +219,79 @@
             const $modalTitle = $('.modal-title');
             const $saveBtn = $('#saveBtn');
 
+            // Preload address data for cascading selects
+            const districts = @json($districts->map(function($d){ return ['id'=>$d->id,'name'=>$d->name,'province_id'=>$d->province_id]; }));
+            const sectors = @json($sectors->map(function($s){ return ['id'=>$s->id,'name'=>$s->name,'district_id'=>$s->district_id]; }));
+            const cells = @json($cells->map(function($c){ return ['id'=>$c->id,'name'=>$c->name,'sector_id'=>$c->sector_id]; }));
+            const villages = @json($villages->map(function($v){ return ['id'=>$v->id,'name'=>$v->name,'cell_id'=>$v->cell_id]; }));
+
+            function populateChild(selectSelector, items, parentKey, parentId) {
+                let $sel = $(selectSelector);
+                let currentVal = $sel.val();
+                let options = '<option></option>';
+                if (parentId) {
+                    for (let i = 0; i < items.length; i++) {
+                        if (String(items[i][parentKey]) === String(parentId)) {
+                            options += `<option value="${items[i].id}">${items[i].name}</option>`;
+                        }
+                    }
+                }
+                $sel.html(options);
+                // preserve selection when possible
+                if (currentVal && $sel.find(`option[value="${currentVal}"]`).length) {
+                    $sel.val(currentVal).trigger('change');
+                } else {
+                    $sel.val(null).trigger('change');
+                }
+            }
+
+            // Cascade handlers: province -> districts -> sectors -> cells -> villages
+            $('#province_id').on('change', function () {
+                const pid = $(this).val();
+                populateChild('#district_id', districts, 'province_id', pid);
+                // clear downstream selects
+                populateChild('#sector_id', [], 'district_id', null);
+                populateChild('#cell_id', [], 'sector_id', null);
+                populateChild('#village_id', [], 'cell_id', null);
+            });
+
+            $('#district_id').on('change', function () {
+                const did = $(this).val();
+                populateChild('#sector_id', sectors, 'district_id', did);
+                populateChild('#cell_id', [], 'sector_id', null);
+                populateChild('#village_id', [], 'cell_id', null);
+            });
+
+            $('#sector_id').on('change', function () {
+                const sid = $(this).val();
+                populateChild('#cell_id', cells, 'sector_id', sid);
+                populateChild('#village_id', [], 'cell_id', null);
+            });
+
+            $('#cell_id').on('change', function () {
+                const cid = $(this).val();
+                populateChild('#village_id', villages, 'cell_id', cid);
+            });
+
             // Handle Add button click
             $('#addBtn').click(function () {
                 $submitForm[0].reset();
                 $('#id').val(0);
+                // ensure any previous update url is cleared when adding
+                $('#update_url').val('');
                 $modalTitle.text('Add New Shareholder');
                 $submitForm.find('.is-invalid').removeClass('is-invalid');
                 $submitForm.find('.invalid-feedback').remove();
                 $('#legal_type_id').val(null).trigger('change');
+                // clear address selects
+                $('#province_id').val(null).trigger('change');
+                $('#district_id').val(null).trigger('change');
+                $('#sector_id').val(null).trigger('change');
+                $('#cell_id').val(null).trigger('change');
+                $('#village_id').val(null).trigger('change');
+                // clear name fields
+                $('#first_name').val('');
+                $('#last_name').val('');
                 myModal.show();
             });
 
@@ -180,12 +301,18 @@
                 $submitForm[0].reset();
 
                 const url = $(this).data('url');
+                // read update url provided on the action button (attribute name data-update_url)
+                // use attr to read the raw attribute name (underscore) to be robust
+                const updateUrl = $(this).attr('data-update_url') || '';
                 $.get(url, function (data) {
                     $modalTitle.text('Edit Shareholder');
                     $submitForm.find('.is-invalid').removeClass('is-invalid');
                     $submitForm.find('.invalid-feedback').remove();
                     $('#id').val(data.id);
-                    $('#name').val(data.name);
+                    // store update url on the form so submit handler can use it
+                    $('#update_url').val(updateUrl);
+                    $('#first_name').val(data.first_name ?? '');
+                    $('#last_name').val(data.last_name ?? '');
                     $('#legal_type_id').val(data.legal_type_id).trigger('change');
                     $('#id_number').val(data.id_number);
                     $('#phone_number').val(data.phone_number);
@@ -193,6 +320,12 @@
                     $('#tin').val(data.tin);
                     $('#birth_date').val(data.birth_date);
                     $('#residential_address').val(data.residential_address);
+                    // populate address selects if available
+                    $('#province_id').val(data.province_id ?? null).trigger('change');
+                    $('#district_id').val(data.district_id ?? null).trigger('change');
+                    $('#sector_id').val(data.sector_id ?? null).trigger('change');
+                    $('#cell_id').val(data.cell_id ?? null).trigger('change');
+                    $('#village_id').val(data.village_id ?? null).trigger('change');
                     myModal.show();
                 });
             });
@@ -207,7 +340,11 @@
                 $submitForm.find('.invalid-feedback').remove();
 
                 const id = $('#id').val();
-                const url = id > 0 ? `{{ url('admin/shareholders') }}/${id}` : "{{ route('admin.shareholders.store') }}";
+                // prefer explicit update_url (set on edit) when available, otherwise construct from id
+                const formUpdateUrl = $('#update_url').val();
+                const url = id > 0
+                    ? (formUpdateUrl && formUpdateUrl.length ? formUpdateUrl : `{{ url('admin/shareholders') }}/${id}`)
+                    : "{{ route('admin.shareholders.store') }}";
                 const method = id > 0 ? 'PUT' : 'POST';
 
                 $.ajax({

@@ -57,6 +57,10 @@ Route::group(['middleware' => ['auth', PasswordChanged::class, EnsureUserIsActiv
     Route::group(['prefix' => 'shares', 'as' => 'shares.'], function () {
         Route::get('/', [ShareController::class, 'index'])->name('index');
         Route::get('/{share}/details', [ShareController::class, 'show'])->name('show');
+            // allow fetching a share for editing and updating it when pending
+        Route::get('/{share}/edit', [ShareController::class, 'edit'])->name('edit');
+        Route::put('/{share}', [ShareController::class, 'update'])->name('update');
+        Route::delete('/{share}', [ShareController::class, 'destroy'])->name('destroy');
         Route::post('/{share}/review', [ShareController::class, 'review'])->name('review');
     });
 

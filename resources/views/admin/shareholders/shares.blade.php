@@ -116,15 +116,37 @@
                                                 <td>
                                                     <span class="badge badge-light-{{$share->statusColor}} rounded-pill">{{ ucfirst($share->status )}}</span>
                                                 </td>
-                                                  <td class="text-end">
-                                                      <a href="" class="btn btn-sm btn-light-primary">
-                                                          View
-                                                      </a>
-                                                  </td>
+                                                                  <td class="text-end">
+                                                                      <div class="dropdown">
+                                                                          <button class="btn btn-sm btn-light btn-icon" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                                              <x-lucide-more-vertical class="tw-h-5 tw-w-5"/>
+                                                                          </button>
+                                                                          <ul class="dropdown-menu dropdown-menu-end">
+                                                                              <li>
+                                                                                  <a href="{{ url('admin/shares/'.encodeId($share->id).'/details') }}" class="dropdown-item">View</a>
+                                                                              </li>
+                                                                              @if(strtolower($share->status) === 'pending')
+                                                                                  <li>
+                                                                                      <button type="button" class="dropdown-item edit-share"
+                                                                                              data-url="{{ url('admin/shares/'.encodeId($share->id).'/edit') }}"
+                                                                                              data-update_url="{{ url('admin/shares/'.encodeId($share->id)) }}">
+                                                                                          Edit
+                                                                                      </button>
+                                                                                  </li>
+                                                                                  <li>
+                                                                                      <button type="button" class="dropdown-item text-danger delete-share"
+                                                                                              data-delete_url="{{ route('admin.shares.destroy', encodeId($share->id)) }}">
+                                                                                          Delete
+                                                                                      </button>
+                                                                                  </li>
+                                                                              @endif
+                                                                          </ul>
+                                                                      </div>
+                                                                  </td>
                                             </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="5" class="text-center">
+                                                <td colspan="6" class="text-center">
                                                     No shares found for this shareholder.
                                                 </td>
                                             </tr>
@@ -180,7 +202,8 @@
                       action="{{ route('admin.shareholders.shares.store', encodeId($shareholder->id)) }}">
                     <div class="modal-body">
 
-                        @csrf
+                                        @csrf
+                                        <input type="hidden" name="_method" id="share_method" value=""/>
                         <input type="hidden" name="shareholder_id" value="{{ $shareholder->id }}"/>
                         <div class="row">
                             <!--begin::Input group-->
@@ -322,6 +345,11 @@
 
                 e.preventDefault();
                 const formData = new FormData(this);
+                // If method override field is present and set (e.g. PUT for update), ensure it's sent
+                const methodOverride = $('#share_method').val();
+                if (methodOverride) {
+                    formData.set('_method', methodOverride);
+                }
                 const url = $form.attr('action');
                 const method = $form.attr('method');
                 const submitBtn = $form.find('button[type="submit"]');
@@ -376,6 +404,95 @@
                     submitBtn.html('<span class="indicator-label">Submit</span>');
                 });
             })
+
+            // keep original action to restore when adding a new share
+            const originalAction = $form.attr('action');
+
+            // Handle edit button click - open modal populated with share data
+            $(document).on('click', '.edit-share', function (e) {
+                e.preventDefault();
+                const url = $(this).data('url');
+                const updateUrl = $(this).data('update_url');
+
+                // fetch share data
+                axios.get(url).then(response => {
+                    const share = response.data;
+                    // populate fields
+                    $form.find('input[name="quantity"]').val(share.quantity);
+                    $form.find('input[name="value"]').val(share.value);
+                    $('#amount').val((share.quantity * share.value).toFixed(2));
+                    $('#payment_method_id').val(share.payment ? share.payment.payment_method_id : '');
+                    $('#bank_id').val(share.payment ? share.payment.bank_id : '');
+                    $('#reference_number').val(share.payment ? share.payment.reference_number : '');
+
+                    // set form action to update endpoint and set method override to PUT
+                    $form.attr('action', updateUrl);
+                    $('#share_method').val('PUT');
+
+                    // mark form as editing for the modal show handler
+                    $('#kt_modal_add_share').data('editing', true);
+                    // show modal
+                    $('#kt_modal_add_share').modal('show');
+                }).catch(err => {
+                    console.error('Edit share fetch error', err);
+                    let msg = 'Unable to fetch share data for editing.';
+                    if (err.response && err.response.data) {
+                        if (err.response.data.message) msg = err.response.data.message;
+                        else if (err.response.data.errors) msg = JSON.stringify(err.response.data.errors);
+                    } else if (err.response && err.response.statusText) {
+                        msg = `${err.response.status} ${err.response.statusText}`;
+                    }
+                    Swal.fire('Error', msg, 'error');
+                });
+            });
+
+            // Handle delete button click for pending shares
+            $(document).on('click', '.delete-share', function (e) {
+                e.preventDefault();
+                const deleteUrl = $(this).data('delete_url');
+                const csrfToken = document.querySelector('meta[name="csrf-token"]') ? document.querySelector('meta[name="csrf-token"]').getAttribute('content') : null;
+
+                Swal.fire({
+                    title: 'Delete share?',
+                    text: 'This action cannot be undone. The share will be removed.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, delete',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        axios.delete(deleteUrl, {
+                            data: {
+                                _token: csrfToken
+                            }
+                        }).then(function (response) {
+                            Swal.fire('Deleted!', response.data.message ?? 'Share deleted.', 'success').then(() => location.reload());
+                        }).catch(function (err) {
+                            console.error('Delete error', err);
+                            let msg = 'Unable to delete the share.';
+                            if (err.response && err.response.data && err.response.data.message) msg = err.response.data.message;
+                            Swal.fire('Error', msg, 'error');
+                        });
+                    }
+                });
+            });
+
+            // When the modal is shown without editing flag (i.e. Add New Share), reset form
+            $('#kt_modal_add_share').on('show.bs.modal', function () {
+                const editing = $(this).data('editing');
+                if (!editing) {
+                    // reset form and action to original (create)
+                    $form[0].reset();
+                    $form.attr('action', originalAction);
+                    $('#share_method').val('');
+                    $('#amount').val('');
+                }
+            });
+
+            // Clear editing flag when modal hidden
+            $('#kt_modal_add_share').on('hidden.bs.modal', function () {
+                $(this).data('editing', false);
+            });
 
         });
 

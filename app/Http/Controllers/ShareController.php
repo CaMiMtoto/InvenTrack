@@ -45,6 +45,115 @@ class ShareController extends Controller
         return view('admin.shares.show', compact('share'));
     }
 
+    /**
+     * Return share data for editing (AJAX)
+     */
+    public function edit(Share $share)
+    {
+        // load relations useful for editing
+        $share->load(['payment.paymentMethod', 'payment.bank', 'shareholder']);
+        return response()->json($share);
+    }
+
+    /**
+     * Update the specified share. Only allowed when status is pending.
+     */
+    public function update(Request $request, Share $share)
+    {
+        // Only allow editing if pending
+        if (strtolower($share->status) !== 'pending') {
+            return response()->json(['message' => 'Only pending shares can be edited.'], 403);
+        }
+
+        $data = $request->validate([
+            'quantity' => ['required', 'integer', 'min:1'],
+            'payment_method_id' => ['nullable', 'exists:payment_methods,id'],
+            'bank_id' => ['nullable', 'exists:banks,id'],
+            'reference_number' => ['nullable', 'string'],
+            'attachment' => ['nullable', 'file', 'max:10240'],
+        ]);
+
+        DB::beginTransaction();
+        try {
+            $share->quantity = $data['quantity'];
+            $share->save();
+
+            // update or create payment
+            $amount = $share->quantity * $share->value;
+            if ($share->payment) {
+                $payment = $share->payment;
+                $payment->payment_method_id = $data['payment_method_id'] ?? $payment->payment_method_id;
+                $payment->bank_id = $data['bank_id'] ?? $payment->bank_id;
+                $payment->reference_number = $data['reference_number'] ?? $payment->reference_number;
+                $payment->amount = $amount;
+
+                if ($request->hasFile('attachment')) {
+                    // store new file and update path
+                    $path = $request->file('attachment')->store('payments');
+                    $payment->attachment = $path;
+                }
+
+                $payment->save();
+            } else {
+                // create a new payment record if any payment information provided
+                if ($data['payment_method_id'] || $data['bank_id'] || $data['reference_number'] || $request->hasFile('attachment')) {
+                    $payload = [
+                        'payment_method_id' => $data['payment_method_id'] ?? null,
+                        'bank_id' => $data['bank_id'] ?? null,
+                        'reference_number' => $data['reference_number'] ?? null,
+                        'amount' => $amount,
+                        'status' => $share->status === 'approved' ? 'paid' : 'pending',
+                        'user_id' => auth()->id(),
+                    ];
+                    if ($request->hasFile('attachment')) {
+                        $payload['attachment'] = $request->file('attachment')->store('payments');
+                    }
+                    $share->payments()->create($payload);
+                }
+            }
+
+            DB::commit();
+            return response()->json(['message' => 'Share updated successfully.']);
+        } catch (Throwable $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
+    /**
+     * Remove the specified share. Only allowed when status is pending.
+     */
+    public function destroy(Share $share)
+    {
+        if (strtolower($share->status) !== 'pending') {
+            return response()->json(['message' => 'Only pending shares can be deleted.'], 403);
+        }
+
+        DB::beginTransaction();
+        try {
+            // delete related payments and flow histories
+            if ($share->payments && $share->payments()->exists()) {
+                foreach ($share->payments as $payment) {
+                    // if attachments are stored, consider deleting files here
+                    $payment->delete();
+                }
+            }
+            if ($share->flowHistories && $share->flowHistories()->exists()) {
+                foreach ($share->flowHistories as $fh) {
+                    $fh->delete();
+                }
+            }
+
+            $share->delete();
+            DB::commit();
+
+            return response()->json(['message' => 'Share deleted successfully.']);
+        } catch (Throwable $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
 
     /**
      * @throws Throwable
