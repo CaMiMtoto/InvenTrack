@@ -295,9 +295,16 @@ class OrderController extends Controller
      */
     public function destroy(Order $Order)
     {
-        if ($Order->status !== Status::Pending) {
+        // Compare the raw order_status (not the accessor which returns a capitalized value)
+        if ($Order->order_status !== Status::Pending) {
             return response()->json(['error' => 'Only pending orders can be deleted.']);
         }
+
+        // Only the creator of the order may delete it while it's pending
+        if ($Order->created_by !== auth()->id()) {
+            return response()->json(['error' => 'Only the creator can delete this pending order.']);
+        }
+
         DB::beginTransaction();
         // rollback stock
         $this->rollbackStock($Order);

@@ -1,39 +1,18 @@
-#IBE-System valuation
-1.Bank customer (SHARE)
-•	F.name
-•	S.name
-•	Id or passport
-•	Phone
-•	Email
-•	Address
-•	BOD
-•	Status
-•	Customer photo
-•	Customer id or passport photo
-•	Bank account
-•	Deposit amount 
+
+New Comments
+=---------------------
+- add •	Customer photo
+      •	Customer id or passport photo on shareholder
+- allow order to be deleted by the creator when Pending status
+- fix error when assigning orders on pending deliveries
+- Legal Type->ID Type on shareholder's form
+
+- Share Payment Summary report add share done by on filters
+- Share Salary calculation based on percentage of approved shares (e.g. 8% can be changed any time and should not affected previous shares) - on dashboard he can see his salary based on %
+
+- product remove class
+- on Sales Order Report add filter by done by
+- sales report remove expenses on margin calculation : margin= sales - purchases.  total expenses to be there as well, net profit=margin-total expenses;
+- fix double order creation after placing order user my accidentally or intentionally . 
 
 
-
-1.Shareholder identification:
-•	Name:
-•	Last name:
-•	Set option: Id, passport or Tin number 
-•	Email:
-•	DOB:
-•	Residential Address (Province, District and Sector):
-
-2.Transaction on share there is an error
-3.There is no Staff performance in selling the shares 
-4.There is no Salary calculation  (must based staff contract )
-5.there is no access  on editing share values 
-
-
-
-Product Part:
-1.	category guhundira (Amballage, Food, drink, …..
-2.	bonus igomba gukoresha kuri salary (system igomba gufata salary y’umukozi)
-3.	Gukuramo Class Product  twasanze byagorana mu gukora calculation ya salary 
-4.	Gukosora Logic Error Igihe Umuntu Akoze Assign Kuri Delivery Product
-5.	Kuri Sales Report Kongeramo Columm Ya (Margin Profit= Sales Price -Purchase Price) kuri buri customer care, we akabona total sales, mugihe admin na finance bo babona byose 
-6.

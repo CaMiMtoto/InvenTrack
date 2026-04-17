@@ -319,13 +319,13 @@
                                 <span class="menu-title">Categories</span>
                             </a>
                         @endcan
-                        @can(Permission::MANAGE_PRODUCT_CLASSES)
+                    {{--    @can(Permission::MANAGE_PRODUCT_CLASSES)
                             <a class="menu-link {{ request()->url()==route('admin.products.product-class.index')?'active':'' }}"
                                href="{{ route('admin.products.product-class.index') }}">
                                 <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
                                 <span class="menu-title">Classes</span>
                             </a>
-                        @endcan
+                        @endcan--}}
                         @can(Permission::MANAGE_PRODUCTS)
                             <!--end:Menu link-->
                             <a class="menu-link {{ request()->url()==route('admin.products.index')?'active':'' }}"

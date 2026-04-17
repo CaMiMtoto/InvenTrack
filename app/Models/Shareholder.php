@@ -47,6 +47,15 @@ class Shareholder extends Model
 {
     use HasFactory,HasEncodedId;
     protected $appends = ['name'];
+    /**
+     * Fillable attributes for mass assignment
+     * Include new file columns: photo and id_attachment
+     */
+    protected $fillable = [
+        'first_name', 'last_name', 'legal_type_id', 'id_number', 'phone_number', 'email',
+        'tin', 'birth_date', 'nationality', 'residential_address', 'province_id', 'district_id',
+        'sector_id', 'cell_id', 'village_id', 'user_id', 'name', 'photo', 'id_attachment'
+    ];
 
     public function legalType(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {

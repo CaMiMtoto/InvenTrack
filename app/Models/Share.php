@@ -48,9 +48,15 @@ class Share extends Model
 {
     use HasStatusColor, HasEncodedId,HasFactory;
 
-    protected $appends = ['status_color', 'total'];
+    protected $appends = ['status_color', 'total', 'salary_amount'];
     protected $casts = [
-        'reviewed_at' => 'datetime'
+        'reviewed_at' => 'datetime',
+        'share_salary_percentage' => 'decimal:2',
+    ];
+
+    // Allow setting percentage at creation/approval time through mass assignment where appropriate
+    protected $fillable = [
+        'shareholder_id', 'value', 'quantity', 'status', 'reviewed_by', 'reviewed_at', 'user_id', 'share_salary_percentage'
     ];
 
     public function shareholder(): BelongsTo
@@ -62,6 +68,16 @@ class Share extends Model
     {
         return Attribute::make(
             get: fn() => $this->quantity * $this->value
+        );
+    }
+
+    /**
+     * Computed salary amount for this share (value * share_salary_percentage / 100)
+     */
+    public function salaryAmount(): Attribute
+    {
+        return Attribute::make(
+            get: fn() => ($this->value * $this->quantity) * (($this->share_salary_percentage ?? config('shares.default_salary_percent', 0)) / 100)
         );
     }
 

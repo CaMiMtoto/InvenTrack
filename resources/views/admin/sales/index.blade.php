@@ -131,14 +131,14 @@
                     {data: 'customer.name', name: 'customer.name'},
                     {
                         data: 'status', name: 'status',
-                        render: function (data, type, row, meta) {
+                        render: function (data, _, row) {
                             return `<span class="badge bg-${row.status_color}-subtle text-${row.status_color} rounded-pill">${data}</span>`;
                         }
                     },
                     {data: 'items_count', name: 'items_count', orderable: false, searchable: false},
                     {
                         data: 'items_sum_quantity_unit_price', name: 'items_sum_quantity_unit_price',
-                        render: function (data, type, row, meta) {
+                        render: function (data) {
                             return Number(data).toLocaleString('en-US', {
                                 style: 'currency',
                                 currency: 'RWF'
@@ -183,10 +183,47 @@
                 });
             });
 
-            $myTable.on('click','.js-complete',function (e) {
+
+
+            // Delete pending order (creator only) handler
+            $myTable.on('click', '.js-delete', function (e) {
                 e.preventDefault();
                 let url = $(this).attr('href');
-
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: 'This will permanently delete the order and its items.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, delete it!',
+                    cancelButtonText: 'No, keep it'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: url,
+                            type: 'DELETE',
+                            data: {
+                                _token: '{{ csrf_token() }}'
+                            },
+                            success: function (response) {
+                                Swal.fire({
+                                    toast: true,
+                                    position: 'top-end',
+                                    icon: 'success',
+                                    title: response.success,
+                                    showConfirmButton: false,
+                                    timer: 2500,
+                                    timerProgressBar: true
+                                });
+                                window.dt.ajax.reload(null, false);
+                            },
+                            error: function (xhr) {
+                                let msg = 'An unexpected error occurred.';
+                                if (xhr.responseJSON && xhr.responseJSON.error) msg = xhr.responseJSON.error;
+                                Swal.fire('Error', msg, 'error');
+                            }
+                        });
+                    }
+                });
             });
 
             $myTable.on('click','.js-complete',function (e) {

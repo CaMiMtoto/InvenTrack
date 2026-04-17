@@ -8,7 +8,9 @@ use App\Models\Expense;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
+use App\Models\Share;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
@@ -101,6 +103,19 @@ class DashboardController extends Controller
             $incomeVsExpenses['expenses'][] = round($expense, 2);
         }
 
+        // Share salary earnings for logged-in user (optional date range via share_from & share_to request params)
+        $shareFrom = request('share_from') ? Carbon::parse(request('share_from'))->startOfDay() : now()->subDays(30)->startOfDay();
+        $shareTo = request('share_to') ? Carbon::parse(request('share_to'))->endOfDay() : now()->endOfDay();
+
+        $defaultPercent = (float) config('shares.default_salary_percent', 0);
+        $shareEarningsQuery = Share::query()
+            ->where('status', 'approved')
+            ->where('user_id', auth()->id())
+            ->whereBetween('reviewed_at', [$shareFrom, $shareTo]);
+
+        $shareEarningsRow = $shareEarningsQuery->select(DB::raw('COALESCE(SUM(quantity * value * (COALESCE(share_salary_percentage, ' . $defaultPercent . ') / 100)), 0) as earnings'))->first();
+        $shareEarnings = $shareEarningsRow->earnings ?? 0;
+
         return view('admin.dashboard', compact(
             'todaySales',
             'pendingOrders',
@@ -111,7 +126,10 @@ class DashboardController extends Controller
             'salesChartData',
             'orderStatusChart',
             'topProductsChart',
-            'incomeVsExpenses'
+            'incomeVsExpenses',
+            'shareEarnings',
+            'shareFrom',
+            'shareTo'
         ));
     }
 }

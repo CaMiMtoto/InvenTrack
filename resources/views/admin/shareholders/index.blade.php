@@ -22,7 +22,7 @@
                     <tr class="text-start text-gray-800 fw-bold fs-7 text-uppercase">
                         <th>Created At</th>
                         <th>Name</th>
-                        <th>Legal Type</th>
+                        <th>ID Type</th>
                         <th>Phone</th>
                         <th>Amount</th>
                         <th>Email</th>
@@ -51,7 +51,7 @@
                     <!--end::Close-->
                 </div>
 
-                <form id="submitForm" method="post">
+                <form id="submitForm" method="post" enctype="multipart/form-data">
                     @csrf
                     <input type="hidden" id="id" name="id" value="0"/>
                     {{-- when editing we store the exact update URL (data-update_url) here so submission uses it --}}
@@ -67,7 +67,7 @@
                                 <input type="text" class="form-control" id="last_name" name="last_name"/>
                             </div>
                             <div class="col-lg-6 mb-3">
-                                <label for="legal_type_id" class="form-label ">Legal Type</label>
+                                <label for="legal_type_id" class="form-label ">ID Type</label>
                                 <select class="form-select" id="legal_type_id" name="legal_type_id"
                                         data-control="select2" data-dropdown-parent="#myModal">
                                     <option></option>
@@ -102,6 +102,14 @@
                                 </label>
                                 <input type="text" class="form-control" id="residential_address"
                                        name="residential_address"/>
+                            </div>
+                            <div class="col-lg-6 mb-3">
+                                <label for="photo" class="form-label">Customer Photo</label>
+                                <input type="file" class="form-control" id="photo" name="photo" accept="image/*" />
+                            </div>
+                            <div class="col-lg-6 mb-3">
+                                <label for="id_attachment" class="form-label">ID / Passport Photo (or PDF)</label>
+                                <input type="file" class="form-control" id="id_attachment" name="id_attachment" accept="image/*,.pdf" />
                             </div>
                             <div class="col-lg-6 mb-3">
                                 <label for="province_id" class="form-label">Province</label>
@@ -187,7 +195,7 @@
                     {data: 'name', name: 'name'},
                     {
                         data: 'legal_type.name', name: 'legalType.name',
-                        render: function (data, type, row) {
+                        render: function (data, _, row) {
                             return `<div>
                             <em>${data}</em> <br>
                             <code class="px-0">${row.id_number}</code>
@@ -197,7 +205,7 @@
                     {data: 'phone_number', name: 'phone_number'},
                     {
                         data: 'shares_sum_value', name: 'shares_sum_value',
-                        render: function (data, type, row) {
+                        render: function (data) {
                             return Number(data).toLocaleString('en-US', {
                                 style: 'currency',
                                 currency: 'RWF'
@@ -345,12 +353,21 @@
                 const url = id > 0
                     ? (formUpdateUrl && formUpdateUrl.length ? formUpdateUrl : `{{ url('admin/shareholders') }}/${id}`)
                     : "{{ route('admin.shareholders.store') }}";
-                const method = id > 0 ? 'PUT' : 'POST';
+                // Use FormData so file inputs are included
+                const formData = new FormData(this);
+                // Laravel method spoofing for PUT
+                if (id > 0) {
+                    // prefer explicit update url
+                    formData.append('_method', 'PUT');
+                }
 
                 $.ajax({
                     url: url,
-                    method: method,
-                    data: $(this).serialize(),
+                    method: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    cache: false,
                     success: function (response) {
                         myModal.hide();
                         table.ajax.reload();

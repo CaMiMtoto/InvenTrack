@@ -28,7 +28,6 @@
                         <th>Created At</th>
                         <th>Name</th>
                         <th>Category</th>
-                        <th>Class</th>
                         <th>Price</th>
                         <th>Stock</th>
                         <th>Reorder</th>
@@ -64,7 +63,7 @@
                     <div class="modal-body">
                         <input type="hidden" id="id" name="id" value="0"/>
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="mb-3 col-md-6">
                                 <div class="mb-3">
                                     <label for="category_id" class="form-label">Category</label>
                                     <select class="form-select" id="category_id" name="category_id">
@@ -75,27 +74,10 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="product_class_id" class="form-label">Class</label>
-                                    <select class="form-select" id="product_class_id" name="product_class_id">
-                                        <option value="">Select Class</option>
-                                        @foreach($classes as $category)
-                                            <option value="{{ $category->id }}">{{ $category->name }}
-                                                - {{ $category->rate }}%
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
+                            <div class="mb-3 col-md-6">
+                                <label for="name" class="form-label">Name</label>
+                                <input type="text" class="form-control" id="name" name="name" placeholder=""/>
                             </div>
-                        </div>
-
-
-                        <div class="mb-3">
-                            <label for="name" class="form-label">Name</label>
-                            <input type="text" class="form-control" id="name" name="name" placeholder=""/>
-                        </div>
-                        <div class="row">
                             <div class="mb-3 col-md-6">
                                 <label for="price" class="form-label">Selling Price</label>
                                 <input type="number" class="form-control" id="price" name="price" placeholder=""/>
@@ -104,10 +86,6 @@
                                 <label for="unit_measure" class="form-label">Unit Measure</label>
                                 <input class="form-control" id="unit_measure" name="unit_measure" type="text"/>
                             </div>
-                        </div>
-                        <div class="row">
-
-
                             <div class="mb-3 col-md-6">
                                 <label for="min_stock" class="form-label">
                                     Reorder Level
@@ -198,12 +176,7 @@
                     },
                     {data: 'name', name: 'name'},
                     {data: 'category.name', name: 'category.name'},
-                    {
-                        data: 'product_class.name', name: 'product_class.name',
-                        render: function (data, type, row) {
-                            return data ? row.product_class.name + ' - ' + row.product_class.rate + '%' : 'n/a';
-                        }
-                    },
+                    // product class column removed
                     {
                         data: 'price', name: 'price',
                         render: function (data, type, row) {

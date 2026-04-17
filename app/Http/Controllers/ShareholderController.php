@@ -15,6 +15,7 @@ use App\Models\Cell;
 use App\Models\Village;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Validator;
 use Yajra\DataTables\DataTables;
@@ -64,6 +65,15 @@ class ShareholderController extends Controller
         $validated['user_id'] = auth()->id();
         // populate legacy name from first and last name if provided
         $validated['name'] = trim(($validated['first_name'] ?? '') . ' ' . ($validated['last_name'] ?? ''));
+
+        // handle uploads
+        if ($request->hasFile('photo')) {
+            $validated['photo'] = $request->file('photo')->store('shareholders/photos');
+        }
+        if ($request->hasFile('id_attachment')) {
+            $validated['id_attachment'] = $request->file('id_attachment')->store('shareholders/ids');
+        }
+
         Shareholder::create($validated);
 
         return response()->json(['success' => 'Shareholder created successfully.']);
@@ -86,6 +96,21 @@ class ShareholderController extends Controller
 
         // populate legacy name from first and last name if provided
         $validated['name'] = trim(($validated['first_name'] ?? '') . ' ' . ($validated['last_name'] ?? ''));
+
+        // handle uploads - replace existing files if new ones provided
+        if ($request->hasFile('photo')) {
+            if ($shareholder->photo) {
+                Storage::delete($shareholder->photo);
+            }
+            $validated['photo'] = $request->file('photo')->store('shareholders/photos');
+        }
+        if ($request->hasFile('id_attachment')) {
+            if ($shareholder->id_attachment) {
+                Storage::delete($shareholder->id_attachment);
+            }
+            $validated['id_attachment'] = $request->file('id_attachment')->store('shareholders/ids');
+        }
+
         $shareholder->update($validated);
 
         return response()->json(['success' => 'Shareholder updated successfully.']);
@@ -148,6 +173,9 @@ class ShareholderController extends Controller
                     }
                 }
             ],
+            // uploaded photo and ID/passport file
+            'photo' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
+            'id_attachment' => ['nullable', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:2048'],
             // New address foreign keys (nullable)
             'province_id' => ['required', 'exists:provinces,id'],
             'district_id' => ['required', 'exists:districts,id'],

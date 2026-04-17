@@ -162,11 +162,19 @@ class ShareController extends Controller
     {
         $data = \request()->validate([
             'status' => ['required', 'in:' . Status::Approved . ',' . Status::Rejected],
-            'comment' => ['required']
+            'comment' => ['required'],
+            'share_salary_percentage' => ['nullable', 'numeric', 'min:0', 'max:100'],
         ]);
         DB::beginTransaction();
         // Update the share's status
         $share->status = $data['status'];
+        // If approving, persist the applied salary percentage on the share (immutable afterwards)
+        if ($data['status'] === Status::Approved) {
+            // Only set if not already set to preserve existing historic value
+            if ($share->share_salary_percentage === null) {
+                $share->share_salary_percentage = $data['share_salary_percentage'] ?? config('shares.default_salary_percent');
+            }
+        }
         // Record who reviewed it and when
         $share->reviewed_by = auth()->id();
         $share->reviewed_at = now();

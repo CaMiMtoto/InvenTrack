@@ -14,6 +14,8 @@
                 Mark as Complete
             </a>
         @endif
-        {{--        <a class="dropdown-item js-delete" href="{{ route(route('admin.sale-orders.destroy', $saleOrder->id)) }}">Delete</a>--}}
+        @if($saleOrder->order_status === \App\Constants\Status::Pending && $saleOrder->created_by === auth()->id())
+            <a class="dropdown-item js-delete" href="{{ route('admin.orders.destroy', encodeId($saleOrder->id)) }}">Delete</a>
+        @endif
     </div>
 </div>
