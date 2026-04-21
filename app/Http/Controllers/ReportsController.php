@@ -26,9 +26,10 @@ class ReportsController extends Controller
         $startDate = request('start_date', now()->subMonth()->format('Y-m-d'));
         $endDate = request('end_date', now()->format('Y-m-d'));
         $productId = request('product_id');
+        $doneBy = request('done_by');
 
         $service = new \App\Services\ReportService();
-        $builder = $service->getSalesQueryBuilder($startDate, $endDate, $productId);
+        $builder = $service->getSalesQueryBuilder($startDate, $endDate, $productId, null, $doneBy);
 
         $user = auth()->user();
         $canSeeAll = $user && (
@@ -89,11 +90,14 @@ class ReportsController extends Controller
         $startDate = request('start_date', now()->subMonth()->format('Y-m-d'));
         $endDate = request('end_date', now()->format('Y-m-d'));
         $productId = request('product_id');
+        $doneBy = request('done_by');
+
+//        return request()->all();
 
         $user = auth()->user();
         $fileName = sprintf('sales-export-%s-to-%s.xlsx', $startDate, $endDate);
 
-        $export = new SalesExportQuery($startDate, $endDate, $productId, $user);
+        $export = new SalesExportQuery($startDate, $endDate, $productId, $user, $doneBy);
         return Excel::download($export, $fileName);
     }
 

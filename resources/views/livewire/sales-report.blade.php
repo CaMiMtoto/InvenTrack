@@ -54,6 +54,12 @@
                             <option value="{{ $item->id }}">{{ $item->name }}</option>
                         @endforeach
                     </select>
+                    <select class="form-select form-select-sm" name="done_by" wire:model.live="doneById">
+                        <option value="">All Staff (Done By)</option>
+                        @foreach($users as $u)
+                            <option value="{{ $u->id }}">{{ $u->name }}</option>
+                        @endforeach
+                    </select>
                    {{-- <button type="submit" class="btn btn-sm btn-danger flex-shrink-0">
                         View
                         <i class="bi bi-file-pdf"></i>
@@ -89,7 +95,6 @@
                     <th>Price</th>
                     <th>Quantity</th>
                     <th>Total</th>
-                    <th>Margin</th>
                     <th>Customer</th>
                     <th>Done By</th>
                 </tr>
@@ -103,20 +108,12 @@
                         <td>{{number_format($item->unit_price,2)}}</td>
                         <td>{{number_format($item->quantity,2)}}</td>
                         <td>{{number_format($item->total,2)}}</td>
-                        <td>
-                            @php
-                                $purchasePrice = $item->purchase_price ?? 0;
-                                $unitMargin = $item->unit_price - $purchasePrice;
-                                $marginTotal = $unitMargin * $item->quantity;
-                            @endphp
-                            {{ number_format($marginTotal,2) }}
-                        </td>
                         <td>{{optional($item->order->customer)->name}}</td>
                         <td>{{optional($item->order->doneBy)->name}}</td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="9" class="text-center">
+                        <td colspan="8" class="text-center">
                             <p>
                                 No purchase orders found for the selected date range.
                             </p>
@@ -127,7 +124,7 @@
                 </tbody>
                 <tfoot>
                     <tr>
-                        <td colspan="9">
+                        <td colspan="8">
                             <div class="d-flex flex-column flex-md-row justify-content-end align-items-center mt-3 px-2 gap-2">
                                 <div class="d-flex align-items-center">
                                     <span class="fw-bold">Total Sales:</span>

@@ -36,30 +36,42 @@ class ReportService
             });
     }
 
-    public function getSalesQueryBuilder($startDate, $endDate, $productId, $status = null): OrderItem|Builder|\LaravelIdea\Helper\App\Models\_IH_OrderItem_QB
+    public function getSalesQueryBuilder($startDate, $endDate, $productId, $status = null, $doneById = null, $includePurchasePrice = true): OrderItem|Builder|\LaravelIdea\Helper\App\Models\_IH_OrderItem_QB
     {
-        // Add a subquery to fetch an average purchase price for the product so we can calculate margins
-        return OrderItem::query()
-            ->addSelect(['*', \DB::raw("COALESCE((select AVG(unit_price) from purchase_items where product_id = order_items.product_id),0) as purchase_price")])
-            ->with('order.customer') // Eager load related customer data
-            ->whereHas('order', function (Builder $query) use ($productId, $status, $startDate, $endDate) {
-                // Filter by date range
-                $query->when($startDate && $endDate, function ($query) use ($startDate, $endDate) {
-                    $query->whereBetween('order_date', [$startDate, $endDate]);
+        // Build base order items query. Optionally include a purchase_price subselect for convenience.
+        $qb = OrderItem::query()->with(['order.customer', 'product', 'order.doneBy']);
+
+        if ($includePurchasePrice) {
+            $qb->addSelect([
+                '*',
+                \DB::raw("COALESCE((select AVG(unit_price) from purchase_items where product_id = order_items.product_id),0) as purchase_price"),
+            ]);
+        } else {
+            $qb->select(['order_items.*']);
+        }
+
+        // Apply order-level filters
+        $qb->whereHas('order', function (Builder $query) use ($status, $startDate, $endDate, $doneById) {
+            $query->when($startDate && $endDate, function ($query) use ($startDate, $endDate) {
+                $query->whereBetween('order_date', [$startDate, $endDate]);
+            })
+                ->when($status, function ($query) use ($status) {
+                    $query->where('order_status', '=', $status);
                 })
-                    // Filter by status if provided
-                    ->when($status, function ($query) use ($status) {
-                        $query->where('order_status', '=', $status);
-                    })
-                    // Exclude cancelled orders when no status is provided
-                    ->when(is_null($status), function ($query) {
-                        $query->where(\DB::raw("LOWER(order_status)"), '!=', strtolower(Status::Cancelled));
-                    })
-                    // Filter by product ID if provided
-                    ->when($productId, function ($query) use ($productId) {
-                        $query->where('product_id', '=', $productId);
-                    });
-            });
+                ->when(is_null($status), function ($query) {
+                    $query->where(\DB::raw('LOWER(order_status)'), '!=', strtolower(Status::Cancelled));
+                })
+                ->when($doneById, function ($query) use ($doneById) {
+                    $query->where('created_by', $doneById);
+                });
+        });
+
+        // Apply product filter on order_items table
+        $qb->when($productId, function ($query) use ($productId) {
+            $query->where('product_id', '=', $productId);
+        });
+
+        return $qb;
     }
 
 

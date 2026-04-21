@@ -5,8 +5,8 @@ namespace App\Exports;
 use App\Services\ReportService;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\FromQuery;
-use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithTitle;
@@ -14,6 +14,7 @@ use Maatwebsite\Excel\Concerns\WithStyles;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use Illuminate\Support\Facades\DB;
 
 class SalesExportQuery implements FromQuery, WithMapping, WithHeadings, WithChunkReading, ShouldAutoSize, WithTitle, WithStyles, WithEvents
 {
@@ -23,21 +24,23 @@ class SalesExportQuery implements FromQuery, WithMapping, WithHeadings, WithChun
     protected string $endDate;
     protected $productId;
     protected $user;
+    protected $doneById;
     protected float $totalSales = 0;
     protected float $totalExpenses = 0;
     protected float $netProfit = 0;
     protected float $totalMargin = 0;
 
-    public function __construct(string $startDate, string $endDate, $productId = null, $user = null)
+    public function __construct(string $startDate, string $endDate, $productId = null, $user = null, $doneById = null)
     {
         $this->startDate = $startDate;
         $this->endDate = $endDate;
         $this->productId = $productId;
         $this->user = $user;
+        $this->doneById = $doneById;
 
-        // Precompute totals efficiently using aggregate queries
+        // Precompute totals efficiently using aggregate queries built from ReportService without the purchase_price subselect
         $service = new ReportService();
-        $builder = $service->getSalesQueryBuilder($this->startDate, $this->endDate, $this->productId);
+        $base = $service->getSalesQueryBuilder($this->startDate, $this->endDate, $this->productId, null, $this->doneById, false);
 
         // apply permission-based restriction same as UI
         $user = $this->user;
@@ -47,49 +50,35 @@ class SalesExportQuery implements FromQuery, WithMapping, WithHeadings, WithChun
             $user->can(\App\Constants\Permission::VIEW_ADMIN_DASHBOARD)
         );
         if (!$canSeeAll && $user) {
-            $builder->whereHas('order', function(\Illuminate\Database\Eloquent\Builder $q) use ($user) {
+            $base->whereHas('order', function(\Illuminate\Database\Eloquent\Builder $q) use ($user) {
                 $q->where('created_by', $user->id);
             });
         }
 
-        // Build a fresh order_items aggregate query (avoid selecting non-aggregated columns to satisfy ONLY_FULL_GROUP_BY)
-        $orderItemsAgg = \App\Models\OrderItem::query()->whereHas('order', function(\Illuminate\Database\Eloquent\Builder $q) {
-            // apply date and status filters same as ReportService
-            $q->when($this->startDate && $this->endDate, function ($query) {
-                $query->whereBetween('order_date', [$this->startDate, $this->endDate]);
-            });
-            // Exclude cancelled orders by default
-            $q->where(\DB::raw("LOWER(order_status)"), '!=', strtolower(\App\Constants\Status::Cancelled));
-        });
-
-        // Filter by product if provided
-        if ($this->productId) {
-            $orderItemsAgg->where('product_id', '=', $this->productId);
-        }
-
-        // apply permission-based restriction same as UI
-        if (!$canSeeAll && $user) {
-            $orderItemsAgg->whereHas('order', function(\Illuminate\Database\Eloquent\Builder $q) use ($user) {
-                $q->where('created_by', $user->id);
-            });
-        }
+        // Build a subquery that computes average purchase unit price per product and join it for efficient aggregation
+        $avgSub = DB::table('purchase_items')->select('product_id', DB::raw('AVG(unit_price) as avg_price'))->groupBy('product_id');
+        $builderWithAvg = (clone $base)
+            ->leftJoinSub($avgSub, 'avg_prices', function($join) {
+                $join->on('avg_prices.product_id', '=', 'order_items.product_id');
+            })
+            ->selectRaw('order_items.*, COALESCE(avg_prices.avg_price,0) as purchase_price');
 
         // total sales: sum(quantity * unit_price)
-        $this->totalSales = (float) $orderItemsAgg->sum(\DB::raw('quantity * unit_price'));
+        $this->totalSales = (float) $builderWithAvg->sum(DB::raw('quantity * unit_price'));
 
         // total expenses from expenses query
-        $this->totalExpenses = (float) $service->getExpensesQueryBuilder($this->startDate, $this->endDate)->sum(\DB::raw('amount'));
+        $this->totalExpenses = (float) $service->getExpensesQueryBuilder($this->startDate, $this->endDate)->sum(DB::raw('amount'));
         $this->netProfit = $this->totalSales - $this->totalExpenses;
 
-        // total margin: sum(quantity * (unit_price - average_purchase_price_for_product))
-        $cloneForMargin = (clone $orderItemsAgg);
-        $this->totalMargin = (float) $cloneForMargin->selectRaw('COALESCE(SUM(quantity * (unit_price - COALESCE((select AVG(unit_price) from purchase_items where product_id = order_items.product_id),0))),0) as total_margin')->value('total_margin');
+        // total margin: aggregate with sum() to avoid selecting non-aggregated columns under ONLY_FULL_GROUP_BY
+        $this->totalMargin = (float) (clone $builderWithAvg)
+            ->sum(DB::raw('order_items.quantity * (order_items.unit_price - COALESCE(avg_prices.avg_price,0))'));
     }
 
     public function query()
     {
         $service = new ReportService();
-        $builder = $service->getSalesQueryBuilder($this->startDate, $this->endDate, $this->productId);
+        $base = $service->getSalesQueryBuilder($this->startDate, $this->endDate, $this->productId, null, $this->doneById, false);
 
         // apply permission-based restriction same as UI
         $user = $this->user;
@@ -99,12 +88,32 @@ class SalesExportQuery implements FromQuery, WithMapping, WithHeadings, WithChun
             $user->can(\App\Constants\Permission::VIEW_ADMIN_DASHBOARD)
         );
         if (!$canSeeAll && $user) {
-            $builder->whereHas('order', function(\Illuminate\Database\Eloquent\Builder $q) use ($user) {
+            $base->whereHas('order', function(\Illuminate\Database\Eloquent\Builder $q) use ($user) {
                 $q->where('created_by', $user->id);
             });
         }
 
-        return $builder;
+        // apply done-by filter (map doneById to created_by)
+        if ($this->doneById) {
+            $base->whereHas('order', function(\Illuminate\Database\Eloquent\Builder $q) {
+                $q->where('created_by', $this->doneById);
+            });
+        }
+
+        // join avg purchase prices and select purchase_price
+        $avgSub = DB::table('purchase_items')->select('product_id', DB::raw('AVG(unit_price) as avg_price'))->groupBy('product_id');
+        $builderWithAvg = (clone $base)
+            ->leftJoinSub($avgSub, 'avg_prices', function($join) {
+                $join->on('avg_prices.product_id', '=', 'order_items.product_id');
+            })
+            ->selectRaw('order_items.*, COALESCE(avg_prices.avg_price,0) as purchase_price');
+
+        return $builderWithAvg;
+    }
+
+    public function chunkSize(): int
+    {
+        return 1000; // safe chunk size for FromQuery streaming
     }
 
     public function headings(): array
@@ -144,10 +153,7 @@ class SalesExportQuery implements FromQuery, WithMapping, WithHeadings, WithChun
         ];
     }
 
-    public function chunkSize(): int
-    {
-        return 1000; // safe chunk size
-    }
+    // chunkSize removed: export uses FromCollection with get(); consider switching back to FromQuery for very large exports
 
     public function title(): string
     {
