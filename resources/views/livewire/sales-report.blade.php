@@ -64,10 +64,10 @@
                         View
                         <i class="bi bi-file-pdf"></i>
                     </button>--}}
-                    <button type="submit" formaction="{{ route('admin.reports.export-sales') }}" formtarget="_blank" class="btn btn-sm btn-success flex-shrink-0">
-                        Export Excel
+{{--                    <button type="submit" formaction="{{ route('admin.reports.export-sales') }}" formtarget="_blank" class="btn btn-sm btn-success flex-shrink-0">--}}
+{{--                        Export Excel--}}
 {{--                        <i class="bi bi-file-earmark-excel"></i>--}}
-                    </button>
+{{--                    </button>--}}
                 </form>
             </div>
             <!--end::Actions-->
