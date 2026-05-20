@@ -9,6 +9,7 @@
                 <th>Items</th>
                 <th>Amount</th>
                 <th>Status</th>
+{{--                <th>Order Status</th>--}}
                 <th>Options</th>
             </tr>
             </thead>

@@ -28,10 +28,16 @@
                         })
                     }
                 },
-                {
+              /*  {
                     data: 'status', name: 'status',
                     render: function (data, type, row, meta) {
                         return `<span class="badge bg-${row.status_color}-subtle text-${row.status_color} rounded-pill">${data}</span>`
+                    }
+                },*/
+                {
+                    data: 'order.status', name: 'order.status',
+                    render: function (data, type, row, meta) {
+                        return `<span class="badge bg-${row.order.status_color}-subtle text-${row.order.status_color} rounded-pill">${data}</span>`
                     }
                 },
                 {data: 'action', name: 'action', orderable: false, searchable: false},
