@@ -104,6 +104,13 @@
                     <!--end:Menu link-->
                     <!--begin:Menu sub-->
                     <div class="menu-sub menu-sub-accordion">
+                        @can(Permission::NEW_ORDER)
+                            <a class="menu-link {{ request()->fullUrl()==route('admin.orders.create')?'active':'' }}"
+                               href="{{ route('admin.orders.create') }}">
+                                <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                                <span class="menu-title">New Order</span>
+                            </a>
+                        @endcan
                         @can(Permission::APPROVE_ORDERS)
                             <a class="menu-link {{ request()->fullUrl()==route('admin.orders.index',['status'=>'pending'])?'active':'' }}"
                                href="{{ route('admin.orders.index',['status'=>'pending']) }}">

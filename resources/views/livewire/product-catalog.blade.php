@@ -27,7 +27,7 @@
             <div class="d-flex align-items-center gap-2">
                 <div class="d-flex align-items-center ms-1 ms-lg-3">
                     <!--begin::Menu wrapper-->
-                    <a href="{{ route('admin.orders.create') }}"
+                    <a href="{{ route('admin.orders.checkout-form') }}"
                         class="btn btn-icon btn-danger position-relative btn-sm rounded-pill">
                         <!--begin::Svg Icon | path: icons/duotone/Communication/Group-chat.svg-->
                         <span class="svg-icon svg-icon-1">

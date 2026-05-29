@@ -158,4 +158,11 @@ class Order extends Model implements Auditable
         );
     }
 
+
+    public function canBeEdited(): bool
+    {
+        return auth()->user()->can(Permission::NEW_ORDER) && $this->order_status == Status::Pending;
+    }
+
+
 }

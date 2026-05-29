@@ -75,7 +75,11 @@ Route::group(['middleware' => ['auth', PasswordChanged::class, EnsureUserIsActiv
     Route::group(['prefix' => "orders", "as" => "orders."], function () {
         Route::get('/', [App\Http\Controllers\OrderController::class, 'index'])->name('index');
         Route::get('/create', [App\Http\Controllers\OrderController::class, 'create'])->name('create');
+        Route::get('/checkout', [App\Http\Controllers\OrderController::class, 'checkoutForm'])->name('checkout-form');
+        Route::post('/checkout', [App\Http\Controllers\OrderController::class, 'checkout'])->name('checkout');
         Route::post('/store', [App\Http\Controllers\OrderController::class, 'store'])->name('store');
+        Route::get('/{order}/edit', [App\Http\Controllers\OrderController::class, 'edit'])->name('edit');
+        Route::put('/{order}/update', [App\Http\Controllers\OrderController::class, 'update'])->name('update');
         Route::get('/{saleOrder}/show', [App\Http\Controllers\OrderController::class, 'show'])->name('show');
         Route::delete('/{order}/destroy', [App\Http\Controllers\OrderController::class, 'destroy'])->name('destroy');
         Route::patch('/{order}/update-status', [App\Http\Controllers\OrderController::class, 'updateStatus'])->name('update-status');

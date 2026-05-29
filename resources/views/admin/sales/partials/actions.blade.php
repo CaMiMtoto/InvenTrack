@@ -5,14 +5,17 @@
     </button>
     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
         <a class="dropdown-item" href="{{ route('admin.orders.show', encodeId($saleOrder->id)) }}">Details</a>
-    {{--    <a class="dropdown-item" href="{{route('admin.orders.print',encodeId( $saleOrder->id))}}"
-           target="_blank">Print</a>--}}
+        {{--    <a class="dropdown-item" href="{{route('admin.orders.print',encodeId( $saleOrder->id))}}"
+               target="_blank">Print</a>--}}
 
         @if( $saleOrder->canBeCompleted())
             <a class="dropdown-item js-complete"
                href="{{route('admin.orders.mark-as-complete', encodeId($saleOrder->id))}}">
                 Mark as Complete
             </a>
+        @endif
+        @if($saleOrder->canBeEdited())
+            <a class="dropdown-item" href="{{ route('admin.orders.edit', encodeId($saleOrder->id)) }}">Edit</a>
         @endif
         @if($saleOrder->order_status === \App\Constants\Status::Pending && $saleOrder->created_by === auth()->id())
             <a class="dropdown-item js-delete" href="{{ route('admin.orders.destroy', encodeId($saleOrder->id)) }}">Delete</a>

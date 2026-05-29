@@ -20,7 +20,13 @@
                     <!--end::Logo-->
 
                     <!--begin::Action-->
-
+                    @if($saleOrder->canBeEdited())
+                        <a href="{{ route('admin.orders.edit',encodeId($saleOrder->id)) }}"
+                           class="btn btn-light-primary btn-sm">
+                            <x-lucide-edit class="tw-h-5 tw-w-5"/>
+                            Edit Order
+                        </a>
+                    @endif
                     <!--end::Action-->
                 </div>
                 <!--end::Top-->
@@ -111,9 +117,7 @@
                                     <th class="min-w-80px  pb-2">Qty</th>
                                     <th class="min-w-80px  pb-2">Available Qty</th>
                                     <th class="min-w-100px  pb-2">Total</th>
-                                    @can('Remove Ordered Item')
-                                        <th></th>
-                                    @endcan
+
                                 </tr>
                                 </thead>
 
@@ -125,14 +129,7 @@
                                         <td class="pt-6">{{ number_format($item->quantity,0) }} {{ $item->product->unit_measure }}</td>
                                         <td class="pt-6">{{ number_format($item->product->stock,0) }} {{ $item->product->unit_measure }}</td>
                                         <td class="pt-6 text-dark fw-bolder">{{ number_format($item->total, 0) }}</td>
-                                        @can('Remove Ordered Item')
-                                            <td>
-                                                <a href=""
-                                                   class="btn btn-sm btn-icon btn-active-light-danger rounded-pill">
-                                                    <x-lucide-trash-2 class="tw-h-4 tw-w-4"/>
-                                                </a>
-                                            </td>
-                                        @endcan
+
 
                                     </tr>
                                 @endforeach

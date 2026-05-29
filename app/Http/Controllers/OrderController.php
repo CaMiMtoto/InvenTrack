@@ -11,6 +11,7 @@ use App\Models\Customer;
 use App\Models\JournalEntry;
 use App\Models\JournalLine;
 use App\Models\Order;
+use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\StockMovement;
 use App\Models\User;
@@ -73,21 +74,129 @@ class OrderController extends Controller
     public function create()
     {
 
+        $customers = Customer::all();
+        $items = Product::query()->latest()->get();
+        return view('admin.sales.create', compact('customers', 'items'));
+    }
+
+    public function edit(Order $order)
+    {
+        $customers = Customer::all();
+        $items = Product::query()->latest()->get();
+        return view('admin.sales.create', compact('customers', 'items', 'order'));
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     * @throws \Exception
+     */
+    public function checkoutForm()
+    {
+
         if (\Cart::session(auth()->id())->isEmpty()) {
             return back()->with([
                 'error' => 'Please add items before checkout'
             ]);
         }
-
         $customers = Customer::all();
-        return view('admin.sales.create', compact('customers'));
+        return view('admin.sales.checkout', compact('customers'));
     }
 
+
     /**
-     * Store a newly created resource in storage.
      * @throws Throwable
      */
     public function store(Request $request)
+    {
+        $validated = $this->validateOrder($request);
+
+        DB::transaction(function () use ($validated) {
+            $order = Order::create([
+                'customer_id' => $validated['customer_id'],
+                'created_by' => auth()->id(),
+                'total_amount' => $this->calculateTotalAmount($validated['items']),
+                'order_status' => 'pending',
+                'order_date' => $validated['order_date'],
+                'order_number' => $this->generateOrderNumber(),
+            ]);
+
+            $this->saveOrderItems($order, $validated['items']);
+        });
+
+        return redirect()
+            ->route('admin.orders.index')
+            ->with('success', 'Order created successfully.');
+    }
+
+    /**
+     * @throws Throwable
+     */
+    public function update(Request $request, Order $order)
+    {
+        $validated = $this->validateOrder($request);
+
+        DB::transaction(function () use ($order, $validated) {
+            $order->update([
+                'customer_id' => $validated['customer_id'],
+                'total_amount' => $this->calculateTotalAmount($validated['items']),
+                'order_date' => $validated['order_date'],
+            ]);
+
+            $order->items()->delete();
+
+            $this->saveOrderItems($order, $validated['items']);
+        });
+
+        return redirect()
+            ->route('admin.orders.index')
+            ->with('success', 'Order updated successfully.');
+    }
+
+    private function validateOrder(Request $request): array
+    {
+        return $request->validate([
+            'order_date' => ['required', 'date'],
+            'customer_id' => ['required', 'exists:customers,id'],
+
+            'items' => ['required', 'array', 'min:1'],
+            'items.*.product_id' => [
+                'required',
+                'exists:products,id',
+                'distinct',
+            ],
+            'items.*.quantity' => ['required', 'integer', 'min:1'],
+            'items.*.unit_price' => ['required', 'numeric', 'min:0'],
+        ], [
+            'items.*.product_id.distinct' => 'The same product cannot be added more than once on the same order.',
+        ]);
+    }
+
+    private function calculateTotalAmount(array $items): float
+    {
+        return collect($items)->sum(function ($item) {
+            return $item['quantity'] * $item['unit_price'];
+        });
+    }
+
+    private function saveOrderItems(Order $order, array $items): void
+    {
+        foreach ($items as $item) {
+            $order->items()->create([
+                'product_id' => $item['product_id'],
+                'quantity' => $item['quantity'],
+                'unit_price' => $item['unit_price'],
+            ]);
+        }
+    }
+
+    private function generateOrderNumber(): string
+    {
+        $nextId = (Order::max('id') ?? 0) + 1;
+
+        return 'ORD-' . now()->format('Ymd') . '-' . str_pad($nextId, 5, '0', STR_PAD_LEFT);
+    }
+
+    public function checkout(Request $request)
     {
         $data = $request->validate([
             'customer_id' => ['required', 'exists:customers,id'], // Ensure supplier exists
